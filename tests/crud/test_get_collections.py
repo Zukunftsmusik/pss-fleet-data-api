@@ -1,12 +1,13 @@
-from contextlib import AbstractContextManager, nullcontext as no_exception
+from contextlib import AbstractContextManager
+from contextlib import nullcontext as no_exception
 from datetime import datetime
 
 import pytest
+from sqlmodel import Session
+
 from src.api.database.crud import get_collections
 from src.api.database.models import CollectionDB
 from src.api.models.enums import ParameterInterval
-from sqlmodel import Session
-
 
 testcases_interval = [
     pytest.param(ParameterInterval.HOURLY, 18, no_exception(), id="CRUD get_collections by_interval hourly"),
@@ -37,6 +38,7 @@ testcases_ordered_by = [
     pytest.param(True, id="CRUD get_collections ordered_asc"),
     pytest.param(False, id="CRUD get_collections ordered_desc"),
 ]
+
 
 @pytest.mark.usefixtures("session")
 @pytest.mark.parametrize("interval,expected_length,expected_exception", testcases_interval)

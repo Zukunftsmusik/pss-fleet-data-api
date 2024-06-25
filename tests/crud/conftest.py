@@ -1,7 +1,7 @@
 from typing import Generator
 
 import pytest
-from sqlmodel import Session, create_engine
+from sqlmodel import Session
 
 from src.api.database import db
 

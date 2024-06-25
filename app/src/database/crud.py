@@ -61,8 +61,8 @@ def create_dummy_data(engine: Engine, base_path: str):
             collection = save_collection(engine, collection)
 
 
-def delete_collection(engine: Engine, collection: CollectionDB) -> bool:
-    with Session(engine) as session:
+def delete_collection(session: Session, collection: CollectionDB) -> bool:
+    with session:
         session.delete(collection)
         try:
             session.commit()
@@ -72,8 +72,8 @@ def delete_collection(engine: Engine, collection: CollectionDB) -> bool:
             return False
 
 
-def delete_collection_by_id(engine: Engine, collection_id) -> bool:
-    with Session(engine) as session:
+def delete_collection_by_id(session: Session, collection_id) -> bool:
+    with session:
         collection = session.get(CollectionDB, collection_id)
         session.delete(collection)
         try:
@@ -84,8 +84,8 @@ def delete_collection_by_id(engine: Engine, collection_id) -> bool:
             return False
 
 
-def get_alliance_from_collection(engine: Engine, collection_id: int, alliance_id: int, include_members: bool = True) -> CollectionDB:
-    with Session(engine) as session:
+def get_alliance_from_collection(session: Session, collection_id: int, alliance_id: int, include_members: bool = True) -> CollectionDB:
+    with session:
         query = select(AllianceDB).where(AllianceDB.collection_id == collection_id and AllianceDB.alliance_id == alliance_id)
         if include_members:
             query = query.join(UserDB)
@@ -95,7 +95,7 @@ def get_alliance_from_collection(engine: Engine, collection_id: int, alliance_id
 
 
 def get_alliance_history(
-    engine: Engine,
+    session: Session,
     alliance_id: int,
     include_users: bool,
     from_date: datetime = None,
@@ -105,7 +105,7 @@ def get_alliance_history(
     skip: int = 0,
     take: int = 100,
 ) -> Sequence[tuple[CollectionDB, AllianceDB]]:
-    with Session(engine) as session:
+    with session:
         query = select(CollectionDB, AllianceDB).join(AllianceDB).where(AllianceDB.alliance_id == alliance_id)
         query = _apply_select_parameters_to_query(query, from_date, to_date, interval, desc)
         query = query.offset(skip).limit(take)
@@ -116,8 +116,8 @@ def get_alliance_history(
         return results.all()
 
 
-def get_collection(engine: Engine, collection_id: int, include_alliances: bool = True, include_users: bool = True) -> CollectionDB:
-    with Session(engine) as session:
+def get_collection(session: Session, collection_id: int, include_alliances: bool = True, include_users: bool = True) -> CollectionDB:
+    with session:
         collection = session.get(CollectionDB, collection_id)
         if not include_alliances and not include_users:
             return collection
@@ -140,9 +140,9 @@ def get_collection(engine: Engine, collection_id: int, include_alliances: bool =
 
 
 def get_collections(
-    engine: Engine, from_date: datetime, to_date: datetime, interval: ParameterInterval = ParameterInterval.MONTHLY, desc: bool = False, skip: int = 0, take: int = 100
+    session: Session, from_date: datetime, to_date: datetime, interval: ParameterInterval = ParameterInterval.MONTHLY, desc: bool = False, skip: int = 0, take: int = 100
 ) -> Sequence[CollectionDB]:
-    with Session(engine) as session:
+    with session:
         query = select(CollectionDB)
         query = _apply_select_parameters_to_query(query, from_date, to_date, interval, desc)
         query = query.offset(skip).limit(take)
@@ -151,8 +151,8 @@ def get_collections(
         return results.all()
 
 
-def get_top_100_from_collection(engine: Engine, collection_id: int, skip: int = 0, take: int = 100) -> list[UserDB]:
-    with Session(engine) as session:
+def get_top_100_from_collection(session: Session, collection_id: int, skip: int = 0, take: int = 100) -> list[UserDB]:
+    with session:
         query = select(UserDB).where(UserDB.collection_id == collection_id).order_by(col(UserDB.trophy).desc())
         query = query.offset(skip).limit(take)
 
@@ -160,8 +160,8 @@ def get_top_100_from_collection(engine: Engine, collection_id: int, skip: int = 
         return results.all()
 
 
-def get_user_from_collection(engine: Engine, collection_id: int, user_id: int, include_alliance: bool = True) -> CollectionDB:
-    with Session(engine) as session:
+def get_user_from_collection(session: Session, collection_id: int, user_id: int, include_alliance: bool = True) -> CollectionDB:
+    with session:
         query = select(UserDB).where(UserDB.collection_id == collection_id and UserDB.user_id == user_id)
         if include_alliance:
             query = query.join(AllianceDB)
@@ -171,7 +171,7 @@ def get_user_from_collection(engine: Engine, collection_id: int, user_id: int, i
 
 
 def get_user_history(
-    engine: Engine,
+    session: Session,
     user_id: int,
     include_alliance: bool,
     from_date: datetime = None,
@@ -181,7 +181,7 @@ def get_user_history(
     skip: int = 0,
     take: int = 100,
 ) -> Sequence[tuple[CollectionDB, UserDB]]:
-    with Session(engine) as session:
+    with session:
         query = select(CollectionDB, UserDB).join(UserDB).where(UserDB.user_id == user_id)
         if include_alliance:
             query = query.options(selectinload(UserDB.alliance))
@@ -192,13 +192,13 @@ def get_user_history(
         return results.all()
 
 
-def has_collection(engine: Engine, collection_id: int) -> bool:
-    with Session(engine) as session:
+def has_collection(session: Session, collection_id: int) -> bool:
+    with session:
         return bool(session.get(CollectionDB, collection_id))
 
 
-def save_collection(engine: Engine, collection: CollectionDB, include_alliances: bool = True, include_users: bool = True) -> CollectionDB:
-    with Session(engine) as session:
+def save_collection(session: Session, collection: CollectionDB, include_alliances: bool = True, include_users: bool = True) -> CollectionDB:
+    with session:
         session.add(collection)
         if include_alliances and collection.alliances:
             for alliance in collection.alliances:

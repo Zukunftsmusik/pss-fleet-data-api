@@ -1,7 +1,8 @@
 from os import getenv
+from typing import Generator
 
 from sqlalchemy import Engine
-from sqlmodel import create_engine
+from sqlmodel import Session, create_engine
 
 from . import crud
 
@@ -9,18 +10,32 @@ DATABASE_URL: str = f"postgresql://{getenv("DATABASE_SERVER")}/pss-fleet-data?ss
 ENGINE: Engine = None
 
 
-def initialize_db(engine: Engine, data_base_path: str = "examples"):
-    crud.drop_tables(engine)
-    crud.create_tables(engine)
-    crud.create_dummy_data(engine, data_base_path)
+def get_session() -> Generator[Session, None, None]:
+    if not ENGINE:
+        raise Exception(f"ENGINE is `None`. The function {set_up_db_engine.__name__}() needs to get called first!")
+
+    with Session(ENGINE) as session:
+        yield session
 
 
-def set_up_db_engine(database_url: str = None, echo: bool = True):
+def initialize_db(data_base_path: str = "examples"):
+    if not ENGINE:
+        raise Exception(f"ENGINE is `None`. The function {set_up_db_engine.__name__}() needs to get called first!")
+
+    crud.drop_tables(ENGINE)
+    crud.create_tables(ENGINE)
+    crud.create_dummy_data(ENGINE, data_base_path)
+
+
+def set_up_db_engine(database_url: str = None, echo: bool = True, is_sqlite: bool = False):
     if database_url:
         global DATABASE_URL
         DATABASE_URL = database_url
     global ENGINE
-    ENGINE = create_engine(DATABASE_URL, echo=echo)
+    connect_args = {}
+    if is_sqlite:
+        connect_args["check_same_thread"] = False
+    ENGINE = create_engine(DATABASE_URL, echo=echo, connect_args=connect_args)
 
 
 __all__ = [

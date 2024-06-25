@@ -1,7 +1,8 @@
 from datetime import datetime
 from typing import Annotated, Optional
 
-from fastapi import APIRouter, Path, Query
+from fastapi import APIRouter, Depends, Path, Query
+from sqlmodel import Session
 
 from ..database import crud, db
 from ..models import AllianceHistoryOut
@@ -20,7 +21,8 @@ def get_alliance_history(
     desc: Annotated[Optional[bool], Query()] = False,
     skip: Annotated[Optional[int], Query(ge=0)] = 0,
     take: Annotated[Optional[int], Query(ge=0)] = 100,
+    session: Session = Depends(db.get_session),
 ) -> AllianceHistoryOut:
-    history = crud.get_alliance_history(db.ENGINE, alliance_id, True, from_date, to_date, interval, desc, skip, take)
+    history = crud.get_alliance_history(session, alliance_id, True, from_date, to_date, interval, desc, skip, take)
     result = [FromDB.to_alliance_history(entry) for entry in history]
     return result

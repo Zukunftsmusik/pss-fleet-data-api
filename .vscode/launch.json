@@ -1,0 +1,41 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+
+        {
+            "name": "Launch API",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "app/main.py",
+            "console": "integratedTerminal",
+            "justMyCode": false
+        },
+        {
+            "name": "Convert schema files",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "convert_schemas.py",
+            "console": "integratedTerminal",
+            "justMyCode": false
+        },
+        {
+            "name": "Create dummy data",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "create_dummy_data.py",
+            "console": "integratedTerminal",
+            "justMyCode": false
+        },
+        {
+            "name": "Debug tests",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "app/test.py",
+            "console": "integratedTerminal",
+            "justMyCode": false
+        }
+    ]
+}

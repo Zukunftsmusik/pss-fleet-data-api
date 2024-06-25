@@ -1,0 +1,151 @@
+from datetime import datetime, timedelta
+from typing import Optional, Union
+
+import dateutil
+from sqlalchemy.orm import foreign, relationship
+from sqlmodel import Field, Relationship, SQLModel, and_
+
+
+class CollectionDB(SQLModel, table=True):
+    """A snapshot of fleet and player data in PSS."""
+
+    __tablename__ = "collection"
+
+    def __init__(self, **kwargs):
+        kwargs["collected_at"] = convert_to_datetime(kwargs.pop("collected_at", None))
+        super().__init__(**kwargs)
+
+    collection_id: int | None = Field(primary_key=True, index=True, default=None, ge=0)
+    """An arbitrary ID for this Collection."""
+    collected_at: datetime = Field(index=True)
+    """Date and time of when this snapshot was created."""
+    duration: float = Field(ge=0.0)
+    """The time it took to collection the data in this snapshot."""
+    fleet_count: Optional[int] = Field(ge=0, le=101)  # Sometimes, 101 fleets participate.
+    """The number of fleets collected in this snapshot."""
+    user_count: Optional[int] = Field(ge=0, le=10200)  # Up to 100 members per fleet plus top 100 players, if they all aren't in a tournament fleet (unlikely, but still).
+    """The number of players collected in this snapshot. Up to 100 members per fleet and an additional"""
+    tournament_running: bool
+    """Determines, if a monthly fleet tournament was active when collectin the data."""
+    max_tournament_battle_attempts: Optional[int] = Field(ge=0, default=None, nullable=True)
+    """The maximum Tournament battle attempts per day for any given player."""
+
+    alliances: list["AllianceDB"] = Relationship(back_populates="collection", sa_relationship_kwargs={"cascade": "delete"})
+    """The fleets in this Collection."""
+    users: list["UserDB"] = Relationship(back_populates="collection", sa_relationship_kwargs={"cascade": "delete"})
+    """The players in this Collection."""
+
+
+class AllianceDB(SQLModel, table=True):
+    """A partial PSS Alliance (fleet)."""
+
+    __tablename__ = "alliance"
+
+    collection_id: int = Field(primary_key=True, index=True, foreign_key="collection.collection_id", ge=0)
+    """The `collection_id` of the Collection this User data is referencing."""
+    alliance_id: int = Field(primary_key=True, index=True, ge=0)
+    """The PSS property `AllianceId` of the Alliance as returned by the PSS API."""
+
+    alliance_name: str = Field(min_length=1)
+    """The PSS property `AllianceName` of the Alliance as returned by the PSS API."""
+    score: int = Field(ge=0)
+    """The PSS property `Score` of the Alliance as returned by the PSS API."""
+    division_design_id: Optional[int] = Field(ge=0)
+    """The PSS property `DivisionDesignId` of the Alliance as returned by the PSS API."""
+    trophy: int = Field(ge=0)
+    """The PSS property `Trophy` of the Alliance as returned by the PSS API."""
+    championship_score: Optional[int] = Field(ge=0, default=None, nullable=True)
+    """The PSS property `ChampionshipScore` of the Alliance as returned by the PSS API."""
+    number_of_members: Optional[int] = Field(ge=0, le=100, default=None, nullable=True)
+    """The PSS property `NumberOfMembers` of the Alliance as returned by the PSS API."""
+    number_of_approved_members: Optional[int] = Field(ge=0, le=100, default=None, nullable=True)
+    """The PSS property `NumberOfApprovedMembers` of the Alliance as returned by the PSS API."""
+
+    collection: CollectionDB = Relationship(back_populates="alliances")
+    """The Collection this Alliance data is referencing."""
+    users: list["UserDB"] = Relationship()
+    """The members of this fleet."""
+
+
+class UserDB(SQLModel, table=True):
+    """A dipartial PSS User (player)."""
+
+    __tablename__ = "user"
+
+    def __init__(self, **kwargs):
+        kwargs["alliance_join_date"] = convert_to_datetime(kwargs.pop("alliance_join_date", None))
+        kwargs["last_login_date"] = convert_to_datetime(kwargs.pop("last_login_date", None))
+        kwargs["last_heartbeat_date"] = convert_to_datetime(kwargs.pop("last_heartbeat_date", None))
+        super().__init__(**kwargs)
+
+    collection_id: int = Field(primary_key=True, index=True, foreign_key="collection.collection_id", ge=0)
+    """The `collection_id` of the Collection this User data is referencing."""
+    user_id: int = Field(primary_key=True, index=True, ge=0)
+    """The PSS property `Id` of the User as returned by the PSS API."""
+    alliance_id: int = Field(index=True, ge=0, default=0)
+    """The PSS property `AllianceId` of the User as returned by the PSS API."""
+
+    user_name: str = Field(min_length=1)
+    """The PSS property `Name` of the User as returned by the PSS API."""
+    trophy: int = Field(ge=0)
+    """The PSS property `Trophy` of the User as returned by the PSS API."""
+    alliance_score: int = Field(ge=0, default=0)
+    """The PSS property `AllianceScore` (stars) of the User as returned by the PSS API."""
+    alliance_membership: Optional[str] = Field(default=None, nullable=True)
+    """The PSS property `AllianceMembership` (fleet rank) of the User as returned by the PSS API."""
+    alliance_join_date: Optional[datetime] = Field(default=None, nullable=True)
+    """The PSS property `AllianceJoinDate` of the User as returned by the PSS API."""
+    last_login_date: datetime
+    """The PSS property `LastLoginDate` of the User as returned by the PSS API."""
+    last_heartbeat_date: Optional[datetime] = Field(default=None, nullable=True)
+    """The PSS property `LastHeartBeatDate` of the User as returned by the PSS API."""
+    crew_donated: Optional[int] = Field(ge=0)
+    """The PSS property `CrewDonated` of the User as returned by the PSS API."""
+    crew_received: Optional[int] = Field(ge=0)
+    """The PSS property `CrewReceived` (crew borrowed) of the User as returned by the PSS API."""
+    pvp_attack_wins: Optional[int] = Field(ge=0)
+    """The PSS property `PvPAttackWins` of the User as returned by the PSS API."""
+    pvp_attack_losses: Optional[int] = Field(ge=0)
+    """The PSS property `PvPAttackLosses` of the User as returned by the PSS API."""
+    pvp_attack_draws: Optional[int] = Field(ge=0)
+    """The PSS property `PvPAttackDraws` of the User as returned by the PSS API."""
+    pvp_defence_wins: Optional[int] = Field(ge=0)
+    """The PSS property `PvPDefenceWins` of the User as returned by the PSS API."""
+    pvp_defence_losses: Optional[int] = Field(ge=0)
+    """The PSS property `PvPDefenceLosses` of the User as returned by the PSS API."""
+    pvp_defence_draws: Optional[int] = Field(ge=0)
+    """The PSS property `PvPDefenceDraws` of the User as returned by the PSS API."""
+    championship_score: Optional[int] = Field(ge=0, default=None, nullable=True)
+    """The PSS property `ChampionshipScore` of the User as returned by the PSS API."""
+    highest_trophy: Optional[int] = Field(ge=0, default=None, nullable=True)
+    """The PSS property `HighestTrophy` of the User as returned by the PSS API."""
+    tournament_bonus_score: Optional[int] = Field(ge=0, default=None, nullable=True)
+    """The PSS property `TournamentBonusScore` of the User as returned by the PSS API."""
+
+    collection: CollectionDB = Relationship(back_populates="users", sa_relationship_kwargs={"join_depth": 2})
+    """The Collection this User data is referencing."""
+    alliance: Optional[AllianceDB] = Relationship()
+    """The fleet of this player."""
+
+
+AllianceDB.__mapper__.add_property(
+    "users", relationship("UserDB", primaryjoin=and_(foreign(AllianceDB.collection_id) == UserDB.collection_id, foreign(AllianceDB.alliance_id) == UserDB.alliance_id), join_depth=2, viewonly=True)
+)
+UserDB.__mapper__.add_property(
+    "alliance",
+    relationship(
+        "AllianceDB", primaryjoin=and_(foreign(AllianceDB.collection_id) == UserDB.collection_id, foreign(AllianceDB.alliance_id) == UserDB.alliance_id), join_depth=2, uselist=False, viewonly=True
+    ),
+)
+
+
+def convert_to_datetime(value: Union[datetime, int, str]) -> datetime:
+    """Parses a string to datetime or takes the passed datetime and then adds `timezone.utc` to it."""
+    if not value:
+        return None
+    if isinstance(value, int):
+        # If it's an integer value, then it's likely encoded as seconds from Jan 6th, 2016 00:00 UTC
+        value = datetime(2016, 1, 6) + timedelta(seconds=value)
+    elif isinstance(value, str):
+        value = dateutil.parser.parse(value)
+    return value

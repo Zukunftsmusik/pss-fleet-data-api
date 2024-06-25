@@ -3,25 +3,29 @@ all: format check test
 
 .PHONY: init
 init:
-	poetry install
+	rye init
+
+.PHONY: sync
+sync:
+	rye sync
 
 .PHONY: test
 test:
-	poetry run pytest
+	rye run pytest
 
 .PHONY: format
 format:
-	@poetry run autoflake .
-	@poetry run isort .
-	@poetry run black .
+	rye run autoflake .
+	rye run isort .
+	rye run black .
 
 .PHONY: check
 check:
-	@poetry run flake8 .
+	rye run flake8 .
 
-.PHONY: build
-build:
-	poetry build
+.PHONY: run
+run:
+	fastapi dev src/main.py
 
 .PHONY: docker
 docker:

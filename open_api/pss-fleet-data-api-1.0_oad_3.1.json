@@ -1,7 +1,7 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "version": "1",
+    "version": "1.0",
     "title": "PSS Fleet Data API",
     "description": "An API server for Pixel Starships Fleet Data.",
     "contact": {
@@ -41,7 +41,7 @@
       "get": {
         "operationId": "getAllianceHistory",
         "summary": "Get an Alliance's history.",
-        "description": "Get the complete history or a subset of the history of a specific Alliance. You can use the parameters **from**, **to**, **interval**, **skip** and **take** to limit the result set.",
+        "description": "Get the complete history or a subset of the history of a specific Alliance. You can use the parameters **fromDate**, **toDate**, **interval**, **skip** and **take** to limit the result set.",
         "tags": [
           "alliances"
         ],
@@ -50,10 +50,10 @@
             "$ref": "#/components/parameters/path_allianceId"
           },
           {
-            "$ref": "#/components/parameters/query_from"
+            "$ref": "#/components/parameters/query_fromDate"
           },
           {
-            "$ref": "#/components/parameters/query_to"
+            "$ref": "#/components/parameters/query_toDate"
           },
           {
             "$ref": "#/components/parameters/query_interval"
@@ -128,16 +128,16 @@
       "get": {
         "operationId": "get_collections_metadata",
         "summary": "Get metadata of all Collections or a subset of Collections.",
-        "description": "Get the metadata of all Collections or of a subset of all Collections. You can use the parameters **from**, **to**, **interval**, **skip** and **take** to limit the result set.",
+        "description": "Get the metadata of all Collections or of a subset of all Collections. You can use the parameters **fromDate**, **toDate**, **interval**, **skip** and **take** to limit the result set.",
         "tags": [
           "collections"
         ],
         "parameters": [
           {
-            "$ref": "#/components/parameters/query_from"
+            "$ref": "#/components/parameters/query_fromDate"
           },
           {
-            "$ref": "#/components/parameters/query_to"
+            "$ref": "#/components/parameters/query_toDate"
           },
           {
             "$ref": "#/components/parameters/query_interval"
@@ -758,7 +758,7 @@
       "get": {
         "operationId": "getUserHistory",
         "summary": "Get a User's history.",
-        "description": "Get the complete history or a subset of the history of a specific User. You can use the parameters **from**, **to**, **interval**, **skip** and **take** to limit the result set.",
+        "description": "Get the complete history or a subset of the history of a specific User. You can use the parameters **fromDate**, **toDate**, **interval**, **skip** and **take** to limit the result set.",
         "tags": [
           "users"
         ],
@@ -767,10 +767,10 @@
             "$ref": "#/components/parameters/path_userId"
           },
           {
-            "$ref": "#/components/parameters/query_from"
+            "$ref": "#/components/parameters/query_fromDate"
           },
           {
-            "$ref": "#/components/parameters/query_to"
+            "$ref": "#/components/parameters/query_toDate"
           },
           {
             "$ref": "#/components/parameters/query_interval"
@@ -2452,7 +2452,6 @@
         "description": "The PSS property `AllianceName` of the Alliance as returned by the PSS API.",
         "nullable": false,
         "type": "string",
-        "format": "const",
         "minLength": 1,
         "maxLength": 16,
         "examples": [
@@ -2501,7 +2500,7 @@
         "type": "integer",
         "format": "int32",
         "minimum": 0,
-        "maximum": 2147483647,
+        "maximum": 100,
         "examples": [
           95
         ]
@@ -2512,7 +2511,10 @@
         "type": "integer",
         "format": "int32",
         "minimum": 0,
-        "maximum": 94
+        "maximum": 100,
+        "examples": [
+          94
+        ]
       },
       "prop_alliance_Score": {
         "name": "score",
@@ -2664,7 +2666,6 @@
         "description": "An error message matching the code.",
         "nullable": false,
         "type": "string",
-        "format": "const",
         "minLength": 1,
         "maxLength": 512,
         "examples": [
@@ -2675,7 +2676,6 @@
         "description": "A detailed error message.",
         "nullable": false,
         "type": "string",
-        "format": "const",
         "minLength": 1,
         "maxLength": 10000,
         "examples": [
@@ -2686,7 +2686,6 @@
         "description": "The API path that returned the error.",
         "nullable": false,
         "type": "string",
-        "format": "const",
         "minLength": 1,
         "maxLength": 512,
         "examples": [
@@ -2697,7 +2696,6 @@
         "description": "A suggestion for the client on how to fix the error.",
         "nullable": true,
         "type": "string",
-        "format": "const",
         "minLength": 1,
         "maxLength": 10000,
         "examples": [
@@ -2922,7 +2920,6 @@
         "description": "The PSS property `Name` of the User as returned by the PSS API.",
         "nullable": true,
         "type": "string",
-        "format": "const",
         "minLength": 1,
         "maxLength": 16,
         "examples": [
@@ -3134,9 +3131,9 @@
           "example": 1
         }
       },
-      "query_from": {
+      "query_fromDate": {
         "in": "query",
-        "name": "from",
+        "name": "fromDate",
         "description": "Return only Collections created after this date and time. May not be in the future. If no timezone information is given, UTC is assumed.",
         "required": false,
         "schema": {
@@ -3194,9 +3191,9 @@
           "example": 25
         }
       },
-      "query_to": {
+      "query_toDate": {
         "in": "query",
-        "name": "to",
+        "name": "toDate",
         "required": false,
         "description": "Return only Collections created before this date and time. If no timezone information is given, UTC is assumed.",
         "schema": {

@@ -1,4 +1,4 @@
-from src.database import db
+from src.api.database import db
 
 SQLITE_FILE_NAME = "test.sqlite"
 DATABASE_URL = f"sqlite:///app/tests/{SQLITE_FILE_NAME}"

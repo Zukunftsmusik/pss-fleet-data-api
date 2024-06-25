@@ -140,7 +140,7 @@ def get_collection(session: Session, collection_id: int, include_alliances: bool
 
 
 def get_collections(
-    session: Session, from_date: datetime, to_date: datetime, interval: ParameterInterval = ParameterInterval.MONTHLY, desc: bool = False, skip: int = 0, take: int = 100
+    session: Session, from_date: datetime = None, to_date: datetime = None, interval: ParameterInterval = ParameterInterval.MONTHLY, desc: bool = False, skip: int = 0, take: int = 100
 ) -> Sequence[CollectionDB]:
     with session:
         query = select(CollectionDB)

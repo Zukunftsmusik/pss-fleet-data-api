@@ -43,7 +43,7 @@ testcases_ordered_by = [
 
 testcases_include_users = [
     pytest.param(201549, True, id="CRUD get_alliance_history include_users_1"),
-    pytest.param(201549, False, id="CRUD get_alliance_history include_users_1"),
+    pytest.param(201549, False, id="CRUD get_alliance_history include_users_2"),
 ]
 
 

@@ -136,14 +136,14 @@ def get_collection(session: Session, collection_id: int, include_alliances: bool
         if not collection or (not include_alliances and not include_users):
             return collection
 
-        if include_alliances:
+        if include_alliances:  # Split up retrieving alliances, because getting all data at once was significantly slower
             query = select(AllianceDB).where(AllianceDB.collection_id == collection_id)
             alliances = session.exec(query).all()
             collection.alliances = alliances
             for alliance in collection.alliances:
                 alliance.collection = collection
 
-        if include_users:
+        if include_users:  # Split up retrieving users, because getting all data at once was significantly slower
             query = select(UserDB).where(UserDB.collection_id == collection_id)
             users = session.exec(query).all()
             collection.users = users
@@ -176,11 +176,11 @@ def get_top_100_from_collection(session: Session, collection_id: int, skip: int 
 
 def get_user_from_collection(session: Session, collection_id: int, user_id: int, include_alliance: bool = True) -> Optional[UserDB]:
     with session:
-        query = select(UserDB).where(UserDB.collection_id == collection_id).where(UserDB.user_id == user_id)
+        user_query = select(UserDB).where(UserDB.collection_id == collection_id).where(UserDB.user_id == user_id)
         if include_alliance:
-            query = query.join(AllianceDB)
+            user_query = user_query.options(selectinload(UserDB.alliance))
 
-        result = session.exec(query)
+        result = session.exec(user_query)
         return result.first()
 
 

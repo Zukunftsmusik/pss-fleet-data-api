@@ -24,7 +24,7 @@ def initialize_db():
 
     crud.drop_tables(ENGINE)
     crud.create_tables(ENGINE)
-    crud.create_dummy_data(ENGINE, ["examples/generated_dummy_data.json"])
+    crud.insert_dummy_data(ENGINE, ["examples/generated_dummy_data.json"])
 
 
 def set_up_db_engine(database_url: str = None, echo: bool = True, is_sqlite: bool = False):

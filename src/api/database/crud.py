@@ -19,7 +19,7 @@ def create_tables(engine: Engine):
     SQLModel.metadata.create_all(engine)
 
 
-def create_dummy_data(engine: Engine, file_paths: list[str]):
+def insert_dummy_data(engine: Engine, file_paths: list[str]):
     """Adds dummy data to the database.
 
     Args:
@@ -392,7 +392,7 @@ def _apply_order_by_collected_at_to_query(query: Select, desc: bool) -> Select:
 
 
 __all__ = [
-    create_dummy_data.__name__,
+    insert_dummy_data.__name__,
     delete_collection.__name__,
     get_alliance_from_collection.__name__,
     get_alliance_history.__name__,

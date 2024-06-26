@@ -1,6 +1,6 @@
 import json
 from datetime import datetime, timedelta
-from typing import Sequence
+from typing import Optional, Sequence
 
 from sqlalchemy import Engine
 from sqlalchemy.orm import selectinload
@@ -84,14 +84,19 @@ def delete_collection_by_id(session: Session, collection_id) -> bool:
             return False
 
 
-def get_alliance_from_collection(session: Session, collection_id: int, alliance_id: int, include_members: bool = True) -> CollectionDB:
+def get_alliance_from_collection(session: Session, collection_id: int, alliance_id: int, include_users: bool = True) -> Optional[AllianceDB]:
     with session:
-        query = select(AllianceDB).where(AllianceDB.collection_id == collection_id and AllianceDB.alliance_id == alliance_id)
-        if include_members:
-            query = query.join(UserDB)
+        alliance_query = select(AllianceDB).where(AllianceDB.collection_id == collection_id).where(AllianceDB.alliance_id == alliance_id)
+        alliance = session.exec(alliance_query).first()
 
-        result = session.exec(query)
-        return result.first()
+        if alliance and include_users:
+            user_query = select(UserDB).where(UserDB.collection_id == collection_id).where(UserDB.alliance_id == alliance_id)
+            users = session.exec(user_query).all()
+            alliance.users = list(users)
+            for user in alliance.users:
+                user.alliance = alliance
+
+        return alliance
 
 
 def get_alliance_history(
@@ -116,7 +121,7 @@ def get_alliance_history(
         return results.all()
 
 
-def get_collection(session: Session, collection_id: int, include_alliances: bool = True, include_users: bool = True) -> CollectionDB:
+def get_collection(session: Session, collection_id: int, include_alliances: bool = True, include_users: bool = True) -> Optional[CollectionDB]:
     with session:
         collection = session.get(CollectionDB, collection_id)
         if not collection or (not include_alliances and not include_users):
@@ -151,7 +156,7 @@ def get_collections(
         return results.all()
 
 
-def get_top_100_from_collection(session: Session, collection_id: int, skip: int = 0, take: int = 100) -> list[UserDB]:
+def get_top_100_from_collection(session: Session, collection_id: int, skip: int = 0, take: int = 100) -> Sequence[UserDB]:
     with session:
         query = select(UserDB).where(UserDB.collection_id == collection_id).order_by(col(UserDB.trophy).desc())
         query = query.offset(skip).limit(take)
@@ -160,9 +165,9 @@ def get_top_100_from_collection(session: Session, collection_id: int, skip: int 
         return results.all()
 
 
-def get_user_from_collection(session: Session, collection_id: int, user_id: int, include_alliance: bool = True) -> CollectionDB:
+def get_user_from_collection(session: Session, collection_id: int, user_id: int, include_alliance: bool = True) -> Optional[UserDB]:
     with session:
-        query = select(UserDB).where(UserDB.collection_id == collection_id and UserDB.user_id == user_id)
+        query = select(UserDB).where(UserDB.collection_id == collection_id).where(UserDB.user_id == user_id)
         if include_alliance:
             query = query.join(AllianceDB)
 

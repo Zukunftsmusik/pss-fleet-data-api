@@ -129,13 +129,11 @@ class UserDB(SQLModel, table=True):
 
 
 AllianceDB.__mapper__.add_property(
-    "users", relationship("UserDB", primaryjoin=and_(foreign(AllianceDB.collection_id) == UserDB.collection_id, foreign(AllianceDB.alliance_id) == UserDB.alliance_id), join_depth=2, viewonly=True)
+    "users", relationship("UserDB", primaryjoin=and_(foreign(AllianceDB.collection_id) == UserDB.collection_id, foreign(AllianceDB.alliance_id) == UserDB.alliance_id), uselist=True, lazy="noload")
 )
 UserDB.__mapper__.add_property(
     "alliance",
-    relationship(
-        "AllianceDB", primaryjoin=and_(foreign(AllianceDB.collection_id) == UserDB.collection_id, foreign(AllianceDB.alliance_id) == UserDB.alliance_id), join_depth=2, uselist=False, viewonly=True
-    ),
+    relationship("AllianceDB", primaryjoin=and_(foreign(AllianceDB.collection_id) == UserDB.collection_id, foreign(AllianceDB.alliance_id) == UserDB.alliance_id), uselist=False, lazy="noload"),
 )
 
 

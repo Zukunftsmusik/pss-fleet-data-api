@@ -14,3 +14,4 @@ def session() -> Generator[Session, None, None]:
     db.set_up_db_engine()
     with Session(db.ENGINE) as session:
         yield session
+        session.rollback()

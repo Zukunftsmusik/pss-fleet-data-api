@@ -10,7 +10,7 @@ SQLITE_FILE_NAME = "test.sqlite"
 DATABASE_URL = f"sqlite:///app/tests/{SQLITE_FILE_NAME}"
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="module")
 def session() -> Generator[Session, None, None]:
     """Provide a session that will automatically create and rollback transactions."""  # https://github.com/tiangolo/sqlmodel/discussions/940
     db.set_up_db_engine()

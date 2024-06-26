@@ -238,4 +238,16 @@ def _apply_order_by_collected_at_to_query(query: Select, desc: bool) -> Select:
     return query
 
 
-__all__ = [create_dummy_data.__name__, delete_collection_by_id.__name__, get_alliance_from_collection.__name__, get_alliance_history.__name__, get_collection.__name__, get_collections.__name__, get_top_100_from_collection.__name__, get_user_from_collection.__name__, get_user_history.__name__, has_collection.__name__, save_collection.__name__]
+__all__ = [
+    create_dummy_data.__name__,
+    delete_collection_by_id.__name__,
+    get_alliance_from_collection.__name__,
+    get_alliance_history.__name__,
+    get_collection.__name__,
+    get_collections.__name__,
+    get_top_100_from_collection.__name__,
+    get_user_from_collection.__name__,
+    get_user_history.__name__,
+    has_collection.__name__,
+    save_collection.__name__,
+]

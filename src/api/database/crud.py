@@ -101,16 +101,32 @@ def get_alliance_history(
     desc: bool = False,
     skip: int = 0,
     take: int = 100,
-) -> Sequence[tuple[CollectionDB, AllianceDB]]:
+) -> list[tuple[CollectionDB, AllianceDB]]:
+    """Retrieve an alliance's history over time.
+
+    Args:
+        session (Session): The database session to use.
+        alliance_id (int): The `alliance_id` of the Alliance to retrieve data for.
+        include_users (bool): Determines, if the alliance's members should be included in the results.
+        from_date (datetime, optional): Return only data collected after this date and time or exactly at this point. Defaults to None.
+        to_date (datetime, optional): Return only data collected before this date and time or exactly at this point. Defaults to None.
+        interval (ParameterInterval, optional): Specify the interval of the data returned. Defaults to ParameterInterval.MONTHLY.
+        desc (bool, optional): Determines, whether the data should be returned in descending order by the collection date and time. Defaults to False.
+        skip (int, optional): Skip this number of results from the result set. Defaults to 0.
+        take (int, optional): Limit the number of results returned. Defaults to 100.
+
+    Returns:
+        list[tuple[CollectionDB, AllianceDB]]: A list of tuples representing entries in the alliance history. A tuple contains the metadata of the respective collection and the alliance's data from that collection.
+    """
     with session:
-        query = select(CollectionDB, AllianceDB).join(AllianceDB).where(AllianceDB.alliance_id == alliance_id)
+        query = select(AllianceDB, CollectionDB).where(AllianceDB.alliance_id == alliance_id).join(CollectionDB, AllianceDB.collection_id == CollectionDB.collection_id)
         query = _apply_select_parameters_to_query(query, from_date, to_date, interval, desc)
         query = query.offset(skip).limit(take)
         if include_users:
             query = query.options(selectinload(AllianceDB.users))
 
-        results = session.exec(query)
-        return results.all()
+        results = session.exec(query).all()
+        return [(result[1], result[0]) for result in results]
 
 
 def get_collection(session: Session, collection_id: int, include_alliances: bool = True, include_users: bool = True) -> Optional[CollectionDB]:

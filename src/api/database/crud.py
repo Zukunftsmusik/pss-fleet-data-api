@@ -188,8 +188,7 @@ def get_user_history(
 
 
 def has_collection(session: Session, collection_id: int) -> bool:
-    with session:
-        return bool(session.get(CollectionDB, collection_id))
+    return bool(get_collection(session, collection_id, include_alliances=False, include_users=False))
 
 
 def save_collection(session: Session, collection: CollectionDB, include_alliances: bool = True, include_users: bool = True) -> CollectionDB:

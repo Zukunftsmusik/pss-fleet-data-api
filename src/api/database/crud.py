@@ -1,6 +1,6 @@
 import json
 from datetime import datetime, timedelta
-from typing import Optional, Sequence
+from typing import Optional
 
 from sqlalchemy import Engine
 from sqlalchemy.orm import selectinload
@@ -177,9 +177,7 @@ def get_collection(session: Session, collection_id: int, include_alliances: bool
         return collection
 
 
-def get_collections(
-    session: Session, from_date: datetime, to_date: datetime, interval: ParameterInterval, desc: bool, skip: int, take: int
-) -> list[CollectionDB]:
+def get_collections(session: Session, from_date: datetime, to_date: datetime, interval: ParameterInterval, desc: bool, skip: int, take: int) -> list[CollectionDB]:
     """Retrieves metadata of Collections meeting the specified criteria.
 
     Args:

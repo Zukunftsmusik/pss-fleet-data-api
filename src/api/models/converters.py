@@ -114,11 +114,7 @@ class FromDB:
 class ToDB:
     @staticmethod
     def from_alliance_2(source: AllianceCreate2) -> AllianceDB:
-        return AllianceDB(
-            alliance_id=source[0],
-            alliance_name=source[1],
-            score=source[2]
-        )
+        return AllianceDB(alliance_id=source[0], alliance_name=source[1], score=source[2])
 
     @staticmethod
     def from_alliance_3(source: AllianceCreate3) -> AllianceDB:

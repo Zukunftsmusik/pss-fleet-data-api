@@ -119,14 +119,15 @@ def get_alliance_history(
         list[tuple[CollectionDB, AllianceDB]]: A list of tuples representing entries in the alliance history. A tuple contains the metadata of the respective collection and the alliance's data from that collection.
     """
     with session:
-        query = select(AllianceDB, CollectionDB).where(AllianceDB.alliance_id == alliance_id).join(CollectionDB, AllianceDB.collection_id == CollectionDB.collection_id)
+        query = select(AllianceDB, CollectionDB).join(CollectionDB, AllianceDB.collection_id == CollectionDB.collection_id).where(AllianceDB.alliance_id == alliance_id)
         query = _apply_select_parameters_to_query(query, from_date, to_date, interval, desc)
         query = query.offset(skip).limit(take)
+
         if include_users:
             query = query.options(selectinload(AllianceDB.users))
 
         results = session.exec(query).all()
-        return [(result[1], result[0]) for result in results]
+        return [(collection, alliance) for alliance, collection in results]
 
 
 def get_collection(session: Session, collection_id: int, include_alliances: bool = True, include_users: bool = True) -> Optional[CollectionDB]:
@@ -195,14 +196,15 @@ def get_user_history(
     take: int = 100,
 ) -> Sequence[tuple[CollectionDB, UserDB]]:
     with session:
-        query = select(CollectionDB, UserDB).join(UserDB).where(UserDB.user_id == user_id)
-        if include_alliance:
-            query = query.options(selectinload(UserDB.alliance))
+        query = select(UserDB, CollectionDB).join(CollectionDB, UserDB.collection_id == CollectionDB.collection_id).where(UserDB.user_id == user_id)
         query = _apply_select_parameters_to_query(query, from_date, to_date, interval, desc)
         query = query.offset(skip).limit(take)
+        
+        if include_alliance:
+            query = query.options(selectinload(UserDB.alliance))
 
-        results = session.exec(query)
-        return results.all()
+        results = session.exec(query).all()
+        return [(collection, user) for user, collection in results]
 
 
 def has_collection(session: Session, collection_id: int) -> bool:

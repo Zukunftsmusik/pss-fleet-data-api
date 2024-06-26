@@ -9,13 +9,13 @@ from src.api.database.models import AllianceDB, CollectionDB, UserDB
 
 testcases = [
     pytest.param(1, False, False, CollectionDB, no_exception(), id="CRUD get_collection valid_ID_1"),
-    pytest.param(1, True, False, CollectionDB, no_exception(), id="CRUD get_collections valid_ID_2"),
-    pytest.param(1, False, True, CollectionDB, no_exception(), id="CRUD get_collections valid_ID_3"),
-    pytest.param(1, True, True, CollectionDB, no_exception(), id="CRUD get_collections valid_ID_4"),
-    pytest.param(9001, False, False, type(None), no_exception(), id="CRUD get_collections invalid_ID_1"),
-    pytest.param(9001, True, False, type(None), no_exception(), id="CRUD get_collections invalid_ID_2"),
-    pytest.param(9001, False, True, type(None), no_exception(), id="CRUD get_collections invalid_ID_3"),
-    pytest.param(9001, True, True, type(None), no_exception(), id="CRUD get_collections invalid_ID_4"),
+    pytest.param(1, True, False, CollectionDB, no_exception(), id="CRUD get_collection valid_ID_2"),
+    pytest.param(1, False, True, CollectionDB, no_exception(), id="CRUD get_collection valid_ID_3"),
+    pytest.param(1, True, True, CollectionDB, no_exception(), id="CRUD get_collection valid_ID_4"),
+    pytest.param(9001, False, False, type(None), no_exception(), id="CRUD get_collection invalid_ID_1"),
+    pytest.param(9001, True, False, type(None), no_exception(), id="CRUD get_collection invalid_ID_2"),
+    pytest.param(9001, False, True, type(None), no_exception(), id="CRUD get_collection invalid_ID_3"),
+    pytest.param(9001, True, True, type(None), no_exception(), id="CRUD get_collection invalid_ID_4"),
 ]
 
 

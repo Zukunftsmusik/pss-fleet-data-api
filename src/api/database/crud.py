@@ -199,7 +199,7 @@ def get_user_history(
         query = select(UserDB, CollectionDB).join(CollectionDB, UserDB.collection_id == CollectionDB.collection_id).where(UserDB.user_id == user_id)
         query = _apply_select_parameters_to_query(query, from_date, to_date, interval, desc)
         query = query.offset(skip).limit(take)
-        
+
         if include_alliance:
             query = query.options(selectinload(UserDB.alliance))
 

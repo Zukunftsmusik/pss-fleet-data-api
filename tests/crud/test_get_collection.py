@@ -21,7 +21,7 @@ testcases = [
 
 @pytest.mark.usefixtures("session")
 @pytest.mark.parametrize("collection_id,include_alliances,include_users,expected_type,expected_exception", testcases)
-def test_get_collection(collection_id: int, include_alliances: bool, include_users: bool, expected_type: type, expected_exception: AbstractContextManager, session: Session) -> CollectionDB:
+def test_get_collection(collection_id: int, include_alliances: bool, include_users: bool, expected_type: type, expected_exception: AbstractContextManager, session: Session):
     with expected_exception:
         collection = get_collection(session, collection_id, include_alliances, include_users)
         assert isinstance(collection, expected_type)

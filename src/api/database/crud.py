@@ -62,15 +62,17 @@ def create_dummy_data(engine: Engine, base_path: str):
                 collection = save_collection(session, collection)
 
 
-def delete_collection_by_id(session: Session, collection_id) -> bool:
+def delete_collection(session: Session, collection_id: int) -> bool:
+    """Attempts to delete the collection with the provided `collection_id`.
+    Returns `True`, if such a collection exists and is deleted successfully.
+    Returns `False`, if no collection with the provided `collection_id` exists."""
     with session:
         collection = session.get(CollectionDB, collection_id)
-        session.delete(collection)
-        try:
+        if collection:
+            session.delete(collection)
             session.commit()
             return True
-        except Exception as e:
-            print(e)
+        else:
             return False
 
 
@@ -239,7 +241,7 @@ def _apply_order_by_collected_at_to_query(query: Select, desc: bool) -> Select:
 
 __all__ = [
     create_dummy_data.__name__,
-    delete_collection_by_id.__name__,
+    delete_collection.__name__,
     get_alliance_from_collection.__name__,
     get_alliance_history.__name__,
     get_collection.__name__,

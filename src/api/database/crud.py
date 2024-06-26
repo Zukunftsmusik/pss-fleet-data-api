@@ -62,17 +62,6 @@ def create_dummy_data(engine: Engine, base_path: str):
                 collection = save_collection(session, collection)
 
 
-def delete_collection(session: Session, collection: CollectionDB) -> bool:
-    with session:
-        session.delete(collection)
-        try:
-            session.commit()
-            return True
-        except Exception as e:
-            print(e)
-            return False
-
-
 def delete_collection_by_id(session: Session, collection_id) -> bool:
     with session:
         collection = session.get(CollectionDB, collection_id)
@@ -249,4 +238,4 @@ def _apply_order_by_collected_at_to_query(query: Select, desc: bool) -> Select:
     return query
 
 
-__all__ = [delete_collection.__name__, get_alliance_history.__name__, get_collection.__name__, get_collections.__name__, get_user_history.__name__, save_collection.__name__]
+__all__ = [create_dummy_data.__name__, delete_collection_by_id.__name__, get_alliance_from_collection.__name__, get_alliance_history.__name__, get_collection.__name__, get_collections.__name__, get_top_100_from_collection.__name__, get_user_from_collection.__name__, get_user_history.__name__, has_collection.__name__, save_collection.__name__]

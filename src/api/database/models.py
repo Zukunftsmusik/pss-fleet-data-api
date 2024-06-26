@@ -136,6 +136,7 @@ AllianceDB.__mapper__.add_property(
         uselist=True,
         lazy="noload",
         back_populates="alliance",
+        viewonly=True,
     ),
 )
 UserDB.__mapper__.add_property(
@@ -146,6 +147,7 @@ UserDB.__mapper__.add_property(
         uselist=False,
         lazy="noload",
         back_populates="users",
+        viewonly=True,
     ),
 )
 

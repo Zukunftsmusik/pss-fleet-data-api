@@ -38,27 +38,28 @@ def create_dummy_data(engine: Engine, base_path: str):
         if not isinstance(data, list):
             data = [data]
 
-        for collected_data in data:
-            alliances = [AllianceDB(**alliance) for alliance in collected_data["fleets"]]
-            users = [UserDB(**user) for user in collected_data["users"]]
+        with Session(engine) as session:
+            for collected_data in data:
+                alliances = [AllianceDB(**alliance) for alliance in collected_data["fleets"]]
+                users = [UserDB(**user) for user in collected_data["users"]]
 
-            collection = CollectionDB(**(collected_data["metadata"]), alliances=alliances, users=users)
+                collection = CollectionDB(**(collected_data["metadata"]), alliances=alliances, users=users)
 
-            for i, alliance in enumerate(alliances):
-                if not alliance.trophy:
-                    alliance.trophy = sum(user.trophy for user in users if user.alliance_id == alliance.alliance_id)
+                for i, alliance in enumerate(alliances):
+                    if not alliance.trophy:
+                        alliance.trophy = sum(user.trophy for user in users if user.alliance_id == alliance.alliance_id)
 
-                if collection.tournament_running and not alliance.division_design_id:
-                    if i < 8:
-                        alliance.division_design_id = 1
-                    elif i < 20:
-                        alliance.division_design_id = 2
-                    elif i < 50:
-                        alliance.division_design_id = 3
-                    else:
-                        alliance.division_design_id = 4
+                    if collection.tournament_running and not alliance.division_design_id:
+                        if i < 8:
+                            alliance.division_design_id = 1
+                        elif i < 20:
+                            alliance.division_design_id = 2
+                        elif i < 50:
+                            alliance.division_design_id = 3
+                        else:
+                            alliance.division_design_id = 4
 
-            collection = save_collection(engine, collection)
+                collection = save_collection(session, collection)
 
 
 def delete_collection(session: Session, collection: CollectionDB) -> bool:

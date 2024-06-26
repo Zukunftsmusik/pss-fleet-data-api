@@ -9,7 +9,7 @@ from .routers import alliances, collections, upload, users
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     db.set_up_db_engine()
-    # db.initialize_db(db.ENGINE)
+    # db.initialize_db()
     yield
 
 

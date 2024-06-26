@@ -45,7 +45,7 @@ def create_dummy_data(engine: Engine, file_paths: list[str]):
                     if not alliance.trophy:
                         alliance.trophy = sum(user.trophy for user in users if user.alliance_id == alliance.alliance_id)
 
-                    if collection.tournament_running and not alliance.division_design_id:
+                    if collection.tournament_running and alliance.division_design_id is None:
                         if i < 8:
                             alliance.division_design_id = 1
                         elif i < 20:
@@ -55,7 +55,7 @@ def create_dummy_data(engine: Engine, file_paths: list[str]):
                         else:
                             alliance.division_design_id = 4
 
-                collection = save_collection(session, collection)
+                collection = save_collection(session, collection, True, True)
 
 
 def delete_collection(session: Session, collection_id: int) -> bool:
@@ -69,7 +69,7 @@ def delete_collection(session: Session, collection_id: int) -> bool:
         bool: Returns `True`, if such a collection exists and is deleted successfully. Returns `False`, if no collection with the provided `collection_id` exists.
     """
     with session:
-        collection = session.get(CollectionDB, collection_id)
+        collection = get_collection(session, collection_id, True, True)
         if collection:
             session.delete(collection)
             session.commit()

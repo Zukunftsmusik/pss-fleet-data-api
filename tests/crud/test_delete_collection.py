@@ -14,7 +14,7 @@ testcases = [
 
 @pytest.mark.usefixtures("session")
 @pytest.mark.parametrize("collection_id,expected_result,expected_exception", testcases)
-def test_get_alliance_from_collection(collection_id: int, expected_result: bool, expected_exception: AbstractContextManager, session: Session):
+def test_delete_collection(collection_id: int, expected_result: bool, expected_exception: AbstractContextManager, session: Session):
     with expected_exception:
         result = delete_collection(session, collection_id)
         assert result == expected_result

@@ -293,7 +293,7 @@ def has_collection(session: Session, collection_id: int) -> bool:
     Returns:
         bool: `True`, if a collection exists in the database. Else, `False`.
     """
-    return bool(get_collection(session, collection_id, include_alliances=False, include_users=False))
+    return bool(get_collection(session, collection_id, False, False))
 
 
 def save_collection(session: Session, collection: CollectionDB, include_alliances: bool, include_users: bool) -> CollectionDB:

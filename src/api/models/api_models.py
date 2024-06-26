@@ -6,6 +6,11 @@ import dateutil.parser
 from pydantic import BaseModel, Field, field_validator
 
 AllianceCreate2 = tuple[int, str, int]
+"""_summary_
+
+Returns:
+    _type_: _description_
+"""
 AllianceCreate3 = tuple[int, str, int, int]
 AllianceCreate4 = tuple[int, str, int, int, int]
 AllianceCreate5 = AllianceCreate4

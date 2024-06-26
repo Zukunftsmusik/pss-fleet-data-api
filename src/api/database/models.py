@@ -17,7 +17,7 @@ class CollectionDB(SQLModel, table=True):
 
     collection_id: int | None = Field(primary_key=True, index=True, default=None, ge=0)
     """An arbitrary ID for this Collection."""
-    collected_at: datetime = Field(index=True)
+    collected_at: datetime = Field(index=True, unique=True)
     """Date and time of when this snapshot was created."""
     duration: float = Field(ge=0.0)
     """The time it took to collection the data in this snapshot."""
@@ -30,9 +30,9 @@ class CollectionDB(SQLModel, table=True):
     max_tournament_battle_attempts: Optional[int] = Field(ge=0, default=None, nullable=True)
     """The maximum Tournament battle attempts per day for any given player."""
 
-    alliances: list["AllianceDB"] = Relationship(back_populates="collection", sa_relationship_kwargs={"cascade": "delete"})
+    alliances: list["AllianceDB"] = Relationship(back_populates="collection", sa_relationship_kwargs={"cascade": "all, delete-orphan", "lazy": "noload"})
     """The fleets in this Collection."""
-    users: list["UserDB"] = Relationship(back_populates="collection", sa_relationship_kwargs={"cascade": "delete"})
+    users: list["UserDB"] = Relationship(back_populates="collection", sa_relationship_kwargs={"cascade": "all, delete-orphan", "lazy": "noload"})
     """The players in this Collection."""
 
 
@@ -61,7 +61,7 @@ class AllianceDB(SQLModel, table=True):
     number_of_approved_members: Optional[int] = Field(ge=0, le=100, default=None, nullable=True)
     """The PSS property `NumberOfApprovedMembers` of the Alliance as returned by the PSS API."""
 
-    collection: CollectionDB = Relationship(back_populates="alliances")
+    collection: CollectionDB = Relationship(back_populates="alliances", sa_relationship_kwargs={"lazy": "noload"})
     """The Collection this Alliance data is referencing."""
     users: list["UserDB"] = Relationship()
     """The members of this fleet."""
@@ -122,7 +122,7 @@ class UserDB(SQLModel, table=True):
     tournament_bonus_score: Optional[int] = Field(ge=0, default=None, nullable=True)
     """The PSS property `TournamentBonusScore` of the User as returned by the PSS API."""
 
-    collection: CollectionDB = Relationship(back_populates="users", sa_relationship_kwargs={"join_depth": 2})
+    collection: CollectionDB = Relationship(back_populates="users", sa_relationship_kwargs={"lazy": "noload"})
     """The Collection this User data is referencing."""
     alliance: Optional[AllianceDB] = Relationship()
     """The fleet of this player."""

@@ -18,13 +18,13 @@ def get_session() -> Generator[Session, None, None]:
         yield session
 
 
-def initialize_db(data_base_path: str = "examples"):
+def initialize_db():
     if not ENGINE:
         raise Exception(f"ENGINE is `None`. The function {set_up_db_engine.__name__}() needs to get called first!")
 
     crud.drop_tables(ENGINE)
     crud.create_tables(ENGINE)
-    crud.create_dummy_data(ENGINE, data_base_path)
+    crud.create_dummy_data(ENGINE, ["examples/generated_dummy_data.json"])
 
 
 def set_up_db_engine(database_url: str = None, echo: bool = True, is_sqlite: bool = False):

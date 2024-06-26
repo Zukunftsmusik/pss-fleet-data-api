@@ -19,7 +19,6 @@ testcases = [
 ]
 
 
-@pytest.mark.usefixtures("session")
 @pytest.mark.parametrize("collection_id,skip,take,expected_length,expected_exception", testcases)
 def test_get_top_100_from_collection(collection_id: int, skip: int, take: int, expected_length: int, expected_exception: AbstractContextManager, session: Session):
     with expected_exception:

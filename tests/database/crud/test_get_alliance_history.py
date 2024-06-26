@@ -47,7 +47,6 @@ testcases_include_users = [
 ]
 
 
-@pytest.mark.usefixtures("session")
 @pytest.mark.parametrize("alliance_id,interval,expected_length,expected_exception", testcases_interval)
 def test_get_alliance_history_by_interval(alliance_id: int, interval: ParameterInterval, expected_length: int, expected_exception: AbstractContextManager, session: Session):
     with expected_exception:
@@ -56,7 +55,6 @@ def test_get_alliance_history_by_interval(alliance_id: int, interval: ParameterI
         assert len(alliance_history) == expected_length
 
 
-@pytest.mark.usefixtures("session")
 @pytest.mark.parametrize("alliance_id,from_date,to_date,expected_length,expected_exception", testcases_by_date)
 def test_get_alliance_history_by_date(alliance_id: int, from_date: datetime, to_date: datetime, expected_length: int, expected_exception: AbstractContextManager, session: Session):
     with expected_exception:
@@ -65,7 +63,6 @@ def test_get_alliance_history_by_date(alliance_id: int, from_date: datetime, to_
         assert len(alliance_history) == expected_length
 
 
-@pytest.mark.usefixtures("session")
 @pytest.mark.parametrize("alliance_id,skip,take,expected_length,expected_exception", testcases_skip_take)
 def test_get_alliance_history_by_skip_take(alliance_id: int, skip: int, take: int, expected_length: int, expected_exception: AbstractContextManager, session: Session):
     with expected_exception:
@@ -74,7 +71,6 @@ def test_get_alliance_history_by_skip_take(alliance_id: int, skip: int, take: in
         assert len(alliance_history) == expected_length
 
 
-@pytest.mark.usefixtures("session")
 @pytest.mark.parametrize("alliance_id,desc", testcases_ordered_by)
 def test_get_alliance_history_ordered_asc(alliance_id: int, desc: bool, session: Session):
     alliance_history = get_alliance_history(session, alliance_id, False, None, None, ParameterInterval.HOURLY, desc, 0, 100)
@@ -86,7 +82,6 @@ def test_get_alliance_history_ordered_asc(alliance_id: int, desc: bool, session:
             assert entry_1[0].collected_at < entry_2[0].collected_at
 
 
-@pytest.mark.usefixtures("session")
 @pytest.mark.parametrize("alliance_id,include_users", testcases_include_users)
 def test_get_alliance_history_include_users(alliance_id: int, include_users: bool, session: Session):
     alliance_history = get_alliance_history(session, alliance_id, include_users, None, None, ParameterInterval.HOURLY, False, 0, 100)

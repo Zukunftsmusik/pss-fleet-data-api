@@ -21,7 +21,6 @@ testcases = [
 ]
 
 
-@pytest.mark.usefixtures("session")
 @pytest.mark.parametrize("collection_id,user_id,include_alliance,expected_type,expected_exception", testcases)
 def test_get_user_from_collection(collection_id: int, user_id: int, include_alliance: bool, expected_type: type, expected_exception: AbstractContextManager, session: Session):
     with expected_exception:

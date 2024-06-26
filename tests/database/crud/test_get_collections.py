@@ -41,7 +41,6 @@ testcases_ordered_by = [
 ]
 
 
-@pytest.mark.usefixtures("session")
 @pytest.mark.parametrize("interval,expected_length,expected_exception", testcases_interval)
 def test_get_collections_by_interval(interval: ParameterInterval, expected_length: int, expected_exception: AbstractContextManager, session: Session):
     with expected_exception:
@@ -50,7 +49,6 @@ def test_get_collections_by_interval(interval: ParameterInterval, expected_lengt
         assert len(collections) == expected_length
 
 
-@pytest.mark.usefixtures("session")
 @pytest.mark.parametrize("from_date,to_date,expected_length,expected_exception", testcases_by_date)
 def test_get_collections_by_date(from_date: datetime, to_date: datetime, expected_length: int, expected_exception: AbstractContextManager, session: Session):
     with expected_exception:
@@ -59,7 +57,6 @@ def test_get_collections_by_date(from_date: datetime, to_date: datetime, expecte
         assert len(collections) == expected_length
 
 
-@pytest.mark.usefixtures("session")
 @pytest.mark.parametrize("skip,take,expected_length,expected_exception", testcases_skip_take)
 def test_get_collections_by_skip_take(skip: int, take: int, expected_length: int, expected_exception: AbstractContextManager, session: Session):
     with expected_exception:
@@ -68,7 +65,6 @@ def test_get_collections_by_skip_take(skip: int, take: int, expected_length: int
         assert len(collections) == expected_length
 
 
-@pytest.mark.usefixtures("session")
 @pytest.mark.parametrize("desc", testcases_ordered_by)
 def test_get_collections_ordered_asc(desc: bool, session: Session):
     collections = get_collections(session, None, None, ParameterInterval.HOURLY, desc, 0, 100)

@@ -47,7 +47,6 @@ testcases_include_alliance = [
 ]
 
 
-@pytest.mark.usefixtures("session")
 @pytest.mark.parametrize("user_id,interval,expected_length,expected_exception", testcases_interval)
 def test_get_user_history_by_interval(user_id: int, interval: ParameterInterval, expected_length: int, expected_exception: AbstractContextManager, session: Session):
     with expected_exception:
@@ -56,7 +55,6 @@ def test_get_user_history_by_interval(user_id: int, interval: ParameterInterval,
         assert len(user_history) == expected_length
 
 
-@pytest.mark.usefixtures("session")
 @pytest.mark.parametrize("user_id,from_date,to_date,expected_length,expected_exception", testcases_by_date)
 def test_get_user_history_by_date(user_id: int, from_date: datetime, to_date: datetime, expected_length: int, expected_exception: AbstractContextManager, session: Session):
     with expected_exception:
@@ -65,7 +63,6 @@ def test_get_user_history_by_date(user_id: int, from_date: datetime, to_date: da
         assert len(user_history) == expected_length
 
 
-@pytest.mark.usefixtures("session")
 @pytest.mark.parametrize("user_id,skip,take,expected_length,expected_exception", testcases_skip_take)
 def test_get_user_history_by_skip_take(user_id: int, skip: int, take: int, expected_length: int, expected_exception: AbstractContextManager, session: Session):
     with expected_exception:
@@ -74,7 +71,6 @@ def test_get_user_history_by_skip_take(user_id: int, skip: int, take: int, expec
         assert len(user_history) == expected_length
 
 
-@pytest.mark.usefixtures("session")
 @pytest.mark.parametrize("user_id,desc", testcases_ordered_by)
 def test_get_user_history_ordered_asc(user_id: int, desc: bool, session: Session):
     user_history = get_user_history(session, user_id, False, None, None, ParameterInterval.HOURLY, desc, 0, 100)
@@ -86,7 +82,6 @@ def test_get_user_history_ordered_asc(user_id: int, desc: bool, session: Session
             assert entry_1[0].collected_at < entry_2[0].collected_at
 
 
-@pytest.mark.usefixtures("session")
 @pytest.mark.parametrize("user_id,include_alliance", testcases_include_alliance)
 def test_get_user_history_include_alliance(user_id: int, include_alliance: bool, session: Session):
     user_history = get_user_history(session, user_id, include_alliance, None, None, ParameterInterval.HOURLY, False, 0, 100)

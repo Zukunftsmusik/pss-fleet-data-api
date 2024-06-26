@@ -119,7 +119,7 @@ def get_alliance_history(
 def get_collection(session: Session, collection_id: int, include_alliances: bool = True, include_users: bool = True) -> CollectionDB:
     with session:
         collection = session.get(CollectionDB, collection_id)
-        if not include_alliances and not include_users:
+        if not collection or (not include_alliances and not include_users):
             return collection
 
         if include_alliances:

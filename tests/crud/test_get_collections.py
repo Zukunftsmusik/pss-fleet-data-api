@@ -35,8 +35,9 @@ testcases_skip_take = [
 ]
 
 testcases_ordered_by = [
-    pytest.param(True, id="CRUD get_collections ordered_asc"),
-    pytest.param(False, id="CRUD get_collections ordered_desc"),
+    pytest.param(True, id="CRUD get_collections ordered asc"),
+    pytest.param(False, id="CRUD get_collections ordered desc"),
+    pytest.param(None, id="CRUD get_collections ordered None"),
 ]
 
 
@@ -77,17 +78,3 @@ def test_get_collections_ordered_asc(desc: bool, session: Session):
             assert collection_1.collected_at > collection_2.collected_at
         else:
             assert collection_1.collected_at < collection_2.collected_at
-
-
-# @pytest.mark.usefixtures("session")
-# @pytest.mark.parametrize("from_date,to_date,interval,desc,skip,take,expected_length", testcases_mixed)
-# def test_get_collections_mixed(from_date: datetime, to_date: datetime, interval: ParameterInterval, desc: bool, skip: int, take: int, expected_length: int, session: Session):
-#     collections = get_collections(session, from_date, to_date, interval, desc, skip, take)
-#     assert all(isinstance(collection, CollectionDB) for collection in collections)
-#     assert len(collections) == expected_length
-#     if expected_length > 1:
-#         for collection_1, collection_2 in zip(collections, collections[1:]):
-#             if desc:
-#                 assert collection_1.collected_at > collection_2.collected_at
-#             else:
-#                 assert collection_1.collected_at < collection_2.collected_at

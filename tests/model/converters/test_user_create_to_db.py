@@ -4,49 +4,37 @@ from src.api.database.models import UserDB
 from src.api.models.api_models import UserCreate3, UserCreate4, UserCreate5, UserCreate6, UserCreate8, UserCreate9, UserDataCreate3
 from src.api.models.converters import ToDB
 
-pytest.mark.usefixtures("user_create_3", "user_data_create_3")
-
-
+@pytest.mark.usefixtures("user_create_3", "user_data_create_3")
 def test_from_user_create_3(user_create_3: UserCreate3, user_data_create_3: UserDataCreate3):
     user_db = ToDB.from_user_3(user_create_3, user_data_create_3)
     _check_user_db_from_3(user_db)
 
 
-pytest.mark.usefixtures("user_create_4")
-
-
+@pytest.mark.usefixtures("user_create_4")
 def test_from_user_create_4(user_create_4: UserCreate4):
     user_db = ToDB.from_user_4(user_create_4)
     _check_user_db_from_4(user_db)
 
 
-pytest.mark.usefixtures("user_create_5")
-
-
+@pytest.mark.usefixtures("user_create_5")
 def test_from_user_create_5(user_create_5: UserCreate5):
     user_db = ToDB.from_user_5(user_create_5)
     _check_user_db_from_5(user_db)
 
 
-pytest.mark.usefixtures("user_create_6")
-
-
+@pytest.mark.usefixtures("user_create_6")
 def test_from_user_create_6(user_create_6: UserCreate6):
     user_db = ToDB.from_user_6(user_create_6)
     _check_user_db_from_6(user_db)
 
 
-pytest.mark.usefixtures("user_create_8")
-
-
+@pytest.mark.usefixtures("user_create_8")
 def test_from_user_create_8(user_create_8: UserCreate8):
     user_db = ToDB.from_user_8(user_create_8)
     _check_user_db_from_8(user_db)
 
 
-pytest.mark.usefixtures("user_create_9")
-
-
+@pytest.mark.usefixtures("user_create_9")
 def test_from_user_create_9(user_create_9: UserCreate9):
     user_db = ToDB.from_user_9(user_create_9)
     _check_user_db_from_9(user_db)

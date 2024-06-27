@@ -82,26 +82,13 @@ class CollectionBase(BaseModel):
     """The players recorded in this Collection."""
 
 
-class CollectionCreate2(CollectionBase):
-    """
-    A snapshot of fleet and player data in PSS. Schema version 3, _without_ `division_design_id` in fleet tuples.
-    See also: https://github.com/Zukunftsmusik/pss-fleet-data?tab=readme-ov-file#schema-version-3
-    """
-
-    fleets: list["AllianceCreate2"]
-    """The fleets recorded in this Collection."""
-    users: list["UserCreate3"]
-    """The players recorded in this Collection."""
-    data: list["UserDataCreate3"]
-
-
 class CollectionCreate3(CollectionBase):
     """
-    A snapshot of fleet and player data in PSS. Schema version 3, _with_ `division_design_id` in fleet tuples.
+    A snapshot of fleet and player data in PSS. Schema version 3.
     See also: https://github.com/Zukunftsmusik/pss-fleet-data?tab=readme-ov-file#schema-version-3
     """
 
-    fleets: list["AllianceCreate3"]
+    fleets: list[Union["AllianceCreate2", "AllianceCreate3"]]
     """The fleets recorded in this Collection."""
     users: list["UserCreate3"]
     """The IDs and names of the players recorded in this Collection."""

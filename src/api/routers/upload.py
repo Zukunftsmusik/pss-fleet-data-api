@@ -4,14 +4,14 @@ from fastapi import APIRouter, Depends, File
 from sqlmodel import Session
 
 from ..database import crud, db
-from ..models import CollectionCreate2, CollectionCreate3, CollectionCreate4, CollectionCreate5, CollectionCreate6, CollectionCreate7, CollectionCreate8, CollectionCreate9, CollectionOut
+from ..models import CollectionCreate3, CollectionCreate4, CollectionCreate5, CollectionCreate6, CollectionCreate7, CollectionCreate8, CollectionCreate9, CollectionOut
 from ..models.converters import FromDB, ToDB
 
 router: APIRouter = APIRouter(tags=["upload"], prefix="/upload")
 
 
 @router.post("3")
-async def schema_version_3(collection: Annotated[Union[CollectionCreate2, CollectionCreate3], File()], session: Session = Depends(db.get_session)) -> CollectionOut:
+async def schema_version_3(collection: Annotated[CollectionCreate3, File()], session: Session = Depends(db.get_session)) -> CollectionOut:
     """Use this endpoint to upload JSON files of schema versions 3 or below."""
     collection_db = ToDB.from_collection_3(collection)
     collection_db = crud.save_collection(session, collection_db)

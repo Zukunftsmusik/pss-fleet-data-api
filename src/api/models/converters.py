@@ -8,7 +8,6 @@ from .api_models import (
     AllianceCreate7,
     AllianceHistoryOut,
     AllianceOut,
-    CollectionCreate2,
     CollectionCreate3,
     CollectionCreate4,
     CollectionCreate5,
@@ -134,18 +133,19 @@ class ToDB:
         return result
 
     @staticmethod
-    def from_collection_2(source: CollectionCreate2) -> CollectionDB:
-        fleets = [ToDB.from_alliance_2(alliance) for alliance in source.fleets]
-        for rank, fleet in enumerate(fleets):
-            if fleet.division_design_id is None:
+    def from_collection_3(source: CollectionCreate3) -> CollectionDB:
+        for rank, fleet in enumerate(source.fleets):
+            if len(fleet) == 3:
                 if rank <= 8:
-                    fleet.division_design_id = 1
+                    division_design_id = "1"
                 elif rank <= 20:
-                    fleet.division_design_id = 2
+                    division_design_id = "2"
                 elif rank <= 50:
-                    fleet.division_design_id = 3
+                    division_design_id = "3"
                 else:
-                    fleet.division_design_id = 4
+                    division_design_id = "4"
+                source.fleets[rank] = (*fleet, division_design_id)
+        fleets = [ToDB.from_alliance_2(alliance) for alliance in source.fleets]
 
         user_dict = {user[0]: user for user in source.users}
         user_data_dict = {user_data[0]: user_data for user_data in source.data}
@@ -160,10 +160,6 @@ class ToDB:
             alliances=fleets,
             users=users,
         )
-
-    @staticmethod
-    def from_collection_3(source: CollectionCreate3) -> CollectionDB:
-        return ToDB.from_collection_2(source)
 
     @staticmethod
     def from_collection_4(source: CollectionCreate4) -> CollectionDB:

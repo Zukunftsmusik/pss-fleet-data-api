@@ -9,7 +9,6 @@ from src.api.models.api_models import (
     AllianceCreate4,
     AllianceCreate6,
     AllianceCreate7,
-    CollectionCreate2,
     CollectionCreate3,
     CollectionCreate4,
     CollectionCreate5,
@@ -69,11 +68,6 @@ def alliance_db() -> AllianceDB:
 @pytest.fixture(scope="function")
 def alliance_history_db() -> AllianceHistoryDB:
     return (_create_collection_db(), _create_alliance_db())
-
-
-@pytest.fixture(scope="function")
-def collection_create_2() -> CollectionCreate2:
-    return _create_collection_create_2()
 
 
 @pytest.fixture(scope="function")
@@ -190,10 +184,6 @@ def _create_alliance_create_7() -> AllianceCreate7:
 
 def _create_alliance_db() -> AllianceDB:
     return AllianceDB(collection_id=1, alliance_id=1, alliance_name="A1", score=0, division_design_id=0, trophy=5000, championship_score=0, number_of_members=1, number_of_approved_members=0)
-
-
-def _create_collection_create_2() -> CollectionCreate2:
-    return CollectionCreate2(metadata=_create_collection_metadata_create_2(), fleets=[_create_alliance_create_2()], users=[_create_user_create_3()], data=[_create_user_data_create_3()])
 
 
 def _create_collection_create_3() -> CollectionCreate3:

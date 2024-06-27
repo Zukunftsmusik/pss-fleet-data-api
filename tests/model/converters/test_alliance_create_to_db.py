@@ -4,41 +4,31 @@ from src.api.database.models import AllianceDB
 from src.api.models.api_models import AllianceCreate2, AllianceCreate3, AllianceCreate4, AllianceCreate6, AllianceCreate7
 from src.api.models.converters import ToDB
 
-pytest.mark.usefixtures("alliance_create_2")
-
-
+@pytest.mark.usefixtures("alliance_create_2")
 def test_from_alliance_create_2(alliance_create_2: AllianceCreate2):
     alliance_db = ToDB.from_alliance_2(alliance_create_2)
     _check_alliance_db_from_2(alliance_db)
 
 
-pytest.mark.usefixtures("alliance_create_3")
-
-
+@pytest.mark.usefixtures("alliance_create_3")
 def test_from_alliance_create_3(alliance_create_3: AllianceCreate3):
     alliance_db = ToDB.from_alliance_3(alliance_create_3)
     _check_alliance_db_from_3(alliance_db)
 
 
-pytest.mark.usefixtures("alliance_create_4")
-
-
+@pytest.mark.usefixtures("alliance_create_4")
 def test_from_alliance_create_4(alliance_create_4: AllianceCreate4):
     alliance_db = ToDB.from_alliance_4(alliance_create_4)
     _check_alliance_db_from_4(alliance_db)
 
 
-pytest.mark.usefixtures("alliance_create_6")
-
-
+@pytest.mark.usefixtures("alliance_create_6")
 def test_from_alliance_create_6(alliance_create_6: AllianceCreate6):
     alliance_db = ToDB.from_alliance_6(alliance_create_6)
     _check_alliance_db_from_6(alliance_db)
 
 
-pytest.mark.usefixtures("alliance_create_7")
-
-
+@pytest.mark.usefixtures("alliance_create_7")
 def test_from_alliance_create_7(alliance_create_7: AllianceCreate7):
     alliance_db = ToDB.from_alliance_7(alliance_create_7)
     _check_alliance_db_from_7(alliance_db)

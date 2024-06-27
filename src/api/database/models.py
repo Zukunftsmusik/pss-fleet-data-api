@@ -63,7 +63,7 @@ class AllianceDB(AllianceBaseDB, table=True):
     """The PSS property `AllianceName` of the Alliance as returned by the PSS API."""
     score: int = Field(ge=0)
     """The PSS property `Score` of the Alliance as returned by the PSS API."""
-    division_design_id: Optional[int] = Field(ge=0)
+    division_design_id: int = Field(ge=0)
     """The PSS property `DivisionDesignId` of the Alliance as returned by the PSS API."""
     trophy: int = Field(ge=0)
     """The PSS property `Trophy` of the Alliance as returned by the PSS API."""

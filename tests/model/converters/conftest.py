@@ -165,15 +165,15 @@ def user_history_db() -> UserHistoryDB:
 
 
 def _create_alliance_create_2() -> AllianceCreate2:
-    return (1, "A1", 0)
+    return ("1", "A1", "0")
 
 
 def _create_alliance_create_3() -> AllianceCreate3:
-    return (*_create_alliance_create_2(), 0)
+    return (*_create_alliance_create_2(), "0")
 
 
 def _create_alliance_create_4() -> AllianceCreate4:
-    return (*_create_alliance_create_3(), 0, 1000)
+    return (1, "A1", 0, 0, 1000)
 
 
 def _create_alliance_create_5() -> AllianceCreate4:
@@ -181,11 +181,11 @@ def _create_alliance_create_5() -> AllianceCreate4:
 
 
 def _create_alliance_create_6() -> AllianceCreate6:
-    return (*_create_alliance_create_5(), 0, 1000, 0)
+    return (*_create_alliance_create_5(), 0)
 
 
 def _create_alliance_create_7() -> AllianceCreate7:
-    return (*_create_alliance_create_6(), 0, 1000, 0, 1, 0)
+    return (*_create_alliance_create_6(), 1, 0)
 
 
 def _create_alliance_db() -> AllianceDB:
@@ -193,35 +193,35 @@ def _create_alliance_db() -> AllianceDB:
 
 
 def _create_collection_create_2() -> CollectionCreate2:
-    return CollectionCreate2(_create_collection_metadata_create_2(), fleets=[_create_alliance_create_2()], users=[_create_user_create_3], data=[_create_user_data_create_3])
+    return CollectionCreate2(metadata=_create_collection_metadata_create_2(), fleets=[_create_alliance_create_2()], users=[_create_user_create_3()], data=[_create_user_data_create_3()])
 
 
 def _create_collection_create_3() -> CollectionCreate3:
-    return CollectionCreate3(_create_collection_metadata_create_3(), fleets=[_create_alliance_create_3()], users=[_create_user_create_3], data=[_create_user_data_create_3])
+    return CollectionCreate3(metadata=_create_collection_metadata_create_3(), fleets=[_create_alliance_create_3()], users=[_create_user_create_3()], data=[_create_user_data_create_3()])
 
 
 def _create_collection_create_4() -> CollectionCreate4:
-    return CollectionCreate4(_create_collection_metadata_create_4(), fleets=[_create_alliance_create_4()], users=[_create_user_create_4])
+    return CollectionCreate4(metadata=_create_collection_metadata_create_4(), fleets=[_create_alliance_create_4()], users=[_create_user_create_4()])
 
 
 def _create_collection_create_5() -> CollectionCreate5:
-    return CollectionCreate5(_create_collection_metadata_create_4(schema_version=5), fleets=[_create_alliance_create_5()], users=[_create_user_create_5])
+    return CollectionCreate5(metadata=_create_collection_metadata_create_4(schema_version=5), fleets=[_create_alliance_create_5()], users=[_create_user_create_5()])
 
 
 def _create_collection_create_6() -> CollectionCreate6:
-    return CollectionCreate6(_create_collection_metadata_create_4(schema_version=6), fleets=[_create_alliance_create_6()], users=[_create_user_create_6])
+    return CollectionCreate6(metadata=_create_collection_metadata_create_4(schema_version=6), fleets=[_create_alliance_create_6()], users=[_create_user_create_6()])
 
 
 def _create_collection_create_7() -> CollectionCreate7:
-    return CollectionCreate6(_create_collection_metadata_create_4(schema_version=7), fleets=[_create_alliance_create_7()], users=[_create_user_create_6])
+    return CollectionCreate7(metadata=_create_collection_metadata_create_4(schema_version=7), fleets=[_create_alliance_create_7()], users=[_create_user_create_6()])
 
 
 def _create_collection_create_8() -> CollectionCreate8:
-    return CollectionCreate6(_create_collection_metadata_create_4(schema_version=8), fleets=[_create_alliance_create_7()], users=[_create_user_create_8])
+    return CollectionCreate8(metadata=_create_collection_metadata_create_4(schema_version=8), fleets=[_create_alliance_create_7()], users=[_create_user_create_8()])
 
 
 def _create_collection_create_9() -> CollectionCreate9:
-    return CollectionCreate6(_create_collection_metadata_create_9(), fleets=[_create_alliance_create_7()], users=[_create_user_create_9])
+    return CollectionCreate9(metadata=_create_collection_metadata_create_9(), fleets=[_create_alliance_create_7()], users=[_create_user_create_9()])
 
 
 def _create_collection_db() -> CollectionDB:
@@ -255,7 +255,7 @@ def _create_collection_metadata_create_9() -> CollectionMetadataCreate9:
 
 
 def _create_user_create_3() -> UserCreate3:
-    return (1, "U1")
+    return ("1", "U1")
 
 
 def _create_user_create_4() -> UserCreate4:
@@ -296,7 +296,7 @@ def _create_user_create_9() -> UserCreate9:
 
 
 def _create_user_data_create_3() -> UserDataCreate3:
-    return (1, "U1", 1, 1000, 0, datetime(2016, 1, 6, 8, 12, 34), datetime(2016, 1, 6, 23, 58))
+    return ("1", "U1", "1", "1000", "0", datetime(2016, 1, 6, 8, 12, 34).strftime("%Y-%m-%dT%H:%M:%S"), datetime(2016, 1, 6, 23, 58).strftime("%Y-%m-%dT%H:%M:%S"))
 
 
 def _create_user_db() -> UserDB:

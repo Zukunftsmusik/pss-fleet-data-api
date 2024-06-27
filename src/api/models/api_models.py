@@ -7,22 +7,22 @@ from pydantic import BaseModel, field_validator
 
 from .. import utils
 
-AllianceCreate2 = tuple[int, str, int]
+AllianceCreate2 = tuple[str, str, str]
 """(
-    0: alliance_id,
-    1: alliance_name,
-    2: score
+    0: alliance_id (int),
+    1: alliance_name (str),
+    2: score (int)
 )
 See also: https://github.com/Zukunftsmusik/pss-fleet-data?tab=readme-ov-file#schema-version-3
 """
 
 
-AllianceCreate3 = tuple[int, str, int, int]
+AllianceCreate3 = tuple[str, str, str, str]
 """(
-    0: alliance_id,
-    1: alliance_name,
-    2: score,
-    3: division_design_id
+    0: alliance_id (int),
+    1: alliance_name (str),
+    2: score (int),
+    3: division_design_id (int)
 )
 See also: https://github.com/Zukunftsmusik/pss-fleet-data?tab=readme-ov-file#schema-version-3
 """
@@ -237,10 +237,10 @@ class CollectionMetadataCreate9(CollectionMetadataCreate4):
     """The maximum number of tournament battles any given player can do on a given monthly fleet tournament day."""
 
 
-UserCreate3 = tuple[int, str]
+UserCreate3 = tuple[str, str]
 """(
-    0: user_id,
-    1: user_name
+    0: user_id (int),
+    1: user_name (str)
 )
 See also: https://github.com/Zukunftsmusik/pss-fleet-data?tab=readme-ov-file#schema-version-3
 """
@@ -253,10 +253,10 @@ UserCreate4 = tuple[int, str, int, int, Optional[int], int, Optional[datetime], 
     2: alliance_id,
     3: trophy,
     4: alliance_score,
-    5: alliance_membership,
-    6: alliance_join_date,
-    7: last_login_date,
-    8: last_heartbeat_date,
+    5: alliance_membership (encoded),
+    6: alliance_join_date (encoded),
+    7: last_login_date (encoded),
+    8: last_heartbeat_date (encoded),
     9: crew_donated,
     10: crew_received,
     11: pvp_attack_wins,
@@ -277,10 +277,10 @@ UserCreate5 = UserCreate4
     2: alliance_id,
     3: trophy,
     4: alliance_score,
-    5: alliance_membership,
-    6: alliance_join_date,
-    7: last_login_date,
-    8: last_heartbeat_date,
+    5: alliance_membership (encoded),
+    6: alliance_join_date (encoded),
+    7: last_login_date (encoded),
+    8: last_heartbeat_date (encoded),
     9: crew_donated,
     10: crew_received,
     11: pvp_attack_wins,
@@ -301,10 +301,10 @@ UserCreate6 = tuple[int, str, int, int, Optional[int], int, Optional[datetime], 
     2: alliance_id,
     3: trophy,
     4: alliance_score,
-    5: alliance_membership,
-    6: alliance_join_date,
-    7: last_login_date,
-    8: last_heartbeat_date,
+    5: alliance_membership (encoded),
+    6: alliance_join_date (encoded),
+    7: last_login_date (encoded),
+    8: last_heartbeat_date (encoded),
     9: crew_donated,
     10: crew_received,
     11: pvp_attack_wins,
@@ -326,10 +326,10 @@ UserCreate8 = tuple[int, str, int, int, Optional[int], int, Optional[datetime], 
     2: alliance_id,
     3: trophy,
     4: alliance_score,
-    5: alliance_membership,
-    6: alliance_join_date,
-    7: last_login_date,
-    8: last_heartbeat_date,
+    5: alliance_membership (encoded),
+    6: alliance_join_date (encoded),
+    7: last_login_date (encoded),
+    8: last_heartbeat_date (encoded),
     9: crew_donated,
     10: crew_received,
     11: pvp_attack_wins,
@@ -352,10 +352,10 @@ UserCreate9 = tuple[int, str, int, int, Optional[int], int, Optional[datetime], 
     2: alliance_id,
     3: trophy,
     4: alliance_score,
-    5: alliance_membership,
-    6: alliance_join_date,
-    7: last_login_date,
-    8: last_heartbeat_date,
+    5: alliance_membership (encoded),
+    6: alliance_join_date (encoded),
+    7: last_login_date (encoded),
+    8: last_heartbeat_date (encoded),
     9: crew_donated,
     10: crew_received,
     11: pvp_attack_wins,
@@ -372,15 +372,15 @@ See also: https://github.com/Zukunftsmusik/pss-fleet-data?tab=readme-ov-file#sch
 """
 
 
-UserDataCreate3 = tuple[int, int, int, Optional[int], Optional[str], Optional[datetime], datetime]
+UserDataCreate3 = tuple[str, str, str, Optional[str], Optional[str], Optional[str], str]
 """(
-    0: user_id,
-    1: alliance_id,
-    2: trophy,
-    3: alliance_score,
-    4: alliance_membership,
-    5: alliance_join_date,
-    6: last_login_date
+    0: user_id (int),
+    1: alliance_id (int),
+    2: trophy (int),
+    3: alliance_score (int),
+    4: alliance_membership (str),
+    5: alliance_join_date (datetime),
+    6: last_login_date (datetime)
 )
 See also: https://github.com/Zukunftsmusik/pss-fleet-data?tab=readme-ov-file#schema-version-3
 """

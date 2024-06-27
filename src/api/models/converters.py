@@ -8,6 +8,7 @@ from .api_models import (
     AllianceCreate7,
     AllianceHistoryOut,
     AllianceOut,
+    CollectionCreate2,
     CollectionCreate3,
     CollectionCreate4,
     CollectionCreate5,
@@ -133,45 +134,131 @@ class ToDB:
         return result
 
     @staticmethod
+    def from_collection_2(source: CollectionCreate2) -> CollectionDB:
+        fleets = [ToDB.from_alliance_2(alliance) for alliance in source.fleets]
+        for rank, fleet in enumerate(fleets):
+            if fleet.division_design_id is None:
+                if rank <= 8:
+                    fleet.division_design_id = 1
+                elif rank <= 20:
+                    fleet.division_design_id = 2
+                elif rank <= 50:
+                    fleet.division_design_id = 3
+                else:
+                    fleet.division_design_id = 4
+
+        user_dict = {user[0]: user for user in source.users}
+        user_data_dict = {user_data[0]: user_data for user_data in source.data}
+        users = [ToDB.from_user_3(user, user_data_dict[user_id]) for user_id, user in user_dict.items()]
+
+        return CollectionDB(
+            collected_at=source.metadata.timestamp,
+            duration=source.metadata.duration,
+            fleet_count=source.metadata.fleet_count,
+            user_count=source.metadata.user_count,
+            tournament_running=source.metadata.tourney_running,
+            alliances=fleets,
+            users=users,
+        )
+
+    @staticmethod
     def from_collection_3(source: CollectionCreate3) -> CollectionDB:
-        pass
+        return ToDB.from_collection_2(source)
 
     @staticmethod
     def from_collection_4(source: CollectionCreate4) -> CollectionDB:
-        pass
+        fleets = [ToDB.from_alliance_4(alliance) for alliance in source.fleets]
+        users = [ToDB.from_user_4(user) for user in source.users]
+
+        return CollectionDB(
+            collected_at=source.metadata.timestamp,
+            duration=source.metadata.duration,
+            fleet_count=source.metadata.fleet_count,
+            user_count=source.metadata.user_count,
+            tournament_running=source.metadata.tourney_running,
+            alliances=fleets,
+            users=users,
+        )
 
     @staticmethod
     def from_collection_5(source: CollectionCreate5) -> CollectionDB:
-        pass
+        fleets = [ToDB.from_alliance_4(alliance) for alliance in source.fleets]
+        users = [ToDB.from_user_5(user) for user in source.users]
+
+        return CollectionDB(
+            collected_at=source.metadata.timestamp,
+            duration=source.metadata.duration,
+            fleet_count=source.metadata.fleet_count,
+            user_count=source.metadata.user_count,
+            tournament_running=source.metadata.tourney_running,
+            alliances=fleets,
+            users=users,
+        )
 
     @staticmethod
     def from_collection_6(source: CollectionCreate6) -> CollectionDB:
-        pass
+        fleets = [ToDB.from_alliance_6(alliance) for alliance in source.fleets]
+        users = [ToDB.from_user_6(user) for user in source.users]
+
+        return CollectionDB(
+            collected_at=source.metadata.timestamp,
+            duration=source.metadata.duration,
+            fleet_count=source.metadata.fleet_count,
+            user_count=source.metadata.user_count,
+            tournament_running=source.metadata.tourney_running,
+            alliances=fleets,
+            users=users,
+        )
 
     @staticmethod
     def from_collection_7(source: CollectionCreate7) -> CollectionDB:
-        pass
+        fleets = [ToDB.from_alliance_7(alliance) for alliance in source.fleets]
+        users = [ToDB.from_user_6(user) for user in source.users]
+
+        return CollectionDB(
+            collected_at=source.metadata.timestamp,
+            duration=source.metadata.duration,
+            fleet_count=source.metadata.fleet_count,
+            user_count=source.metadata.user_count,
+            tournament_running=source.metadata.tourney_running,
+            alliances=fleets,
+            users=users,
+        )
 
     @staticmethod
     def from_collection_8(source: CollectionCreate8) -> CollectionDB:
-        pass
+        fleets = [ToDB.from_alliance_7(alliance) for alliance in source.fleets]
+        users = [ToDB.from_user_8(user) for user in source.users]
+
+        return CollectionDB(
+            collected_at=source.metadata.timestamp,
+            duration=source.metadata.duration,
+            fleet_count=source.metadata.fleet_count,
+            user_count=source.metadata.user_count,
+            tournament_running=source.metadata.tourney_running,
+            alliances=fleets,
+            users=users,
+        )
 
     @staticmethod
     def from_collection_9(source: CollectionCreate9) -> CollectionDB:
-        pass
+        fleets = [ToDB.from_alliance_7(alliance) for alliance in source.fleets]
+        users = [ToDB.from_user_9(user) for user in source.users]
+
+        return CollectionDB(
+            collected_at=source.metadata.timestamp,
+            duration=source.metadata.duration,
+            fleet_count=source.metadata.fleet_count,
+            user_count=source.metadata.user_count,
+            tournament_running=source.metadata.tourney_running,
+            max_tournament_battle_attempts=source.metadata.max_tournament_battle_attempts,
+            alliances=fleets,
+            users=users,
+        )
 
     @staticmethod
     def from_user_3(user: UserCreate3, data: UserDataCreate3) -> UserDB:
-        return UserDB(
-            user_id=user[0],
-            user_name=user[1],
-            alliance_id=data[1],
-            trophy=data[2],
-            alliance_score=data[3],
-            alliance_membership=data[4],
-            alliance_join_date=data[5],
-            last_login_date=data[6]
-        )
+        return UserDB(user_id=user[0], user_name=user[1], alliance_id=data[1], trophy=data[2], alliance_score=data[3], alliance_membership=data[4], alliance_join_date=data[5], last_login_date=data[6])
 
     @staticmethod
     def from_user_4(source: UserCreate4) -> UserDB:
@@ -192,15 +279,15 @@ class ToDB:
             pvp_attack_draws=source[13],
             pvp_defence_wins=source[14],
             pvp_defence_losses=source[15],
-            pvp_defence_draws=source[16]
+            pvp_defence_draws=source[16],
         )
 
     @staticmethod
     def from_user_5(source: UserCreate5) -> UserDB:
         user_db = ToDB.from_user_4(source)
-        user_db.alliance_join_date=utils.parse_datetime(source[6])
-        user_db.last_login_date=utils.parse_datetime(source[7])
-        user_db.last_heartbeat_date=utils.parse_datetime(source[8])
+        user_db.alliance_join_date = utils.parse_datetime(source[6])
+        user_db.last_login_date = utils.parse_datetime(source[7])
+        user_db.last_heartbeat_date = utils.parse_datetime(source[8])
         return user_db
 
     @staticmethod

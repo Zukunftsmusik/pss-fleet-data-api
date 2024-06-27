@@ -1,10 +1,11 @@
-from datetime import datetime, timedelta
+from datetime import datetime
 from typing import Optional, Union
 
-import dateutil
 from pydantic import field_validator
 from sqlalchemy.orm import foreign, relationship
 from sqlmodel import Field, Relationship, SQLModel, and_
+
+from .. import utils
 
 
 class CollectionBaseDB(SQLModel):
@@ -15,7 +16,7 @@ class CollectionBaseDB(SQLModel):
     @classmethod
     def transform_collected_at(cls, value: Union[datetime, int, str]) -> datetime:
         if isinstance(value, (datetime, int, str)):
-            return _convert_to_datetime(value)
+            return utils.parse_datetime(value)
         else:
             return value
 
@@ -91,7 +92,7 @@ class UserBaseDB(SQLModel):
     @classmethod
     def transform_alliance_join_date(cls, value: Union[datetime, int, str]) -> datetime:
         if isinstance(value, (datetime, int, str)):
-            return _convert_to_datetime(value)
+            return utils.parse_datetime(value)
         else:
             return value
 
@@ -99,7 +100,7 @@ class UserBaseDB(SQLModel):
     @classmethod
     def transform_last_login_date(cls, value: Union[datetime, int, str]) -> datetime:
         if isinstance(value, (datetime, int, str)):
-            return _convert_to_datetime(value)
+            return utils.parse_datetime(value)
         else:
             return value
 
@@ -107,7 +108,7 @@ class UserBaseDB(SQLModel):
     @classmethod
     def transform_last_heartbeat_date(cls, value: Union[datetime, int, str]) -> datetime:
         if isinstance(value, (datetime, int, str)):
-            return _convert_to_datetime(value)
+            return utils.parse_datetime(value)
         else:
             return value
 
@@ -193,15 +194,3 @@ UserDB.__mapper__.add_property(
 
 AllianceHistoryDB = tuple[CollectionDB, AllianceDB]
 UserHistoryDB = tuple[CollectionDB, UserDB]
-
-
-def _convert_to_datetime(value: Union[datetime, int, str]) -> datetime:
-    """Parses a string to datetime or takes the passed datetime and then adds `timezone.utc` to it."""
-    if not value:
-        return None
-    if isinstance(value, int):
-        # If it's an integer value, then it's likely encoded as seconds from Jan 6th, 2016 00:00 UTC
-        value = datetime(2016, 1, 6) + timedelta(seconds=value)
-    elif isinstance(value, str):
-        value = dateutil.parser.parse(value)
-    return value

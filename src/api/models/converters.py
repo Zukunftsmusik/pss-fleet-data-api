@@ -1,8 +1,5 @@
-from typing import Union
-
 from .. import utils
 from ..database.models import AllianceDB, CollectionDB, UserDB
-from ..models.enums import UserAllianceMembership, UserCreateAllianceMembership
 from .api_models import (
     AllianceCreate2,
     AllianceCreate3,
@@ -80,7 +77,7 @@ class FromDB:
             source.alliance_id,
             source.trophy,
             source.alliance_score,
-            convert_alliance_membership_to_int(source.alliance_membership),
+            utils.convert_alliance_membership_to_int(source.alliance_membership),
             utils.add_timezone_utc(source.alliance_join_date),
             utils.add_timezone_utc(source.last_login_date),
             utils.add_timezone_utc(source.last_heartbeat_date),
@@ -183,26 +180,3 @@ class ToDB:
     @staticmethod
     def from_user_9(source: UserCreate9) -> UserDB:
         pass
-
-
-def convert_alliance_membership_to_int(membership: Union[str, UserAllianceMembership]) -> int:
-    if isinstance(membership, str):
-        membership = UserAllianceMembership(membership)
-
-    match membership:
-        case UserAllianceMembership.NONE:
-            return int(UserCreateAllianceMembership.NONE)
-        case UserAllianceMembership.CANDIDATE:
-            return int(UserCreateAllianceMembership.CANDIDATE)
-        case UserAllianceMembership.ENSIGN:
-            return int(UserCreateAllianceMembership.ENSIGN)
-        case UserAllianceMembership.LIEUTENANT:
-            return int(UserCreateAllianceMembership.LIEUTENANT)
-        case UserAllianceMembership.MAJOR:
-            return int(UserCreateAllianceMembership.MAJOR)
-        case UserAllianceMembership.COMMANDER:
-            return int(UserCreateAllianceMembership.COMMANDER)
-        case UserAllianceMembership.VICE_ADMIRAL:
-            return int(UserCreateAllianceMembership.VICE_ADMIRAL)
-        case UserAllianceMembership.FLEET_ADMIRAL:
-            return int(UserCreateAllianceMembership.FLEET_ADMIRAL)

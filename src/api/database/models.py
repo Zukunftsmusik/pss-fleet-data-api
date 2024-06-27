@@ -1,24 +1,31 @@
 from datetime import datetime, timedelta
+import dateutil
 from typing import Optional, Union
 
-import dateutil
+from pydantic import field_validator
 from sqlalchemy.orm import foreign, relationship
 from sqlmodel import Field, Relationship, SQLModel, and_
 
 
-class CollectionDB(SQLModel, table=True):
+class CollectionBaseDB(SQLModel):
+    collected_at: datetime = Field(index=True, unique=True)
+    """Date and time of when this snapshot was created."""
+
+    @field_validator("collected_at", mode="before")
+    @classmethod
+    def transform_collected_at(cls, value: Union[datetime, int, str]) -> datetime:
+        if isinstance(value, (datetime, int, str)):
+            return _convert_to_datetime(value)
+        else:
+            return value
+
+class CollectionDB(CollectionBaseDB, table=True):
     """A snapshot of fleet and player data in PSS."""
 
     __tablename__ = "collection"
 
-    def __init__(self, **kwargs):
-        kwargs["collected_at"] = convert_to_datetime(kwargs.pop("collected_at", None))
-        super().__init__(**kwargs)
-
     collection_id: int | None = Field(primary_key=True, index=True, default=None, ge=0)
     """An arbitrary ID for this Collection."""
-    collected_at: datetime = Field(index=True, unique=True)
-    """Date and time of when this snapshot was created."""
     duration: float = Field(ge=0.0)
     """The time it took to collection the data in this snapshot."""
     fleet_count: Optional[int] = Field(ge=0, le=101)  # Sometimes, 101 fleets participate.
@@ -36,7 +43,11 @@ class CollectionDB(SQLModel, table=True):
     """The players in this Collection."""
 
 
-class AllianceDB(SQLModel, table=True):
+class AllianceBaseDB(SQLModel):
+    pass
+
+
+class AllianceDB(AllianceBaseDB, table=True):
     """A partial PSS Alliance (fleet)."""
 
     __tablename__ = "alliance"
@@ -67,16 +78,42 @@ class AllianceDB(SQLModel, table=True):
     """The members of this fleet."""
 
 
-class UserDB(SQLModel, table=True):
+class UserBaseDB(SQLModel):
+    alliance_join_date: Optional[datetime] = Field(default=None, nullable=True)
+    """The PSS property `AllianceJoinDate` of the User as returned by the PSS API."""
+    last_login_date: datetime
+    """The PSS property `LastLoginDate` of the User as returned by the PSS API."""
+    last_heartbeat_date: Optional[datetime] = Field(default=None, nullable=True)
+    """The PSS property `LastHeartBeatDate` of the User as returned by the PSS API."""
+
+    @field_validator("alliance_join_date", mode="before")
+    @classmethod
+    def transform_alliance_join_date(cls, value: Union[datetime, int, str]) -> datetime:
+        if isinstance(value, (datetime, int, str)):
+            return _convert_to_datetime(value)
+        else:
+            return value
+
+    @field_validator("last_login_date", mode="before")
+    @classmethod
+    def transform_last_login_date(cls, value: Union[datetime, int, str]) -> datetime:
+        if isinstance(value, (datetime, int, str)):
+            return _convert_to_datetime(value)
+        else:
+            return value
+
+    @field_validator("last_heartbeat_date", mode="before")
+    @classmethod
+    def transform_last_heartbeat_date(cls, value: Union[datetime, int, str]) -> datetime:
+        if isinstance(value, (datetime, int, str)):
+            return _convert_to_datetime(value)
+        else:
+            return value
+
+class UserDB(UserBaseDB, table=True):
     """A dipartial PSS User (player)."""
 
     __tablename__ = "user"
-
-    def __init__(self, **kwargs):
-        kwargs["alliance_join_date"] = convert_to_datetime(kwargs.pop("alliance_join_date", None))
-        kwargs["last_login_date"] = convert_to_datetime(kwargs.pop("last_login_date", None))
-        kwargs["last_heartbeat_date"] = convert_to_datetime(kwargs.pop("last_heartbeat_date", None))
-        super().__init__(**kwargs)
 
     collection_id: int = Field(primary_key=True, index=True, foreign_key="collection.collection_id", ge=0)
     """The `collection_id` of the Collection this User data is referencing."""
@@ -152,7 +189,11 @@ UserDB.__mapper__.add_property(
 )
 
 
-def convert_to_datetime(value: Union[datetime, int, str]) -> datetime:
+AllianceHistoryDB = tuple[CollectionDB, AllianceDB]
+UserHistoryDB = tuple[CollectionDB, UserDB]
+
+
+def _convert_to_datetime(value: Union[datetime, int, str]) -> datetime:
     """Parses a string to datetime or takes the passed datetime and then adds `timezone.utc` to it."""
     if not value:
         return None

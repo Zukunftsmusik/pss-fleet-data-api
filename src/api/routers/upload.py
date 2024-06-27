@@ -1,4 +1,4 @@
-from typing import Annotated, Union
+from typing import Annotated
 
 from fastapi import APIRouter, Depends, File
 from sqlmodel import Session

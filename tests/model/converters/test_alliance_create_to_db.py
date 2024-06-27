@@ -4,6 +4,7 @@ from src.api.database.models import AllianceDB
 from src.api.models.api_models import AllianceCreate2, AllianceCreate3, AllianceCreate4, AllianceCreate6, AllianceCreate7
 from src.api.models.converters import ToDB
 
+
 @pytest.mark.usefixtures("alliance_create_2")
 def test_from_alliance_create_2(alliance_create_2: AllianceCreate2):
     alliance_db = ToDB.from_alliance_2(alliance_create_2)

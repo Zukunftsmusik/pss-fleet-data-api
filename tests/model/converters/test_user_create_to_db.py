@@ -4,6 +4,7 @@ from src.api.database.models import UserDB
 from src.api.models.api_models import UserCreate3, UserCreate4, UserCreate5, UserCreate6, UserCreate8, UserCreate9, UserDataCreate3
 from src.api.models.converters import ToDB
 
+
 @pytest.mark.usefixtures("user_create_3", "user_data_create_3")
 def test_from_user_create_3(user_create_3: UserCreate3, user_data_create_3: UserDataCreate3):
     user_db = ToDB.from_user_3(user_create_3, user_data_create_3)

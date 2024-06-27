@@ -1,4 +1,5 @@
 import json
+from os import getenv
 from typing import Generator
 
 import pytest
@@ -36,22 +37,12 @@ class DummyData(metaclass=Singleton):
         users = [UserDB(**user) for user in data["users"]]
 
         collection = CollectionDB(**(data["metadata"]), alliances=alliances, users=users)
-
-        for i, alliance in enumerate(alliances):
-            if not alliance.trophy:
-                alliance.trophy = sum(user.trophy for user in users if user.alliance_id == alliance.alliance_id)
-
-            if collection.tournament_running and alliance.division_design_id is None:
-                if i < 8:
-                    alliance.division_design_id = 1
-                elif i < 20:
-                    alliance.division_design_id = 2
-                elif i < 50:
-                    alliance.division_design_id = 3
-                else:
-                    alliance.division_design_id = 4
-
         return collection
+    
+
+@pytest.fixture()
+def github_actions(): # @pytest.mark.skipif(IN_GITHUB_ACTIONS, reason="Requires postgres DB.")
+    return getenv("IN_GITHUB_ACTIONS")
 
 
 @pytest.fixture(scope="function", autouse=True)  # Set to "function", since "session" wouldn't allow to run all crud tests in quick succession.

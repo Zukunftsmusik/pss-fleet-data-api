@@ -1,3 +1,6 @@
+from typing import Union
+
+from .. import utils
 from ..database.models import AllianceDB, CollectionDB, UserDB
 from ..models.enums import UserAllianceMembership, UserCreateAllianceMembership
 from .api_models import (
@@ -26,7 +29,6 @@ from .api_models import (
     UserDataCreate3,
     UserHistoryOut,
     UserOut,
-    add_utc_to_datetime,
 )
 
 LATEST_SCHEMA_VERSION: int = 9
@@ -48,17 +50,17 @@ class FromDB:
 
     @staticmethod
     def to_alliance_history(source: tuple[CollectionDB, AllianceDB]) -> AllianceHistoryOut:
-        collection = FromDB.to_collection(source[0])
+        collection = FromDB.to_collection(source[0], False, False)
         alliance = FromDB.to_alliance(source[1])
         users = [FromDB.to_user(user)[0] for user in source[1].users if user] if source[1].users else []
         return AllianceHistoryOut(collection=collection, fleet=alliance, users=users)
 
     @staticmethod
     def to_collection(source: CollectionDB, include_alliances: bool, include_users: bool) -> CollectionOut:
-        return {
-            "metadata": {
+        return CollectionOut(
+            metadata={
                 "collection_id": source.collection_id,
-                "timestamp": source.collected_at,
+                "timestamp": utils.add_timezone_utc(source.collected_at),
                 "duration": source.duration,
                 "fleet_count": source.fleet_count,
                 "user_count": source.user_count,
@@ -66,20 +68,12 @@ class FromDB:
                 "max_tournament_battle_attempts": source.max_tournament_battle_attempts,
                 "schema_version": LATEST_SCHEMA_VERSION,
             },
-            "fleets": [FromDB.to_alliance(alliance) for alliance in source.alliances if alliance] if include_alliances and source.alliances else [],
-            "users": [FromDB.to_user(user) for user in source.users if user] if include_users and source.users else [],
-        }
+            fleets=[FromDB.to_alliance(alliance) for alliance in source.alliances if alliance] if include_alliances and source.alliances else [],
+            users=[FromDB.to_user(user) for user in source.users if user] if include_users and source.users else [],
+        )
 
     @staticmethod
     def to_user(source: UserDB) -> UserOut:
-        if source.collection.max_tournament_battle_attempts is not None and source.tournament_bonus_score is not None and source.alliance_membership != UserAllianceMembership.NONE:
-            if source.collection.collected_at > source.last_login_date:
-                tournament_battles_left = source.collection.max_tournament_battle_attempts
-            else:
-                tournament_battles_left = source.collection.max_tournament_battle_attempts - source.tournament_bonus_score
-        else:
-            tournament_battles_left = None
-
         return (
             source.user_id,
             source.user_name,
@@ -87,9 +81,9 @@ class FromDB:
             source.trophy,
             source.alliance_score,
             convert_alliance_membership_to_int(source.alliance_membership),
-            add_utc_to_datetime(source.alliance_join_date),
-            add_utc_to_datetime(source.last_login_date),
-            add_utc_to_datetime(source.last_heartbeat_date),
+            utils.add_timezone_utc(source.alliance_join_date),
+            utils.add_timezone_utc(source.last_login_date),
+            utils.add_timezone_utc(source.last_heartbeat_date),
             source.crew_donated,
             source.crew_received,
             source.pvp_attack_wins,
@@ -100,12 +94,12 @@ class FromDB:
             source.pvp_defence_draws,
             source.championship_score,
             source.highest_trophy,
-            tournament_battles_left,
+            source.tournament_bonus_score,
         )
 
     @staticmethod
     def to_user_history(source: tuple[CollectionDB, UserDB]) -> UserHistoryOut:
-        collection = FromDB.to_collection(source[0])
+        collection = FromDB.to_collection(source[0], False, False)
         user = FromDB.to_user(source[1])
         alliance = FromDB.to_alliance(source[1].alliance) if source[1].alliance else None
         return UserHistoryOut(collection=collection, user=user, fleet=alliance)
@@ -191,7 +185,10 @@ class ToDB:
         pass
 
 
-def convert_alliance_membership_to_int(membership: UserAllianceMembership) -> int:
+def convert_alliance_membership_to_int(membership: Union[str, UserAllianceMembership]) -> int:
+    if isinstance(membership, str):
+        membership = UserAllianceMembership(membership)
+
     match membership:
         case UserAllianceMembership.NONE:
             return int(UserCreateAllianceMembership.NONE)

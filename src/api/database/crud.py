@@ -8,7 +8,7 @@ from sqlmodel import Session, SQLModel, col, extract, select
 from sqlmodel.sql.expression import Select
 
 from ..models.enums import ParameterInterval
-from .models import AllianceDB, CollectionDB, UserDB
+from .models import AllianceDB, AllianceHistoryDB, CollectionDB, UserDB, UserHistoryDB
 
 
 def drop_tables(engine: Engine):
@@ -114,7 +114,7 @@ def get_alliance_history(
     desc: bool,
     skip: int,
     take: int,
-) -> list[tuple[CollectionDB, AllianceDB]]:
+) -> list[AllianceHistoryDB]:
     """Retrieve an Alliance's history over time.
 
     Args:
@@ -252,7 +252,7 @@ def get_user_history(
     desc: bool,
     skip: int,
     take: int,
-) -> list[tuple[CollectionDB, UserDB]]:
+) -> list[UserHistoryDB]:
     """Retrieve an User's history over time.
 
     Args:

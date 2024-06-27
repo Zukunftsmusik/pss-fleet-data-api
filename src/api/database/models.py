@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
-import dateutil
 from typing import Optional, Union
 
+import dateutil
 from pydantic import field_validator
 from sqlalchemy.orm import foreign, relationship
 from sqlmodel import Field, Relationship, SQLModel, and_
@@ -18,6 +18,7 @@ class CollectionBaseDB(SQLModel):
             return _convert_to_datetime(value)
         else:
             return value
+
 
 class CollectionDB(CollectionBaseDB, table=True):
     """A snapshot of fleet and player data in PSS."""
@@ -109,6 +110,7 @@ class UserBaseDB(SQLModel):
             return _convert_to_datetime(value)
         else:
             return value
+
 
 class UserDB(UserBaseDB, table=True):
     """A dipartial PSS User (player)."""

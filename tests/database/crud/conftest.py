@@ -9,6 +9,10 @@ from sqlmodel import Session
 from src.api.database import db
 from src.api.database.models import AllianceDB, CollectionDB, UserDB
 
+if getenv("IN_GITHUB_ACTIONS"):
+    pytest.skip("These tests require a postgres DB", allow_module_level=True)
+
+
 SQLITE_FILE_NAME = "test.sqlite"
 DATABASE_URL = f"sqlite:///app/tests/{SQLITE_FILE_NAME}"
 
@@ -38,11 +42,6 @@ class DummyData(metaclass=Singleton):
 
         collection = CollectionDB(**(data["metadata"]), alliances=alliances, users=users)
         return collection
-    
-
-@pytest.fixture()
-def github_actions(): # @pytest.mark.skipif(IN_GITHUB_ACTIONS, reason="Requires postgres DB.")
-    return getenv("IN_GITHUB_ACTIONS")
 
 
 @pytest.fixture(scope="function", autouse=True)  # Set to "function", since "session" wouldn't allow to run all crud tests in quick succession.

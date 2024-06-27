@@ -109,9 +109,9 @@ class ParameterUserProperties(StrEnum):
 class UserAllianceMembership(StrEnum):
     NONE = "None"
     """This User is not member of an Alliance."""
-    FLEET_ADMIRAL = "Fleet Admiral"
+    FLEET_ADMIRAL = "FleetAdmiral"
     """This User is of rank Fleet Admiral."""
-    VICE_ADMIRAL = "Vice Admiral"
+    VICE_ADMIRAL = "ViceAdmiral"
     """This User is of rank Vice Admiral."""
     COMMANDER = "Commander"
     """This User is of rank Commander."""

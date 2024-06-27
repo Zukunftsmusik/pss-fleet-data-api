@@ -136,14 +136,17 @@ class ToDB:
     def from_collection_3(source: CollectionCreate3) -> CollectionDB:
         for rank, fleet in enumerate(source.fleets):
             if len(fleet) == 3:
-                if rank <= 8:
-                    division_design_id = "1"
-                elif rank <= 20:
-                    division_design_id = "2"
-                elif rank <= 50:
-                    division_design_id = "3"
+                if source.metadata.tourney_running:
+                    if rank < 8:
+                        division_design_id = "1"
+                    elif rank < 20:
+                        division_design_id = "2"
+                    elif rank < 50:
+                        division_design_id = "3"
+                    else:
+                        division_design_id = "4"
                 else:
-                    division_design_id = "4"
+                    division_design_id = "0"
                 source.fleets[rank] = (*fleet, division_design_id)
         fleets = [ToDB.from_alliance_2(alliance) for alliance in source.fleets]
 

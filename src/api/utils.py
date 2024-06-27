@@ -5,6 +5,8 @@ import dateutil
 
 from .models.enums import UserAllianceMembership, UserCreateAllianceMembership
 
+PSS_START_DATE: datetime = datetime(2016, 1, 6, tzinfo=timezone.utc)
+
 
 def add_timezone_utc(dt: datetime) -> datetime:
     return dt.replace(tzinfo=timezone.utc) if dt else None
@@ -33,6 +35,17 @@ def convert_alliance_membership_to_int(membership: Union[str, UserAllianceMember
             return int(UserCreateAllianceMembership.FLEET_ADMIRAL)
 
 
+def convert_datetime_to_seconds(dt: datetime) -> int:
+    if not dt:
+        return None
+
+    dt = add_timezone_utc(dt)
+    if dt < PSS_START_DATE:
+        return 0
+
+    return (dt - PSS_START_DATE).seconds
+
+
 def convert_int_to_alliance_membership(membership: Union[int, UserCreateAllianceMembership]) -> UserAllianceMembership:
     if isinstance(membership, int):
         membership = UserCreateAllianceMembership(membership)
@@ -54,6 +67,10 @@ def convert_int_to_alliance_membership(membership: Union[int, UserCreateAlliance
             return UserAllianceMembership.VICE_ADMIRAL
         case UserCreateAllianceMembership.FLEET_ADMIRAL:
             return UserAllianceMembership.FLEET_ADMIRAL
+
+
+def localize_to_utc(dt: datetime) -> datetime:
+    return dt.astimezone(timezone.utc) if dt else None
 
 
 def parse_datetime(dt: Union[datetime, int, str]) -> datetime:

@@ -3,7 +3,9 @@ from typing import Optional, Union
 
 import dateutil
 import dateutil.parser
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
+
+from .. import utils
 
 AllianceCreate2 = tuple[int, str, int]
 """(
@@ -35,18 +37,6 @@ AllianceCreate4 = tuple[int, str, int, int, int]
     4: trophy
 )
 See also: https://github.com/Zukunftsmusik/pss-fleet-data?tab=readme-ov-file#schema-version-4
-"""
-
-
-AllianceCreate5 = AllianceCreate4
-"""(
-    0: alliance_id,
-    1: alliance_name,
-    2: score,
-    3: division_design_id,
-    4: trophy
-)
-See also: https://github.com/Zukunftsmusik/pss-fleet-data?tab=readme-ov-file#schema-version-5
 """
 
 
@@ -141,7 +131,7 @@ class CollectionCreate5(CollectionCreate4):
 
     metadata: "CollectionMetadataCreate4"
     """The metadata of this Collection."""
-    fleets: list["AllianceCreate5"]
+    fleets: list["AllianceCreate4"]
     """The fleets recorded in this Collection."""
     users: list["UserCreate5"]
     """The players recorded in this Collection."""
@@ -207,6 +197,17 @@ class CollectionMetadataCreateBase(BaseModel):
     """The number of players recorded in this Collection."""
     tourney_running: bool
     """Determines, whether a monthly fleet tournament was running at the time of recording the data in this Collection."""
+
+    @field_validator("timestamp", mode="before")
+    @classmethod
+    def transform_timestamp(cls, value: datetime) -> datetime:
+        if not value:
+            return value
+
+        if not value.tzinfo:
+            return utils.add_timezone_utc(value)
+        else:
+            return utils.localize_to_utc(value)
 
 
 class CollectionMetadataCreate3(CollectionMetadataCreateBase):

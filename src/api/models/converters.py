@@ -4,7 +4,6 @@ from .api_models import (
     AllianceCreate2,
     AllianceCreate3,
     AllianceCreate4,
-    AllianceCreate5,
     AllianceCreate6,
     AllianceCreate7,
     AllianceHistoryOut,
@@ -16,6 +15,7 @@ from .api_models import (
     CollectionCreate7,
     CollectionCreate8,
     CollectionCreate9,
+    CollectionMetadataOut,
     CollectionOut,
     UserCreate3,
     UserCreate4,
@@ -55,16 +55,16 @@ class FromDB:
     @staticmethod
     def to_collection(source: CollectionDB, include_alliances: bool, include_users: bool) -> CollectionOut:
         return CollectionOut(
-            metadata={
-                "collection_id": source.collection_id,
-                "timestamp": utils.add_timezone_utc(source.collected_at),
-                "duration": source.duration,
-                "fleet_count": source.fleet_count,
-                "user_count": source.user_count,
-                "tourney_running": source.tournament_running,
-                "max_tournament_battle_attempts": source.max_tournament_battle_attempts,
-                "schema_version": LATEST_SCHEMA_VERSION,
-            },
+            metadata=CollectionMetadataOut(
+                collection_id=source.collection_id,
+                timestamp=utils.add_timezone_utc(source.collected_at),
+                duration=source.duration,
+                fleet_count=source.fleet_count,
+                user_count=source.user_count,
+                tourney_running=source.tournament_running,
+                max_tournament_battle_attempts=source.max_tournament_battle_attempts,
+                schema_version=LATEST_SCHEMA_VERSION,
+            ),
             fleets=[FromDB.to_alliance(alliance) for alliance in source.alliances if alliance] if include_alliances and source.alliances else [],
             users=[FromDB.to_user(user) for user in source.users if user] if include_users and source.users else [],
         )
@@ -78,9 +78,9 @@ class FromDB:
             source.trophy,
             source.alliance_score,
             utils.convert_alliance_membership_to_int(source.alliance_membership),
-            utils.add_timezone_utc(source.alliance_join_date),
-            utils.add_timezone_utc(source.last_login_date),
-            utils.add_timezone_utc(source.last_heartbeat_date),
+            utils.convert_datetime_to_seconds(source.alliance_join_date),
+            utils.convert_datetime_to_seconds(source.last_login_date),
+            utils.convert_datetime_to_seconds(source.last_heartbeat_date),
             source.crew_donated,
             source.crew_received,
             source.pvp_attack_wins,
@@ -118,7 +118,7 @@ class ToDB:
         pass
 
     @staticmethod
-    def from_alliance_5(source: AllianceCreate5) -> AllianceDB:
+    def from_alliance_5(source: AllianceCreate4) -> AllianceDB:
         pass
 
     @staticmethod

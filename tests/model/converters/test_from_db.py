@@ -83,6 +83,3 @@ def _check_collection_metatadata_out(collection_metadata: CollectionMetadataOut)
 def _check_user_out(user: UserOut):
     assert isinstance(user, tuple)
     assert len(user) == 20
-    assert not user[6] or user[6].tzinfo == timezone.utc
-    assert not user[7] or user[7].tzinfo == timezone.utc
-    assert not user[8] or user[8].tzinfo == timezone.utc

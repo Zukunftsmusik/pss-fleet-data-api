@@ -58,11 +58,13 @@ def test_to_user_history(user_history_db: UserHistoryDB):
 
 
 def _check_alliance_out(alliance: AllianceOut):
+    assert alliance
     assert isinstance(alliance, tuple)
     assert len(alliance) == 8
 
 
 def _check_collection_out(collection: CollectionOut):
+    assert collection
     assert isinstance(collection, CollectionOut)
     _check_collection_metatadata_out(collection.metadata)
 
@@ -76,10 +78,12 @@ def _check_collection_out(collection: CollectionOut):
 
 
 def _check_collection_metatadata_out(collection_metadata: CollectionMetadataOut):
+    assert collection_metadata
     assert isinstance(collection_metadata, CollectionMetadataOut)
     assert collection_metadata.timestamp.tzinfo == timezone.utc
 
 
 def _check_user_out(user: UserOut):
+    assert user
     assert isinstance(user, tuple)
     assert len(user) == 20

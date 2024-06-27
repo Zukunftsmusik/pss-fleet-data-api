@@ -32,32 +32,32 @@ from src.api.models.api_models import (
 
 
 @pytest.fixture(scope="function")
-def alliance_create_2():
+def alliance_create_2() -> AllianceCreate2:
     return _create_alliance_create_2()
 
 
 @pytest.fixture(scope="function")
-def alliance_create_3():
+def alliance_create_3() -> AllianceCreate3:
     return _create_alliance_create_3()
 
 
 @pytest.fixture(scope="function")
-def alliance_create_4():
+def alliance_create_4() -> AllianceCreate4:
     return _create_alliance_create_4()
 
 
 @pytest.fixture(scope="function")
-def alliance_create_5():
+def alliance_create_5() -> AllianceCreate4:
     return _create_alliance_create_5()
 
 
 @pytest.fixture(scope="function")
-def alliance_create_6():
+def alliance_create_6() -> AllianceCreate6:
     return _create_alliance_create_6()
 
 
 @pytest.fixture(scope="function")
-def alliance_create_7():
+def alliance_create_7() -> AllianceCreate7:
     return _create_alliance_create_7()
 
 
@@ -72,42 +72,42 @@ def alliance_history_db() -> AllianceHistoryDB:
 
 
 @pytest.fixture(scope="function")
-def collection_create_2():
+def collection_create_2() -> CollectionCreate2:
     return _create_collection_create_2()
 
 
 @pytest.fixture(scope="function")
-def collection_create_3():
+def collection_create_3() -> CollectionCreate3:
     return _create_collection_create_3()
 
 
 @pytest.fixture(scope="function")
-def collection_create_4():
+def collection_create_4() -> CollectionCreate4:
     return _create_collection_create_4()
 
 
 @pytest.fixture(scope="function")
-def collection_create_5():
+def collection_create_5() -> CollectionCreate5:
     return _create_collection_create_5()
 
 
 @pytest.fixture(scope="function")
-def collection_create_6():
+def collection_create_6() -> CollectionCreate6:
     return _create_collection_create_6()
 
 
 @pytest.fixture(scope="function")
-def collection_create_7():
+def collection_create_7() -> CollectionCreate7:
     return _create_collection_create_7()
 
 
 @pytest.fixture(scope="function")
-def collection_create_8():
+def collection_create_8() -> CollectionCreate8:
     return _create_collection_create_8()
 
 
 @pytest.fixture(scope="function")
-def collection_create_9():
+def collection_create_9() -> CollectionCreate9:
     return _create_collection_create_9()
 
 
@@ -117,37 +117,37 @@ def collection_db() -> CollectionDB:
 
 
 @pytest.fixture(scope="function")
-def user_create_3():
+def user_create_3() -> UserCreate3:
     return _create_user_create_3()
 
 
 @pytest.fixture(scope="function")
-def user_create_4():
+def user_create_4() -> UserCreate4:
     return _create_user_create_4()
 
 
 @pytest.fixture(scope="function")
-def user_create_5():
+def user_create_5() -> UserCreate5:
     return _create_user_create_5()
 
 
 @pytest.fixture(scope="function")
-def user_create_6():
+def user_create_6() -> UserCreate6:
     return _create_user_create_6()
 
 
 @pytest.fixture(scope="function")
-def user_create_8():
+def user_create_8() -> UserCreate8:
     return _create_user_create_8()
 
 
 @pytest.fixture(scope="function")
-def user_create_9():
+def user_create_9() -> UserCreate9:
     return _create_user_create_9()
 
 
 @pytest.fixture(scope="function")
-def user_data_create_3():
+def user_data_create_3() -> UserDataCreate3:
     return _create_user_data_create_3()
 
 
@@ -264,9 +264,10 @@ def _create_user_create_4() -> UserCreate4:
         1,
         1000,
         0,
-        (datetime(2016, 8, 12, 34) - datetime(2016, 1, 6)).seconds,
-        (datetime(2016, 23, 58) - datetime(2016, 1, 6)).seconds,
-        (datetime(2016, 23, 58) - datetime(2016, 1, 6)).seconds,
+        0,
+        (datetime(2016, 6, 1, 8, 12, 34) - datetime(2016, 1, 6)).seconds,
+        (datetime(2016, 6, 1, 23, 58) - datetime(2016, 1, 6)).seconds,
+        (datetime(2016, 6, 1, 23, 58) - datetime(2016, 1, 6)).seconds,
         0,
         0,
         5,

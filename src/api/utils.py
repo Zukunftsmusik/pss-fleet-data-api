@@ -82,11 +82,11 @@ def parse_datetime(dt: Union[datetime, int, str]) -> datetime:
     Returns:
         datetime: The parsed `datetime`.
     """
-    if not value:
+    if not dt:
         return None
-    if isinstance(value, int):
+    if isinstance(dt, int):
         # If it's an integer value, then it's likely encoded as seconds from Jan 6th, 2016 00:00 UTC
-        value = datetime(2016, 1, 6) + timedelta(seconds=value)
-    elif isinstance(value, str):
-        value = dateutil.parser.parse(value)
-    return value
+        return datetime(2016, 1, 6) + timedelta(seconds=dt)
+    elif isinstance(dt, str):
+        return dateutil.parser.parse(dt)
+    return dt

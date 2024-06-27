@@ -115,19 +115,22 @@ class ToDB:
 
     @staticmethod
     def from_alliance_4(source: AllianceCreate4) -> AllianceDB:
-        pass
-
-    @staticmethod
-    def from_alliance_5(source: AllianceCreate4) -> AllianceDB:
-        pass
+        result = ToDB.from_alliance_3(source)
+        result.trophy = source[4]
+        return result
 
     @staticmethod
     def from_alliance_6(source: AllianceCreate6) -> AllianceDB:
-        pass
+        result = ToDB.from_alliance_4(source)
+        result.championship_score = source[5]
+        return result
 
     @staticmethod
     def from_alliance_7(source: AllianceCreate7) -> AllianceDB:
-        pass
+        result = ToDB.from_alliance_6(source)
+        result.number_of_members = source[6]
+        result.number_of_approved_members = source[7]
+        return result
 
     @staticmethod
     def from_collection_3(source: CollectionCreate3) -> CollectionDB:
@@ -158,25 +161,62 @@ class ToDB:
         pass
 
     @staticmethod
-    def from_user3(user: UserCreate3, data: UserDataCreate3) -> UserDB:
-        pass
+    def from_user_3(user: UserCreate3, data: UserDataCreate3) -> UserDB:
+        return UserDB(
+            user_id=user[0],
+            user_name=user[1],
+            alliance_id=data[1],
+            trophy=data[2],
+            alliance_score=data[3],
+            alliance_membership=data[4],
+            alliance_join_date=data[5],
+            last_login_date=data[6]
+        )
 
     @staticmethod
     def from_user_4(source: UserCreate4) -> UserDB:
-        pass
+        return UserDB(
+            user_id=source[0],
+            user_name=source[1],
+            alliance_id=source[2],
+            trophy=source[3],
+            alliance_score=source[4],
+            alliance_membership=source[5],
+            alliance_join_date=utils.parse_datetime(source[6]),
+            last_login_date=utils.parse_datetime(source[7]),
+            last_heartbeat_date=utils.parse_datetime(source[8]),
+            crew_donated=source[9],
+            crew_received=source[10],
+            pvp_attack_wins=source[11],
+            pvp_attack_losses=source[12],
+            pvp_attack_draws=source[13],
+            pvp_defence_wins=source[14],
+            pvp_defence_losses=source[15],
+            pvp_defence_draws=source[16]
+        )
 
     @staticmethod
     def from_user_5(source: UserCreate5) -> UserDB:
-        pass
+        user_db = ToDB.from_user_4(source)
+        user_db.alliance_join_date=utils.parse_datetime(source[6])
+        user_db.last_login_date=utils.parse_datetime(source[7])
+        user_db.last_heartbeat_date=utils.parse_datetime(source[8])
+        return user_db
 
     @staticmethod
     def from_user_6(source: UserCreate6) -> UserDB:
-        pass
+        user_db = ToDB.from_user_5(source)
+        user_db.championship_score = source[17]
+        return user_db
 
     @staticmethod
     def from_user_8(source: UserCreate8) -> UserDB:
-        pass
+        user_db = ToDB.from_user_6(source)
+        user_db.highest_trophy = source[18]
+        return user_db
 
     @staticmethod
     def from_user_9(source: UserCreate9) -> UserDB:
-        pass
+        user_db = ToDB.from_user_8(source)
+        user_db.tournament_bonus_score = source[19]
+        return user_db

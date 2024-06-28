@@ -19,13 +19,13 @@ if SETTINGS.in_github_actions:
 @pytest.fixture(scope="session", autouse=True)
 async def initialize_database():
     db.set_up_db_engine(SETTINGS.database_test_connection_str, echo=SETTINGS.database_engine_echo)
-    await db.initialize_db("tests/02_database/test_data.json")
+    await db.initialize_db("src/tests/02_database/test_data.json")
     await db.ENGINE.dispose()
 
 
 @pytest.fixture(scope="function")
 async def async_engine() -> AsyncGenerator[AsyncEngine, None]:
-    async_engine = create_async_engine(f"postgresql+asyncpg://{getenv("DATABASE_SERVER")}/pss-fleet-data-test", echo=SETTINGS.database_engine_echo)
+    async_engine = create_async_engine(SETTINGS.database_test_connection_str, echo=SETTINGS.database_engine_echo)
     yield async_engine
     await async_engine.dispose()
 
@@ -58,7 +58,7 @@ async def session(async_engine: AsyncEngine) -> AsyncGenerator[AsyncSession, Non
 
 @pytest.fixture(scope="session")
 def test_data() -> dict:
-    with open("tests/02_database/insert_test_data.json", "r") as fp:
+    with open("src/tests/02_database/insert_test_data.json", "r") as fp:
         return json.load(fp)
 
 

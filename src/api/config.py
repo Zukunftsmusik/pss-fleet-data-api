@@ -13,9 +13,10 @@ class Settings():
    description: str = "An API server for Pixel Starships Fleet Data."
 
    # Database
-   database_engine_echo: bool = True
+   database_engine_echo: bool = False
    database_connection_str: str = f"postgresql+asyncpg://{getenv("DATABASE_USER")}:{getenv("DATABASE_PASSWORD")}@{getenv("DATABASE_SERVER")}/pss-fleet-data?sslmode={getenv("DATABASE_SSL_MODE")}"
    database_test_connection_str: str = f"postgresql+asyncpg://{getenv("DATABASE_USER")}:{getenv("DATABASE_PASSWORD")}@{getenv("DATABASE_SERVER")}/pss-fleet-data-test"
+   x = 4
 
 
 SETTINGS = Settings()

@@ -1,9 +1,7 @@
 from os import getenv
 from typing import AsyncGenerator
 
-from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, create_async_engine, AsyncConnection
-from sqlalchemy.orm import sessionmaker
-from sqlmodel import create_engine
+from sqlalchemy.ext.asyncio import AsyncConnection, AsyncEngine, AsyncSession, create_async_engine
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from . import crud
@@ -15,7 +13,7 @@ ENGINE: AsyncEngine = None
 async def get_session() -> AsyncGenerator[AsyncSession, None]:
     if not ENGINE:
         raise RuntimeError(f"ENGINE is `None`. The function {set_up_db_engine.__name__}() needs to get called first!")
-    
+
     connection: AsyncConnection = await ENGINE.connect()
     async with AsyncSession(bind=connection) as async_session:
         try:
@@ -25,7 +23,7 @@ async def get_session() -> AsyncGenerator[AsyncSession, None]:
             raise e
         finally:
             await async_session.close()
-    
+
     await connection.close()
 
 
@@ -48,7 +46,7 @@ async def initialize_db(path_to_dummy_data: str = None):
             raise e
         finally:
             await async_session.close()
-    
+
     # await connection.close()
 
 

@@ -1,24 +1,15 @@
 import json
-from os import getenv, getcwd
-from typing import AsyncGenerator, Generator
+from os import getenv
+from typing import AsyncGenerator
 
 import pytest
 import pytest_asyncio
 import sqlalchemy as sa
-from sqlalchemy.ext.asyncio import (
-    create_async_engine,
-    async_scoped_session,
-    AsyncConnection,
-    AsyncTransaction,
-    AsyncEngine
-)
+from sqlalchemy.ext.asyncio import AsyncConnection, AsyncEngine, AsyncTransaction, create_async_engine
 from sqlmodel.ext.asyncio.session import AsyncSession
-from sqlalchemy.orm import sessionmaker
 
-from src.api.database import db, crud
-from src.api.database.models import AllianceDB, CollectionDB, UserDB
-
-from src.api import utils
+from src.api.database import crud, db
+from src.api.database.models import CollectionDB
 
 if getenv("IN_GITHUB_ACTIONS"):
     pytest.skip("These tests require a postgres DB", allow_module_level=True)
@@ -68,7 +59,7 @@ async def session(async_engine: AsyncEngine) -> AsyncGenerator[AsyncSession, Non
 def test_data() -> dict:
     with open("tests/02_database/insert_test_data.json", "r") as fp:
         return json.load(fp)
-    
+
 
 @pytest.fixture(scope="function")
 def new_collection(test_data) -> CollectionDB:

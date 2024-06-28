@@ -8,9 +8,8 @@ from sqlmodel import SQLModel, col, extract, select
 from sqlmodel.ext.asyncio.session import AsyncSession
 from sqlmodel.sql.expression import Select
 
-from ..models.enums import ParameterInterval
-from . import db
 from .. import utils
+from ..models.enums import ParameterInterval
 from .models import AllianceDB, AllianceHistoryDB, CollectionDB, UserDB, UserHistoryDB
 
 

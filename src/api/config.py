@@ -1,7 +1,7 @@
 from os import getenv
 from dataclasses import dataclass
 
-@dataclass(Frozen=True)
+@dataclass(frozen=True)
 class Settings():
    # Base
    initialize_database_on_startup: bool = False
@@ -14,8 +14,8 @@ class Settings():
 
    # Database
    database_engine_echo: bool = True
-   database_connection_str: str = f"postgresql+asyncpg://{getenv("DATABASE_USER")}:{getenv("DATABASE_PASSWORD")}@{getenv("DATABASE_SERVER")}:/pss-fleet-data?sslmode={getenv("DATABASE_SSL_MODE")}"
-   database_test_connection_str: str = f"postgresql+asyncpg://{getenv("DATABASE_USER")}:{getenv("DATABASE_PASSWORD")}@{getenv("DATABASE_SERVER")}:/pss-fleet-data-test"
+   database_connection_str: str = f"postgresql+asyncpg://{getenv("DATABASE_USER")}:{getenv("DATABASE_PASSWORD")}@{getenv("DATABASE_SERVER")}/pss-fleet-data?sslmode={getenv("DATABASE_SSL_MODE")}"
+   database_test_connection_str: str = f"postgresql+asyncpg://{getenv("DATABASE_USER")}:{getenv("DATABASE_PASSWORD")}@{getenv("DATABASE_SERVER")}/pss-fleet-data-test"
 
 
 SETTINGS = Settings()

@@ -1,7 +1,7 @@
 from os import getenv
 from typing import AsyncGenerator
 
-from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, create_async_engine
+from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, create_async_engine, AsyncConnection
 from sqlalchemy.orm import sessionmaker
 from sqlmodel import create_engine
 from sqlmodel.ext.asyncio.session import AsyncSession
@@ -11,37 +11,45 @@ from . import crud
 DATABASE_URL: str = f"postgresql+asyncpg://{getenv("DATABASE_SERVER")}/pss-fleet-data?sslmode={getenv("DATABASE_SSL_MODE")}"
 ENGINE: AsyncEngine = None
 
-SESSION_LOCAL = None
-
 
 async def get_session() -> AsyncGenerator[AsyncSession, None]:
     if not ENGINE:
-        raise Exception(f"ENGINE is `None`. The function {set_up_db_engine.__name__}() needs to get called first!")
-
-    async_session = sessionmaker(ENGINE, class_=AsyncSession, expire_on_commit=False)
-
-    async with async_session() as session:
-        yield session
-
-
-async def get_session():
-    async with SESSION_LOCAL() as session:
+        raise RuntimeError(f"ENGINE is `None`. The function {set_up_db_engine.__name__}() needs to get called first!")
+    
+    connection: AsyncConnection = await ENGINE.connect()
+    async with AsyncSession(bind=connection) as async_session:
         try:
-            yield session
+            yield async_session
         except Exception as e:
-            await session.rollback()
+            await async_session.rollback()
             raise e
         finally:
-            await session.close()
+            await async_session.close()
+    
+    await connection.close()
 
 
-async def initialize_db():
+async def initialize_db(path_to_dummy_data: str = None):
     if not ENGINE:
-        raise Exception(f"ENGINE is `None`. The function {set_up_db_engine.__name__}() needs to get called first!")
+        raise RuntimeError(f"ENGINE is `None`. The function {set_up_db_engine.__name__}() needs to get called first!")
+
+    if not path_to_dummy_data:
+        path_to_dummy_data = "examples/generated_dummy_data.json"
 
     await crud.drop_tables(ENGINE)
     await crud.create_tables(ENGINE)
-    await crud.insert_dummy_data(ENGINE, ["examples/generated_dummy_data.json"])
+
+    # connection: AsyncConnection = await ENGINE.connect()
+    async with AsyncSession(ENGINE) as async_session:
+        try:
+            await crud.insert_dummy_data(async_session, [path_to_dummy_data])
+        except Exception as e:
+            await async_session.rollback()
+            raise e
+        finally:
+            await async_session.close()
+    
+    # await connection.close()
 
 
 def set_up_db_engine(database_url: str = None, echo: bool = True, is_sqlite: bool = False):
@@ -54,15 +62,6 @@ def set_up_db_engine(database_url: str = None, echo: bool = True, is_sqlite: boo
 
     global ENGINE
     ENGINE = create_async_engine(DATABASE_URL, echo=echo, future=True, connect_args=connect_args)
-
-    global SESSION_LOCAL
-    SESSION_LOCAL = sessionmaker(
-        bind=ENGINE,
-        autocommit=False,
-        autoflush=False,
-        expire_on_commit=False,
-        class_=AsyncSession,
-    )
 
 
 __all__ = [

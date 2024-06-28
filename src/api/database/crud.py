@@ -1,6 +1,6 @@
 import json
 from datetime import datetime, timedelta
-from typing import Optional
+from typing import Optional, Union
 
 from sqlalchemy.ext.asyncio.engine import AsyncEngine
 from sqlalchemy.orm import selectinload
@@ -10,12 +10,13 @@ from sqlmodel.sql.expression import Select
 
 from ..models.enums import ParameterInterval
 from . import db
+from .. import utils
 from .models import AllianceDB, AllianceHistoryDB, CollectionDB, UserDB, UserHistoryDB
 
 
 async def drop_tables(engine: AsyncEngine):
     async with engine.begin() as conn:
-        await conn.run_sync(SQLModel.metadata.drop_all(engine))
+        await conn.run_sync(SQLModel.metadata.drop_all)
 
 
 async def create_tables(engine: AsyncEngine):
@@ -23,43 +24,58 @@ async def create_tables(engine: AsyncEngine):
         await conn.run_sync(SQLModel.metadata.create_all)
 
 
-async def insert_dummy_data(file_paths: list[str]):
+def create_collections_from_dummy_data(data: Union[dict, list[dict]]):
+    collections = []
+
+    if not isinstance(data, list):
+        data = [data]
+
+    for collected_data in data:
+        alliances = [AllianceDB(**alliance) for alliance in collected_data["fleets"]]
+        users = [UserDB(**user) for user in collected_data["users"]]
+        for user in users:
+            user.alliance_join_date = utils.parse_datetime(user.alliance_join_date).replace(tzinfo=None) if user.alliance_join_date else None
+            user.last_login_date = utils.parse_datetime(user.last_login_date).replace(tzinfo=None) if user.last_login_date else None
+            user.last_heartbeat_date = utils.parse_datetime(user.last_heartbeat_date).replace(tzinfo=None) if user.last_heartbeat_date else None
+
+        collection = CollectionDB(**(collected_data["metadata"]), alliances=alliances, users=users)
+        collection.collected_at = utils.parse_datetime(collection.collected_at).replace(tzinfo=None) if collection.collected_at else None
+
+        for i, alliance in enumerate(alliances):
+            if not alliance.trophy:
+                alliance.trophy = sum(user.trophy for user in users if user.alliance_id == alliance.alliance_id)
+
+            if collection.tournament_running and alliance.division_design_id is None:
+                if i < 8:
+                    alliance.division_design_id = 1
+                elif i < 20:
+                    alliance.division_design_id = 2
+                elif i < 50:
+                    alliance.division_design_id = 3
+                else:
+                    alliance.division_design_id = 4
+
+        collections.append(collection)
+
+    return collections
+
+
+async def insert_dummy_data(session: AsyncSession, file_paths: list[str]):
     """Adds dummy data to the database.
 
     Args:
         engine (Engine): The engine to use to create a database session.
         file_paths (list[str]): The paths to the files containing dummy data.
     """
-    data = {}
+    collections = []
     for file in file_paths:
         with open(file, "r") as fp:
             data = json.load(fp)
 
-        if not isinstance(data, list):
-            data = [data]
+        collections.extend(create_collections_from_dummy_data(data))
 
-        for collected_data in data:
-            alliances = [AllianceDB(**alliance) for alliance in collected_data["fleets"]]
-            users = [UserDB(**user) for user in collected_data["users"]]
-
-            collection = CollectionDB(**(collected_data["metadata"]), alliances=alliances, users=users)
-
-            for i, alliance in enumerate(alliances):
-                if not alliance.trophy:
-                    alliance.trophy = sum(user.trophy for user in users if user.alliance_id == alliance.alliance_id)
-
-                if collection.tournament_running and alliance.division_design_id is None:
-                    if i < 8:
-                        alliance.division_design_id = 1
-                    elif i < 20:
-                        alliance.division_design_id = 2
-                    elif i < 50:
-                        alliance.division_design_id = 3
-                    else:
-                        alliance.division_design_id = 4
-
-        async with db.get_session() as session:
-            collection = await save_collection(session, collection, True, True)
+    for collection in collections:
+        collection = await save_collection(session, collection, True, True)
 
 
 async def delete_collection(session: AsyncSession, collection_id: int) -> bool:

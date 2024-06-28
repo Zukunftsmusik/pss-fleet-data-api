@@ -1,5 +1,5 @@
 import json
-from os import getenv
+from os import getenv, getcwd
 from typing import AsyncGenerator, Generator
 
 import pytest
@@ -15,7 +15,7 @@ from sqlalchemy.ext.asyncio import (
 from sqlmodel.ext.asyncio.session import AsyncSession
 from sqlalchemy.orm import sessionmaker
 
-from src.api.database import db
+from src.api.database import db, crud
 from src.api.database.models import AllianceDB, CollectionDB, UserDB
 
 from src.api import utils
@@ -24,9 +24,16 @@ if getenv("IN_GITHUB_ACTIONS"):
     pytest.skip("These tests require a postgres DB", allow_module_level=True)
 
 
+@pytest.fixture(scope="session", autouse=True)
+async def initialize_database():
+    db.set_up_db_engine(f"postgresql+asyncpg://{getenv("DATABASE_SERVER")}/pss-fleet-data-test", echo=False)
+    await db.initialize_db("tests/02_database/test_data.json")
+    await db.ENGINE.dispose()
+
+
 @pytest.fixture(scope="function")
 async def async_engine() -> AsyncGenerator[AsyncEngine, None]:
-    async_engine = create_async_engine(f"postgresql+asyncpg://{getenv("DATABASE_SERVER")}/pss-fleet-data", echo=True)
+    async_engine = create_async_engine(f"postgresql+asyncpg://{getenv("DATABASE_SERVER")}/pss-fleet-data-test", echo=False)
     yield async_engine
     await async_engine.dispose()
 
@@ -38,7 +45,7 @@ async def session(async_engine: AsyncEngine) -> AsyncGenerator[AsyncSession, Non
 
     connection: AsyncConnection = await async_engine.connect()
     transaction: AsyncTransaction = await connection.begin()
-    # async_session = AsyncSession(bind=connection)
+
     async with AsyncSession(bind=connection) as async_session:
         nested = await connection.begin_nested()
 
@@ -58,23 +65,12 @@ async def session(async_engine: AsyncEngine) -> AsyncGenerator[AsyncSession, Non
 
 
 @pytest.fixture(scope="session")
-def dummy_data() -> dict:
-    with open("examples/dummy_data.json", "r") as fp:
+def test_data() -> dict:
+    with open("tests/02_database/insert_test_data.json", "r") as fp:
         return json.load(fp)
     
 
-from src.api.models.converters import ToDB
-
-
 @pytest.fixture(scope="function")
-def new_collection(dummy_data) -> CollectionDB:
-    alliances = [AllianceDB(**alliance) for alliance in dummy_data["fleets"]]
-    users = [UserDB(**user) for user in dummy_data["users"]]
-    for user in users:
-        user.alliance_join_date = utils.parse_datetime(user.alliance_join_date).replace(tzinfo=None) if user.alliance_join_date else None
-        user.last_login_date = utils.parse_datetime(user.last_login_date).replace(tzinfo=None) if user.last_login_date else None
-        user.last_heartbeat_date = utils.parse_datetime(user.last_heartbeat_date).replace(tzinfo=None) if user.last_heartbeat_date else None
-
-    collection = CollectionDB(**(dummy_data["metadata"]), alliances=alliances, users=users)
-    collection.collected_at = utils.parse_datetime(collection.collected_at).replace(tzinfo=None) if collection.collected_at else None
-    return collection
+def new_collection(test_data) -> CollectionDB:
+    collections = crud.create_collections_from_dummy_data(test_data)
+    return collections[0]

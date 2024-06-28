@@ -2,24 +2,28 @@ import json
 from datetime import datetime, timedelta
 from typing import Optional
 
-from sqlalchemy import Engine
+from sqlalchemy.ext.asyncio.engine import AsyncEngine
 from sqlalchemy.orm import selectinload
-from sqlmodel import Session, SQLModel, col, extract, select
+from sqlmodel import SQLModel, col, extract, select
+from sqlmodel.ext.asyncio.session import AsyncSession
 from sqlmodel.sql.expression import Select
 
 from ..models.enums import ParameterInterval
+from . import db
 from .models import AllianceDB, AllianceHistoryDB, CollectionDB, UserDB, UserHistoryDB
 
 
-def drop_tables(engine: Engine):
-    SQLModel.metadata.drop_all(engine)
+async def drop_tables(engine: AsyncEngine):
+    async with engine.begin() as conn:
+        await conn.run_sync(SQLModel.metadata.drop_all(engine))
 
 
-def create_tables(engine: Engine):
-    SQLModel.metadata.create_all(engine)
+async def create_tables(engine: AsyncEngine):
+    async with engine.begin() as conn:
+        await conn.run_sync(SQLModel.metadata.create_all)
 
 
-def insert_dummy_data(engine: Engine, file_paths: list[str]):
+async def insert_dummy_data(file_paths: list[str]):
     """Adds dummy data to the database.
 
     Args:
@@ -34,31 +38,31 @@ def insert_dummy_data(engine: Engine, file_paths: list[str]):
         if not isinstance(data, list):
             data = [data]
 
-        with Session(engine) as session:
-            for collected_data in data:
-                alliances = [AllianceDB(**alliance) for alliance in collected_data["fleets"]]
-                users = [UserDB(**user) for user in collected_data["users"]]
+        for collected_data in data:
+            alliances = [AllianceDB(**alliance) for alliance in collected_data["fleets"]]
+            users = [UserDB(**user) for user in collected_data["users"]]
 
-                collection = CollectionDB(**(collected_data["metadata"]), alliances=alliances, users=users)
+            collection = CollectionDB(**(collected_data["metadata"]), alliances=alliances, users=users)
 
-                for i, alliance in enumerate(alliances):
-                    if not alliance.trophy:
-                        alliance.trophy = sum(user.trophy for user in users if user.alliance_id == alliance.alliance_id)
+            for i, alliance in enumerate(alliances):
+                if not alliance.trophy:
+                    alliance.trophy = sum(user.trophy for user in users if user.alliance_id == alliance.alliance_id)
 
-                    if collection.tournament_running and alliance.division_design_id is None:
-                        if i < 8:
-                            alliance.division_design_id = 1
-                        elif i < 20:
-                            alliance.division_design_id = 2
-                        elif i < 50:
-                            alliance.division_design_id = 3
-                        else:
-                            alliance.division_design_id = 4
+                if collection.tournament_running and alliance.division_design_id is None:
+                    if i < 8:
+                        alliance.division_design_id = 1
+                    elif i < 20:
+                        alliance.division_design_id = 2
+                    elif i < 50:
+                        alliance.division_design_id = 3
+                    else:
+                        alliance.division_design_id = 4
 
-                collection = save_collection(session, collection, True, True)
+        async with db.get_session() as session:
+            collection = await save_collection(session, collection, True, True)
 
 
-def delete_collection(session: Session, collection_id: int) -> bool:
+async def delete_collection(session: AsyncSession, collection_id: int) -> bool:
     """Attempts to delete the collection with the provided `collection_id`.
 
     Args:
@@ -68,17 +72,17 @@ def delete_collection(session: Session, collection_id: int) -> bool:
     Returns:
         bool: Returns `True`, if such a collection exists and is deleted successfully. Returns `False`, if no collection with the provided `collection_id` exists.
     """
-    with session:
-        collection = get_collection(session, collection_id, True, True)
+    async with session:
+        collection = await get_collection(session, collection_id, True, True)
         if collection:
-            session.delete(collection)
-            session.commit()
+            await session.delete(collection)
+            await session.commit()
             return True
         else:
             return False
 
 
-def get_alliance_from_collection(session: Session, collection_id: int, alliance_id: int, include_users: bool) -> Optional[AllianceDB]:
+async def get_alliance_from_collection(session: AsyncSession, collection_id: int, alliance_id: int, include_users: bool) -> Optional[AllianceDB]:
     """Retrieves information about a specific Alliance from a specific Collection.
 
     Args:
@@ -90,13 +94,13 @@ def get_alliance_from_collection(session: Session, collection_id: int, alliance_
     Returns:
         Optional[AllianceDB]: Returns the specified Alliance from the specified Collection, if there's one with the specified `alliance_id`. Else, it returns `None`. If an Alliance is returned and `include_users` is `True`, then the property `users` will be populated. Else, it will be empty.
     """
-    with session:
+    async with session:
         alliance_query = select(AllianceDB).where(AllianceDB.collection_id == collection_id).where(AllianceDB.alliance_id == alliance_id)
-        alliance = session.exec(alliance_query).first()
+        alliance = (await session.exec(alliance_query)).first()
 
         if alliance and include_users:
             user_query = select(UserDB).where(UserDB.collection_id == collection_id).where(UserDB.alliance_id == alliance_id)
-            users = session.exec(user_query).all()
+            users = (await session.exec(user_query)).all()
             alliance.users = list(users)
             for user in alliance.users:
                 user.alliance = alliance
@@ -104,8 +108,8 @@ def get_alliance_from_collection(session: Session, collection_id: int, alliance_
         return alliance
 
 
-def get_alliance_history(
-    session: Session,
+async def get_alliance_history(
+    session: AsyncSession,
     alliance_id: int,
     include_users: bool,
     from_date: datetime,
@@ -131,7 +135,7 @@ def get_alliance_history(
     Returns:
         list[tuple[CollectionDB, AllianceDB]]: A list of tuples representing entries in the Alliance history. A tuple contains the metadata of the respective Collection and the Alliance's data from that Collection.
     """
-    with session:
+    async with session:
         query = select(AllianceDB, CollectionDB).join(CollectionDB, AllianceDB.collection_id == CollectionDB.collection_id).where(AllianceDB.alliance_id == alliance_id)
         query = _apply_select_parameters_to_query(query, from_date, to_date, interval, desc)
         query = query.offset(skip).limit(take)
@@ -139,11 +143,11 @@ def get_alliance_history(
         if include_users:
             query = query.options(selectinload(AllianceDB.users))
 
-        results = session.exec(query).all()
+        results = (await session.exec(query)).all()
         return [(collection, alliance) for alliance, collection in results]
 
 
-def get_collection(session: Session, collection_id: int, include_alliances: bool, include_users: bool) -> Optional[CollectionDB]:
+async def get_collection(session: AsyncSession, collection_id: int, include_alliances: bool, include_users: bool) -> Optional[CollectionDB]:
     """Retrieves the Collection with the specified `collection_id`.
 
     Args:
@@ -155,21 +159,21 @@ def get_collection(session: Session, collection_id: int, include_alliances: bool
     Returns:
         Optional[CollectionDB]: The requested Collection, if it exists. Else, None. If a Collection is returned and `include_alliances` is `True`, then the property `alliances` will be populated. Else, it will be empty. If a Collection is returned and `include_users` is `True`, then the property `users` will be populated. Else, it will be empty.
     """
-    with session:
-        collection = session.get(CollectionDB, collection_id)
+    async with session:
+        collection = await session.get(CollectionDB, collection_id)
         if not collection or (not include_alliances and not include_users):
             return collection
 
         if include_alliances:  # Split up retrieving alliances, because getting all data at once was significantly slower
             query = select(AllianceDB).where(AllianceDB.collection_id == collection_id)
-            alliances = session.exec(query).all()
+            alliances = (await session.exec(query)).all()
             collection.alliances = alliances
             for alliance in collection.alliances:
                 alliance.collection = collection
 
         if include_users:  # Split up retrieving users, because getting all data at once was significantly slower
             query = select(UserDB).where(UserDB.collection_id == collection_id)
-            users = session.exec(query).all()
+            users = (await session.exec(query)).all()
             collection.users = users
             for user in collection.users:
                 user.collection = collection
@@ -177,7 +181,7 @@ def get_collection(session: Session, collection_id: int, include_alliances: bool
         return collection
 
 
-def get_collections(session: Session, from_date: datetime, to_date: datetime, interval: ParameterInterval, desc: bool, skip: int, take: int) -> list[CollectionDB]:
+async def get_collections(session: AsyncSession, from_date: datetime, to_date: datetime, interval: ParameterInterval, desc: bool, skip: int, take: int) -> list[CollectionDB]:
     """Retrieves metadata of Collections meeting the specified criteria.
 
     Args:
@@ -192,16 +196,16 @@ def get_collections(session: Session, from_date: datetime, to_date: datetime, in
     Returns:
         list[CollectionDB]: A list of Collections without any Alliances or Users.
     """
-    with session:
+    async with session:
         query = select(CollectionDB)
         query = _apply_select_parameters_to_query(query, from_date, to_date, interval, desc)
         query = query.offset(skip).limit(take)
 
-        results = session.exec(query)
+        results = await session.exec(query)
         return list(results.all())
 
 
-def get_top_100_from_collection(session: Session, collection_id: int, skip: int, take: int) -> list[UserDB]:
+async def get_top_100_from_collection(session: AsyncSession, collection_id: int, skip: int, take: int) -> list[UserDB]:
     """_summary_
 
     Args:
@@ -213,15 +217,15 @@ def get_top_100_from_collection(session: Session, collection_id: int, skip: int,
     Returns:
         list[UserDB]: _description_
     """
-    with session:
+    async with session:
         query = select(UserDB).where(UserDB.collection_id == collection_id).order_by(col(UserDB.trophy).desc())
         query = query.offset(skip).limit(take)
 
-        results = session.exec(query)
+        results = await session.exec(query)
         return list(results.all())
 
 
-def get_user_from_collection(session: Session, collection_id: int, user_id: int, include_alliance: bool) -> Optional[UserDB]:
+async def get_user_from_collection(session: AsyncSession, collection_id: int, user_id: int, include_alliance: bool) -> Optional[UserDB]:
     """Retrieves information about a specific User from a specific collection.
 
     Args:
@@ -233,17 +237,17 @@ def get_user_from_collection(session: Session, collection_id: int, user_id: int,
     Returns:
         Optional[UserDB]: Returns the specified User from the specified Collection, if there's one with the specified `user_id`. Else, it returns `None`. If a User is returned, `include_alliance` is `True` and the User was in an Alliance, then the property `alliance` will be populated. Else, it will be `None`.
     """
-    with session:
+    async with session:
         user_query = select(UserDB).where(UserDB.collection_id == collection_id).where(UserDB.user_id == user_id)
         if include_alliance:
             user_query = user_query.options(selectinload(UserDB.alliance))
 
-        result = session.exec(user_query)
+        result = await session.exec(user_query)
         return result.first()
 
 
-def get_user_history(
-    session: Session,
+async def get_user_history(
+    session: AsyncSession,
     user_id: int,
     include_alliance: bool,
     from_date: datetime,
@@ -269,7 +273,7 @@ def get_user_history(
     Returns:
         list[tuple[CollectionDB, UserDB]]: A list of tuples representing entries in the User history. A tuple contains the metadata of the respective Collection and the User's data from that Collection.
     """
-    with session:
+    async with session:
         query = select(UserDB, CollectionDB).join(CollectionDB, UserDB.collection_id == CollectionDB.collection_id).where(UserDB.user_id == user_id)
         query = _apply_select_parameters_to_query(query, from_date, to_date, interval, desc)
         query = query.offset(skip).limit(take)
@@ -277,11 +281,11 @@ def get_user_history(
         if include_alliance:
             query = query.options(selectinload(UserDB.alliance))
 
-        results = session.exec(query).all()
+        results = (await session.exec(query)).all()
         return [(collection, user) for user, collection in results]
 
 
-def has_collection(session: Session, collection_id: int) -> bool:
+async def has_collection(session: AsyncSession, collection_id: int) -> bool:
     """Checks, if a Collection with the given `collection_id` exists.
 
     Args:
@@ -291,10 +295,10 @@ def has_collection(session: Session, collection_id: int) -> bool:
     Returns:
         bool: `True`, if a collection exists in the database. Else, `False`.
     """
-    return bool(get_collection(session, collection_id, False, False))
+    return bool(await get_collection(session, collection_id, False, False))
 
 
-def save_collection(session: Session, collection: CollectionDB, include_alliances: bool, include_users: bool) -> CollectionDB:
+async def save_collection(session: AsyncSession, collection: CollectionDB, include_alliances: bool, include_users: bool) -> CollectionDB:
     """Inserts a Collection into the database or updates an existing one.
 
     Args:
@@ -306,7 +310,7 @@ def save_collection(session: Session, collection: CollectionDB, include_alliance
     Returns:
         CollectionDB: The inserted or updated Collection.
     """
-    with session:
+    async with session:
         session.add(collection)
         if include_alliances and collection.alliances:
             for alliance in collection.alliances:
@@ -314,8 +318,8 @@ def save_collection(session: Session, collection: CollectionDB, include_alliance
         if include_users and collection.users:
             for user in collection.users:
                 session.add(user)
-        session.commit()
-        session.refresh(collection)
+        await session.commit()
+        await session.refresh(collection)
         return collection
 
 
@@ -392,8 +396,9 @@ def _apply_order_by_collected_at_to_query(query: Select, desc: bool) -> Select:
 
 
 __all__ = [
-    insert_dummy_data.__name__,
+    create_tables.__name__,
     delete_collection.__name__,
+    drop_tables.__name__,
     get_alliance_from_collection.__name__,
     get_alliance_history.__name__,
     get_collection.__name__,
@@ -402,5 +407,6 @@ __all__ = [
     get_user_from_collection.__name__,
     get_user_history.__name__,
     has_collection.__name__,
+    insert_dummy_data.__name__,
     save_collection.__name__,
 ]

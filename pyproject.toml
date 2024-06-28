@@ -10,8 +10,8 @@ dependencies = [
     "fastapi>=0.111.0",
     "sqlmodel>=0.0.19",
     "fastapi-limiter>=0.1.6",
-    "psycopg2-binary>=2.9.9",
     "python-dateutil>=2.9.0.post0",
+    "asyncpg>=0.29.0",
 ]
 readme = "README.md"
 requires-python = ">= 3.12.3"
@@ -32,7 +32,7 @@ dev-dependencies = [
     "black>=24.4.2",
     "isort>=5.13.2",
     "pytest>=7.2.1",
-    "pytest-asyncio>=0.21.0",
+    "pytest-asyncio>=0.23.7",
     "pytest-vcr>=1.0.2",
     "vcrpy>=6.0.1",
     "pytest-cov>=4.1.0",

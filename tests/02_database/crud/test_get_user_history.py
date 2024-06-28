@@ -4,7 +4,7 @@ from datetime import datetime
 from typing import Sequence
 
 import pytest
-from sqlmodel import Session
+from sqlmodel.ext.asyncio.session import AsyncSession
 
 from src.api.database.crud import get_user_history
 from src.api.database.models import CollectionDB, UserDB
@@ -48,32 +48,32 @@ testcases_include_alliance = [
 
 
 @pytest.mark.parametrize("user_id,interval,expected_length,expected_exception", testcases_interval)
-def test_get_user_history_by_interval(user_id: int, interval: ParameterInterval, expected_length: int, expected_exception: AbstractContextManager, session: Session):
+async def test_get_user_history_by_interval(user_id: int, interval: ParameterInterval, expected_length: int, expected_exception: AbstractContextManager, session: AsyncSession):
     with expected_exception:
-        user_history = get_user_history(session, user_id, False, None, None, interval, False, 0, 100)
+        user_history = await get_user_history(session, user_id, False, None, None, interval, False, 0, 100)
         __assert_correct_types(user_history)
         assert len(user_history) == expected_length
 
 
 @pytest.mark.parametrize("user_id,from_date,to_date,expected_length,expected_exception", testcases_by_date)
-def test_get_user_history_by_date(user_id: int, from_date: datetime, to_date: datetime, expected_length: int, expected_exception: AbstractContextManager, session: Session):
+async def test_get_user_history_by_date(user_id: int, from_date: datetime, to_date: datetime, expected_length: int, expected_exception: AbstractContextManager, session: AsyncSession):
     with expected_exception:
-        user_history = get_user_history(session, user_id, False, from_date, to_date, ParameterInterval.HOURLY, False, 0, 100)
+        user_history = await get_user_history(session, user_id, False, from_date, to_date, ParameterInterval.HOURLY, False, 0, 100)
         __assert_correct_types(user_history)
         assert len(user_history) == expected_length
 
 
 @pytest.mark.parametrize("user_id,skip,take,expected_length,expected_exception", testcases_skip_take)
-def test_get_user_history_by_skip_take(user_id: int, skip: int, take: int, expected_length: int, expected_exception: AbstractContextManager, session: Session):
+async def test_get_user_history_by_skip_take(user_id: int, skip: int, take: int, expected_length: int, expected_exception: AbstractContextManager, session: AsyncSession):
     with expected_exception:
-        user_history = get_user_history(session, user_id, False, None, None, ParameterInterval.HOURLY, False, skip, take)
+        user_history = await get_user_history(session, user_id, False, None, None, ParameterInterval.HOURLY, False, skip, take)
         __assert_correct_types(user_history)
         assert len(user_history) == expected_length
 
 
 @pytest.mark.parametrize("user_id,desc", testcases_ordered_by)
-def test_get_user_history_ordered_asc(user_id: int, desc: bool, session: Session):
-    user_history = get_user_history(session, user_id, False, None, None, ParameterInterval.HOURLY, desc, 0, 100)
+async def test_get_user_history_ordered_asc(user_id: int, desc: bool, session: AsyncSession):
+    user_history = await get_user_history(session, user_id, False, None, None, ParameterInterval.HOURLY, desc, 0, 100)
     __assert_correct_types(user_history)
     for entry_1, entry_2 in zip(user_history, user_history[1:]):
         if desc:
@@ -83,8 +83,8 @@ def test_get_user_history_ordered_asc(user_id: int, desc: bool, session: Session
 
 
 @pytest.mark.parametrize("user_id,include_alliance", testcases_include_alliance)
-def test_get_user_history_include_alliance(user_id: int, include_alliance: bool, session: Session):
-    user_history = get_user_history(session, user_id, include_alliance, None, None, ParameterInterval.HOURLY, False, 0, 100)
+async def test_get_user_history_include_alliance(user_id: int, include_alliance: bool, session: AsyncSession):
+    user_history = await get_user_history(session, user_id, include_alliance, None, None, ParameterInterval.HOURLY, False, 0, 100)
     __assert_correct_types(user_history)
     for _, user in user_history:
         if user.alliance_id:

@@ -3,7 +3,7 @@ from contextlib import nullcontext as no_exception
 from datetime import datetime
 
 import pytest
-from sqlmodel import Session
+from sqlmodel.ext.asyncio.session import AsyncSession
 
 from src.api.database.crud import get_collections
 from src.api.database.models import CollectionDB
@@ -42,32 +42,32 @@ testcases_ordered_by = [
 
 
 @pytest.mark.parametrize("interval,expected_length,expected_exception", testcases_interval)
-def test_get_collections_by_interval(interval: ParameterInterval, expected_length: int, expected_exception: AbstractContextManager, session: Session):
+async def test_get_collections_by_interval(interval: ParameterInterval, expected_length: int, expected_exception: AbstractContextManager, session: AsyncSession):
     with expected_exception:
-        collections = get_collections(session, None, None, interval, False, 0, 100)
+        collections = await get_collections(session, None, None, interval, False, 0, 100)
         assert all(isinstance(collection, CollectionDB) for collection in collections)
         assert len(collections) == expected_length
 
 
 @pytest.mark.parametrize("from_date,to_date,expected_length,expected_exception", testcases_by_date)
-def test_get_collections_by_date(from_date: datetime, to_date: datetime, expected_length: int, expected_exception: AbstractContextManager, session: Session):
+async def test_get_collections_by_date(from_date: datetime, to_date: datetime, expected_length: int, expected_exception: AbstractContextManager, session: AsyncSession):
     with expected_exception:
-        collections = get_collections(session, from_date, to_date, ParameterInterval.HOURLY, False, 0, 100)
+        collections = await get_collections(session, from_date, to_date, ParameterInterval.HOURLY, False, 0, 100)
         assert all(isinstance(collection, CollectionDB) for collection in collections)
         assert len(collections) == expected_length
 
 
 @pytest.mark.parametrize("skip,take,expected_length,expected_exception", testcases_skip_take)
-def test_get_collections_by_skip_take(skip: int, take: int, expected_length: int, expected_exception: AbstractContextManager, session: Session):
+async def test_get_collections_by_skip_take(skip: int, take: int, expected_length: int, expected_exception: AbstractContextManager, session: AsyncSession):
     with expected_exception:
-        collections = get_collections(session, None, None, ParameterInterval.HOURLY, False, skip, take)
+        collections = await get_collections(session, None, None, ParameterInterval.HOURLY, False, skip, take)
         assert all(isinstance(collection, CollectionDB) for collection in collections)
         assert len(collections) == expected_length
 
 
 @pytest.mark.parametrize("desc", testcases_ordered_by)
-def test_get_collections_ordered_asc(desc: bool, session: Session):
-    collections = get_collections(session, None, None, ParameterInterval.HOURLY, desc, 0, 100)
+async def test_get_collections_ordered_asc(desc: bool, session: AsyncSession):
+    collections = await get_collections(session, None, None, ParameterInterval.HOURLY, desc, 0, 100)
     assert all(isinstance(collection, CollectionDB) for collection in collections)
     for collection_1, collection_2 in zip(collections, collections[1:]):
         if desc:

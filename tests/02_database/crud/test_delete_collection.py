@@ -2,7 +2,7 @@ from contextlib import AbstractContextManager
 from contextlib import nullcontext as no_exception
 
 import pytest
-from sqlmodel import Session
+from sqlmodel.ext.asyncio.session import AsyncSession
 
 from src.api.database.crud import delete_collection
 
@@ -13,7 +13,7 @@ testcases = [
 
 
 @pytest.mark.parametrize("collection_id,expected_result,expected_exception", testcases)
-def test_delete_collection(collection_id: int, expected_result: bool, expected_exception: AbstractContextManager, session: Session):
+async def test_delete_collection(collection_id: int, expected_result: bool, expected_exception: AbstractContextManager, session: AsyncSession):
     with expected_exception:
-        result = delete_collection(session, collection_id)
+        result = await delete_collection(session, collection_id)
         assert result == expected_result

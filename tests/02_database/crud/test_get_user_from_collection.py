@@ -2,7 +2,7 @@ from contextlib import AbstractContextManager
 from contextlib import nullcontext as no_exception
 
 import pytest
-from sqlmodel import Session
+from sqlmodel.ext.asyncio.session import AsyncSession
 
 from src.api.database.crud import get_user_from_collection
 from src.api.database.models import UserDB
@@ -22,9 +22,9 @@ testcases = [
 
 
 @pytest.mark.parametrize("collection_id,user_id,include_alliance,expected_type,expected_exception", testcases)
-def test_get_user_from_collection(collection_id: int, user_id: int, include_alliance: bool, expected_type: type, expected_exception: AbstractContextManager, session: Session):
+async def test_get_user_from_collection(collection_id: int, user_id: int, include_alliance: bool, expected_type: type, expected_exception: AbstractContextManager, session: AsyncSession):
     with expected_exception:
-        user = get_user_from_collection(session, collection_id, user_id, include_alliance)
+        user = await get_user_from_collection(session, collection_id, user_id, include_alliance)
         assert isinstance(user, expected_type)
         if user:
             assert bool(user.alliance) == include_alliance

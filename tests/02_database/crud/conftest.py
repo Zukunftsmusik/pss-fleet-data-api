@@ -10,21 +10,22 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 
 from src.api.database import crud, db
 from src.api.database.models import CollectionDB
+from src.api.config import SETTINGS
 
-if getenv("IN_GITHUB_ACTIONS"):
+if SETTINGS.in_github_actions:
     pytest.skip("These tests require a postgres DB", allow_module_level=True)
 
 
 @pytest.fixture(scope="session", autouse=True)
 async def initialize_database():
-    db.set_up_db_engine(f"postgresql+asyncpg://{getenv("DATABASE_SERVER")}/pss-fleet-data-test", echo=False)
+    db.set_up_db_engine(SETTINGS.database_test_connection_str, echo=SETTINGS.database_engine_echo)
     await db.initialize_db("tests/02_database/test_data.json")
     await db.ENGINE.dispose()
 
 
 @pytest.fixture(scope="function")
 async def async_engine() -> AsyncGenerator[AsyncEngine, None]:
-    async_engine = create_async_engine(f"postgresql+asyncpg://{getenv("DATABASE_SERVER")}/pss-fleet-data-test", echo=False)
+    async_engine = create_async_engine(f"postgresql+asyncpg://{getenv("DATABASE_SERVER")}/pss-fleet-data-test", echo=SETTINGS.database_engine_echo)
     yield async_engine
     await async_engine.dispose()
 

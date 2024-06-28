@@ -5,6 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncConnection, AsyncEngine, AsyncSession, c
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from . import crud
+from ..config import SETTINGS
 
 DATABASE_URL: str = f"postgresql+asyncpg://{getenv("DATABASE_SERVER")}/pss-fleet-data?sslmode={getenv("DATABASE_SSL_MODE")}"
 ENGINE: AsyncEngine = None
@@ -50,16 +51,16 @@ async def initialize_db(path_to_dummy_data: str = None):
     # await connection.close()
 
 
-def set_up_db_engine(database_url: str = None, echo: bool = True, is_sqlite: bool = False):
-    if database_url:
-        global DATABASE_URL
-        DATABASE_URL = database_url
+def set_up_db_engine(database_url: str, echo: bool = None, is_sqlite: bool = False):
+    if echo is None:
+        echo = SETTINGS.database_engine_echo
+    
     connect_args = {}
     if is_sqlite:
         connect_args["check_same_thread"] = False
 
     global ENGINE
-    ENGINE = create_async_engine(DATABASE_URL, echo=echo, future=True, connect_args=connect_args)
+    ENGINE = create_async_engine(database_url, echo=echo, future=True, connect_args=connect_args)
 
 
 __all__ = [

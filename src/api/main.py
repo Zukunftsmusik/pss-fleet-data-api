@@ -5,18 +5,21 @@ from fastapi import FastAPI
 from .database import db
 from .routers import alliances, collections, upload, users
 
+from .config import SETTINGS
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    db.set_up_db_engine()
-    # db.initialize_db()
+    db.set_up_db_engine(SETTINGS.database_connection_str)
+    if SETTINGS.initialize_database_on_startup:
+        db.initialize_db()
     yield
 
 
 app = FastAPI(
-    version="1.0",
-    title="PSS Fleet Data API",
-    description="An API server for Pixel Starships Fleet Data.",
+    version=SETTINGS.version,
+    title=SETTINGS.project_name,
+    description=SETTINGS.description,
     contact={"email": "theworstpss@gmail.com", "name": "The worst.", "url": "https://dolores2.xyz"},
     license={"name": "MIT", "url": "https://github.com/Zukunftsmusik/pss-fleet-data-api/blob/main/LICENSE"},
     # servers=[{"url": "https://fleetdata.dolores2.xyz", "description": "The PSS Fleet Data API.", "variables": {}}],

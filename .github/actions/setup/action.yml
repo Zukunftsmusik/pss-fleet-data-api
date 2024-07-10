@@ -1,0 +1,22 @@
+# This workflow will set up an environment to lint and then to be reused
+
+name: "Set up environment"
+description: "Sets up a python environment that can be used in other actions."
+
+runs:
+  using: "composite"
+
+  steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Python 3.12.3
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.12.3"
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        python -m pip install flake8
+      shell: bash

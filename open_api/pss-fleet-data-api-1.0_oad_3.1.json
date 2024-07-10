@@ -1,0 +1,4253 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "version": "1.0",
+    "title": "PSS Fleet Data API",
+    "description": "An API server for Pixel Starships Fleet Data.",
+    "contact": {
+      "email": "theworstpss@gmail.com",
+      "name": "The worst.",
+      "url": "https://dolores2.xyz"
+    },
+    "license": {
+      "name": "MIT",
+      "url": "https://github.com/Zukunftsmusik/pss-fleet-data-api/blob/main/LICENSE"
+    }
+  },
+  "paths": {
+    "/ping": {
+      "get": {
+        "operationId": "ping",
+        "summary": "Ping. Pong.",
+        "description": "Check, if the API is responding at all.",
+        "tags": [
+          "healthcheck"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/200_getPing"
+          },
+          "429": {
+            "$ref": "#/components/responses/429_rateLimited"
+          },
+          "500": {
+            "$ref": "#/components/responses/500_internalServerError"
+          }
+        }
+      }
+    },
+    "/alliances/{allianceId}": {
+      "get": {
+        "operationId": "getAllianceHistory",
+        "summary": "Get an Alliance's history.",
+        "description": "Get the complete history or a subset of the history of a specific Alliance. You can use the parameters **fromDate**, **toDate**, **interval**, **skip** and **take** to limit the result set.",
+        "tags": [
+          "alliances"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/path_allianceId"
+          },
+          {
+            "$ref": "#/components/parameters/query_fromDate"
+          },
+          {
+            "$ref": "#/components/parameters/query_toDate"
+          },
+          {
+            "$ref": "#/components/parameters/query_interval"
+          },
+          {
+            "$ref": "#/components/parameters/query_desc"
+          },
+          {
+            "$ref": "#/components/parameters/query_skip"
+          },
+          {
+            "$ref": "#/components/parameters/query_take"
+          },
+          {
+            "$ref": "#/components/parameters/query_allianceProperties"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/200_getAllianceHistory"
+          },
+          "204": {
+            "$ref": "#/components/responses/204_noDataForParameters"
+          },
+          "400": {
+            "$ref": "#/components/responses/400_from_to"
+          },
+          "404": {
+            "$ref": "#/components/responses/404_allianceId"
+          },
+          "429": {
+            "$ref": "#/components/responses/429_rateLimited"
+          },
+          "500": {
+            "$ref": "#/components/responses/500_internalServerError"
+          }
+        }
+      }
+    },
+    "/collections": {
+      "delete": {
+        "operationId": "deleteAllCollections",
+        "summary": "Delete all Collections.",
+        "description": "Delete all Collections in the database. Use with caution.",
+        "tags": [
+          "collections"
+        ],
+        "parameters": [],
+        "responses": {
+          "204": {
+            "$ref": "#/components/responses/204_allCollectionsDeleted"
+          },
+          "401": {
+            "$ref": "#/components/responses/401_noApiKeyProvided"
+          },
+          "403": {
+            "$ref": "#/components/responses/403_apiKeyNotAuthorized"
+          },
+          "429": {
+            "$ref": "#/components/responses/429_rateLimited"
+          },
+          "500": {
+            "$ref": "#/components/responses/500_internalServerError"
+          }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      },
+      "get": {
+        "operationId": "get_collections_metadata",
+        "summary": "Get metadata of all Collections or a subset of Collections.",
+        "description": "Get the metadata of all Collections or of a subset of all Collections. You can use the parameters **fromDate**, **toDate**, **interval**, **skip** and **take** to limit the result set.",
+        "tags": [
+          "collections"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/query_fromDate"
+          },
+          {
+            "$ref": "#/components/parameters/query_toDate"
+          },
+          {
+            "$ref": "#/components/parameters/query_interval"
+          },
+          {
+            "$ref": "#/components/parameters/query_desc"
+          },
+          {
+            "$ref": "#/components/parameters/query_skip"
+          },
+          {
+            "$ref": "#/components/parameters/query_take"
+          },
+          {
+            "$ref": "#/components/parameters/query_metadataProperties"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/200_getCollections"
+          },
+          "204": {
+            "$ref": "#/components/responses/204_noDataForParameters"
+          },
+          "400": {
+            "$ref": "#/components/responses/400_from_to"
+          },
+          "429": {
+            "$ref": "#/components/responses/429_rateLimited"
+          },
+          "500": {
+            "$ref": "#/components/responses/500_internalServerError"
+          }
+        }
+      },
+      "post": {
+        "operationId": "import_collection",
+        "summary": "Create a new Collection from data schema version 4 or higher.",
+        "description": "Insert Collection data into the database that was created with data schema version 4 or higher. See [https://github.com/Zukunftsmusik/pss-fleet-data/blob/master/readme.md](https://github.com/Zukunftsmusik/pss-fleet-data/blob/master/readme.md) for a description of the expected schema.",
+        "tags": [
+          "collections"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/collectionPost"
+        },
+        "responses": {
+          "201": {
+            "$ref": "#/components/responses/201_postCollection"
+          },
+          "400": {
+            "$ref": "#/components/responses/400_general"
+          },
+          "401": {
+            "$ref": "#/components/responses/401_noApiKeyProvided"
+          },
+          "403": {
+            "$ref": "#/components/responses/403_apiKeyNotAuthorized"
+          },
+          "409": {
+            "$ref": "#/components/responses/409_duplicateCollectionTimestamp"
+          },
+          "415": {
+            "$ref": "#/components/responses/415_bodyFormatNotSupported"
+          },
+          "429": {
+            "$ref": "#/components/responses/429_rateLimited"
+          },
+          "500": {
+            "$ref": "#/components/responses/500_internalServerError"
+          }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/collections/uploadJson": {
+      "post": {
+        "operationId": "uploadCollection",
+        "summary": "Upload a collection file of schema version 4 or above.",
+        "description": "Upload a JSON file containing a complete data Collection that was created with the schema version 4 or above.",
+        "tags": [
+          "collections"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/collectionPostUpload"
+        },
+        "responses": {
+          "201": {
+            "$ref": "#/components/responses/201_postCollection"
+          },
+          "400": {
+            "$ref": "#/components/responses/400_general"
+          },
+          "401": {
+            "$ref": "#/components/responses/401_noApiKeyProvided"
+          },
+          "403": {
+            "$ref": "#/components/responses/403_apiKeyNotAuthorized"
+          },
+          "409": {
+            "$ref": "#/components/responses/409_duplicateCollectionTimestamp"
+          },
+          "415": {
+            "$ref": "#/components/responses/415_bodyFormatNotSupported"
+          },
+          "429": {
+            "$ref": "#/components/responses/429_rateLimited"
+          },
+          "500": {
+            "$ref": "#/components/responses/500_internalServerError"
+          }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "externalDocs": {
+          "description": "A detailed description of the expected JSON file format can be found here.",
+          "url": "https://github.com/Zukunftsmusik/pss-fleet-data?tab=readme-ov-file#schema-descriptions"
+        }
+      }
+    },
+    "/collections/{collectionId}": {
+      "delete": {
+        "operationId": "deleteCollection",
+        "summary": "Delete a specific Collection.",
+        "description": "Delete a specific data Collection.",
+        "tags": [
+          "collections"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/path_collectionId"
+          }
+        ],
+        "responses": {
+          "204": {
+            "$ref": "#/components/responses/204_collectionDeleted"
+          },
+          "400": {
+            "$ref": "#/components/responses/400_general"
+          },
+          "401": {
+            "$ref": "#/components/responses/401_noApiKeyProvided"
+          },
+          "403": {
+            "$ref": "#/components/responses/403_apiKeyNotAuthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/404_collectionId"
+          },
+          "429": {
+            "$ref": "#/components/responses/429_rateLimited"
+          },
+          "500": {
+            "$ref": "#/components/responses/500_internalServerError"
+          }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      },
+      "get": {
+        "operationId": "getCollection",
+        "summary": "Get all data of a specific Collection.",
+        "description": "Get all data from a specific data Collection.",
+        "tags": [
+          "collections"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/path_collectionId"
+          },
+          {
+            "$ref": "#/components/parameters/query_metadataProperties"
+          },
+          {
+            "$ref": "#/components/parameters/query_allianceProperties"
+          },
+          {
+            "$ref": "#/components/parameters/query_userProperties"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/200_getCollection"
+          },
+          "400": {
+            "$ref": "#/components/responses/400_general"
+          },
+          "404": {
+            "$ref": "#/components/responses/404_collectionId"
+          },
+          "429": {
+            "$ref": "#/components/responses/429_rateLimited"
+          },
+          "500": {
+            "$ref": "#/components/responses/500_internalServerError"
+          }
+        }
+      },
+      "put": {
+        "operationId": "updateCollection",
+        "summary": "Update or insert a specific Collection.",
+        "description": "Update or insert a specific Collection.",
+        "tags": [
+          "collections"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/path_collectionId"
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/collectionPut"
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/200_putCollection"
+          },
+          "201": {
+            "$ref": "#/components/responses/201_putCollection"
+          },
+          "400": {
+            "$ref": "#/components/responses/400_general"
+          },
+          "401": {
+            "$ref": "#/components/responses/401_noApiKeyProvided"
+          },
+          "403": {
+            "$ref": "#/components/responses/403_apiKeyNotAuthorized"
+          },
+          "409": {
+            "description": "The Collection ID and its timestamp do not match.",
+            "headers": {
+              "X-RateLimit-Limit": {
+                "$ref": "#/components/headers/X-RateLimit-Limit"
+              },
+              "X-RateLimit-Remaining": {
+                "$ref": "#/components/headers/X-RateLimit-Remaining"
+              },
+              "X-RateLimit-Reset": {
+                "$ref": "#/components/headers/X-RateLimit-Reset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorList"
+                }
+              }
+            }
+          },
+          "415": {
+            "$ref": "#/components/responses/415_bodyFormatNotSupported"
+          },
+          "429": {
+            "$ref": "#/components/responses/429_rateLimited"
+          },
+          "500": {
+            "$ref": "#/components/responses/500_internalServerError"
+          }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/collections/{collectionId}/alliances": {
+      "get": {
+        "operationId": "getAlliances",
+        "summary": "Get a list of Alliances from a specific Collection.",
+        "description": "Get all Alliance data of a specific Collections or of a subset of the Alliance data. You can use the parameters **divisionDesignId**, **skip** and **take** to limit the result set.",
+        "tags": [
+          "collections"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/path_collectionId"
+          },
+          {
+            "$ref": "#/components/parameters/query_divisionDesignId"
+          },
+          {
+            "$ref": "#/components/parameters/query_skip"
+          },
+          {
+            "$ref": "#/components/parameters/query_take"
+          },
+          {
+            "$ref": "#/components/parameters/query_allianceProperties"
+          },
+          {
+            "$ref": "#/components/parameters/query_metadataProperties"
+          },
+          {
+            "$ref": "#/components/parameters/query_userProperties"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/200_getCollection_alliances"
+          },
+          "204": {
+            "$ref": "#/components/responses/204_noDataForParameters"
+          },
+          "400": {
+            "$ref": "#/components/responses/400_general"
+          },
+          "404": {
+            "$ref": "#/components/responses/404_collectionId"
+          },
+          "429": {
+            "$ref": "#/components/responses/429_rateLimited"
+          },
+          "500": {
+            "$ref": "#/components/responses/500_internalServerError"
+          }
+        }
+      }
+    },
+    "/collections/{collectionId}/alliances/{allianceId}": {
+      "get": {
+        "operationId": "getAlliance",
+        "summary": "Get a specific Alliance from a specific Collection.",
+        "description": "Get the data for a specific Alliances from a specific data Collection.",
+        "tags": [
+          "collections"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/path_collectionId"
+          },
+          {
+            "$ref": "#/components/parameters/path_allianceId"
+          },
+          {
+            "$ref": "#/components/parameters/query_allianceProperties"
+          },
+          {
+            "$ref": "#/components/parameters/query_metadataProperties"
+          },
+          {
+            "$ref": "#/components/parameters/query_userProperties"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/200_getCollection_alliance"
+          },
+          "400": {
+            "$ref": "#/components/responses/400_general"
+          },
+          "404": {
+            "$ref": "#/components/responses/404_collectionId_allianceId"
+          },
+          "429": {
+            "$ref": "#/components/responses/429_rateLimited"
+          },
+          "500": {
+            "$ref": "#/components/responses/500_internalServerError"
+          }
+        }
+      }
+    },
+    "/collections/{collectionId}/top100Users": {
+      "get": {
+        "operationId": "getTop100Users",
+        "summary": "Get top 100 Users from a specific Collection.",
+        "description": "Get top 100 Users or a subset of top 100 Users from a specific Collection. You can use the parameters **skip** and **take** to limit the result set.",
+        "tags": [
+          "collections"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/path_collectionId"
+          },
+          {
+            "$ref": "#/components/parameters/query_desc"
+          },
+          {
+            "$ref": "#/components/parameters/query_skip"
+          },
+          {
+            "$ref": "#/components/parameters/query_take"
+          },
+          {
+            "$ref": "#/components/parameters/query_allianceProperties"
+          },
+          {
+            "$ref": "#/components/parameters/query_metadataProperties"
+          },
+          {
+            "$ref": "#/components/parameters/query_userProperties"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/200_getCollection_top100"
+          },
+          "204": {
+            "$ref": "#/components/responses/204_noDataForParameters"
+          },
+          "400": {
+            "$ref": "#/components/responses/400_general"
+          },
+          "404": {
+            "$ref": "#/components/responses/404_collectionId"
+          },
+          "429": {
+            "$ref": "#/components/responses/429_rateLimited"
+          },
+          "500": {
+            "$ref": "#/components/responses/500_internalServerError"
+          }
+        }
+      }
+    },
+    "/collections/{collectionId}/users": {
+      "get": {
+        "operationId": "getUsers",
+        "summary": "Get a list of Users from a specific Collection.",
+        "description": "Get all User data of a specific Collections or of a subset of the User data. You can use the parameters **divisionDesignId**, **skip** and **take** to limit the result set.",
+        "tags": [
+          "collections"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/path_collectionId"
+          },
+          {
+            "$ref": "#/components/parameters/query_divisionDesignId"
+          },
+          {
+            "$ref": "#/components/parameters/query_skip"
+          },
+          {
+            "$ref": "#/components/parameters/query_take"
+          },
+          {
+            "$ref": "#/components/parameters/query_allianceProperties"
+          },
+          {
+            "$ref": "#/components/parameters/query_metadataProperties"
+          },
+          {
+            "$ref": "#/components/parameters/query_userProperties"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/200_getCollection_users"
+          },
+          "204": {
+            "$ref": "#/components/responses/204_noDataForParameters"
+          },
+          "400": {
+            "$ref": "#/components/responses/400_general"
+          },
+          "404": {
+            "$ref": "#/components/responses/404_collectionId"
+          },
+          "429": {
+            "$ref": "#/components/responses/429_rateLimited"
+          },
+          "500": {
+            "$ref": "#/components/responses/500_internalServerError"
+          }
+        }
+      }
+    },
+    "/collections/{collectionId}/users/{userId}": {
+      "get": {
+        "operationId": "getUser",
+        "summary": "Get a specific User from a specific Collection.",
+        "description": "Get the data for a specific User from a specific data Collection.",
+        "tags": [
+          "collections"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/path_collectionId"
+          },
+          {
+            "$ref": "#/components/parameters/path_userId"
+          },
+          {
+            "$ref": "#/components/parameters/query_allianceProperties"
+          },
+          {
+            "$ref": "#/components/parameters/query_userProperties"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/200_getCollection_user"
+          },
+          "400": {
+            "$ref": "#/components/responses/400_general"
+          },
+          "404": {
+            "$ref": "#/components/responses/404_collectionId_userId"
+          },
+          "429": {
+            "$ref": "#/components/responses/429_rateLimited"
+          },
+          "500": {
+            "$ref": "#/components/responses/500_internalServerError"
+          }
+        }
+      }
+    },
+    "/legacy/collections": {
+      "post": {
+        "operationId": "createLegacyCollection",
+        "summary": "Create a new Collection from data schema version 3 or lower.",
+        "description": "Create a new Collection from data schema version 3 or lower. See [https://github.com/Zukunftsmusik/pss-fleet-data/blob/master/readme.md](https://github.com/Zukunftsmusik/pss-fleet-data/blob/master/readme.md) for a description of the expected schema.",
+        "tags": [
+          "legacy"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/collectionPostLegacy"
+        },
+        "responses": {
+          "201": {
+            "$ref": "#/components/responses/201_postCollection"
+          },
+          "400": {
+            "$ref": "#/components/responses/400_general"
+          },
+          "401": {
+            "$ref": "#/components/responses/401_noApiKeyProvided"
+          },
+          "403": {
+            "$ref": "#/components/responses/403_apiKeyNotAuthorized"
+          },
+          "409": {
+            "$ref": "#/components/responses/409_duplicateCollectionTimestamp"
+          },
+          "415": {
+            "$ref": "#/components/responses/415_bodyFormatNotSupported"
+          },
+          "429": {
+            "$ref": "#/components/responses/429_rateLimited"
+          },
+          "500": {
+            "$ref": "#/components/responses/500_internalServerError"
+          }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/legacy/collections/uploadJson": {
+      "post": {
+        "operationId": "uploadLegacyCollection",
+        "summary": "Upload a collection file of schema version 3 or below.",
+        "description": "Upload a JSON file containing a complete data Collection that was created with the schema version 3 or below.",
+        "tags": [
+          "legacy"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/collectionPostUploadLegacy"
+        },
+        "responses": {
+          "201": {
+            "$ref": "#/components/responses/201_postCollection"
+          },
+          "400": {
+            "$ref": "#/components/responses/400_general"
+          },
+          "401": {
+            "$ref": "#/components/responses/401_noApiKeyProvided"
+          },
+          "403": {
+            "$ref": "#/components/responses/403_apiKeyNotAuthorized"
+          },
+          "409": {
+            "$ref": "#/components/responses/409_duplicateCollectionTimestamp"
+          },
+          "415": {
+            "$ref": "#/components/responses/415_bodyFormatNotSupported"
+          },
+          "429": {
+            "$ref": "#/components/responses/429_rateLimited"
+          },
+          "500": {
+            "$ref": "#/components/responses/500_internalServerError"
+          }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "externalDocs": {
+          "description": "A detailed description of the expected JSON file format can be found here.",
+          "url": "https://github.com/Zukunftsmusik/pss-fleet-data?tab=readme-ov-file#schema-version-3"
+        }
+      }
+    },
+    "/users/{userId}": {
+      "get": {
+        "operationId": "getUserHistory",
+        "summary": "Get a User's history.",
+        "description": "Get the complete history or a subset of the history of a specific User. You can use the parameters **fromDate**, **toDate**, **interval**, **skip** and **take** to limit the result set.",
+        "tags": [
+          "users"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/path_userId"
+          },
+          {
+            "$ref": "#/components/parameters/query_fromDate"
+          },
+          {
+            "$ref": "#/components/parameters/query_toDate"
+          },
+          {
+            "$ref": "#/components/parameters/query_interval"
+          },
+          {
+            "$ref": "#/components/parameters/query_desc"
+          },
+          {
+            "$ref": "#/components/parameters/query_skip"
+          },
+          {
+            "$ref": "#/components/parameters/query_take"
+          },
+          {
+            "$ref": "#/components/parameters/query_userProperties"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/200_getUserHistory"
+          },
+          "204": {
+            "$ref": "#/components/responses/204_noDataForParameters"
+          },
+          "400": {
+            "$ref": "#/components/responses/400_from_to"
+          },
+          "404": {
+            "$ref": "#/components/responses/404_userId"
+          },
+          "429": {
+            "$ref": "#/components/responses/429_rateLimited"
+          },
+          "500": {
+            "$ref": "#/components/responses/500_internalServerError"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "Authorization",
+        "description": "Requires an api key that is permitted to access this endpoint."
+      }
+    },
+    "schemas": {
+      "AllianceCreate": {
+        "description": "An object partially representing a PSS Alliance (fleet).",
+        "properties": {
+          "allianceId": {
+            "$ref": "#/components/schemas/prop_alliance_AllianceId"
+          },
+          "allianceName": {
+            "$ref": "#/components/schemas/prop_alliance_AllianceName"
+          },
+          "score": {
+            "$ref": "#/components/schemas/prop_alliance_Score"
+          },
+          "divisionDesignId": {
+            "$ref": "#/components/schemas/prop_alliance_DivisionDesignId"
+          },
+          "trophy": {
+            "$ref": "#/components/schemas/prop_alliance_Trophy"
+          },
+          "championshipScore": {
+            "$ref": "#/components/schemas/prop_alliance_ChampionshipScore"
+          },
+          "numberOfMembers": {
+            "$ref": "#/components/schemas/prop_alliance_NumberOfMembers"
+          },
+          "numberOfApprovedMembers": {
+            "$ref": "#/components/schemas/prop_alliance_NumberOfApprovedMembers"
+          }
+        },
+        "required": [
+          "allianceId",
+          "allianceName",
+          "score",
+          "divisionDesignId",
+          "trophy"
+        ],
+        "examples": [
+          {
+            "allianceId": 44841,
+            "allianceName": "13ooted",
+            "score": 0,
+            "divisionDesignId": 0,
+            "trophy": 146391,
+            "championshipScore": 5,
+            "numberOfMembers": 71,
+            "numberOfApprovedMembers": 71
+          }
+        ]
+      },
+      "AllianceHistoryOut": {
+        "description": "An object representing a point in a PSS Alliance's history.",
+        "properties": {
+          "collection": {
+            "$ref": "#/components/schemas/CollectionMetadataOut"
+          },
+          "alliance": {
+            "$ref": "#/components/schemas/AllianceOut"
+          }
+        },
+        "required": [
+          "collection",
+          "alliance"
+        ]
+      },
+      "AllianceOut": {
+        "description": "An object partially representing a PSS Alliance (fleet).",
+        "properties": {
+          "allianceId": {
+            "$ref": "#/components/schemas/prop_alliance_AllianceId"
+          },
+          "allianceName": {
+            "$ref": "#/components/schemas/prop_alliance_AllianceName"
+          },
+          "score": {
+            "$ref": "#/components/schemas/prop_alliance_Score"
+          },
+          "divisionDesignId": {
+            "$ref": "#/components/schemas/prop_alliance_DivisionDesignId"
+          },
+          "trophy": {
+            "$ref": "#/components/schemas/prop_alliance_Trophy"
+          },
+          "championshipScore": {
+            "$ref": "#/components/schemas/prop_alliance_ChampionshipScore"
+          },
+          "numberOfMembers": {
+            "$ref": "#/components/schemas/prop_alliance_NumberOfMembers"
+          },
+          "numberOfApprovedMembers": {
+            "$ref": "#/components/schemas/prop_alliance_NumberOfApprovedMembers"
+          },
+          "allianceMembers": {
+            "nullable": false,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserOut"
+            },
+            "description": "A list of Users that were members of the Alliance at the time of the Collection.",
+            "uniqueItems": true,
+            "minItems": 0,
+            "maxItems": 100
+          }
+        },
+        "required": [
+          "allianceId",
+          "allianceName",
+          "divisionDesignId",
+          "score",
+          "trophy",
+          "allianceMembers"
+        ]
+      },
+      "AllianceUpload": {
+        "description": "An array with 5, 6 or 8 elements (AllianceId, AllianceName, Score, DivisionDesignId, Trophy, optional: ChampionshipScore, optional: NumberOfMembers, optional: NumberOfApprovedMembers).",
+        "type": "array",
+        "items": [
+          {
+            "$ref": "#/components/schemas/prop_alliance_AllianceId"
+          },
+          {
+            "$ref": "#/components/schemas/prop_alliance_AllianceName"
+          },
+          {
+            "$ref": "#/components/schemas/prop_alliance_Score"
+          },
+          {
+            "$ref": "#/components/schemas/prop_alliance_DivisionDesignId"
+          },
+          {
+            "$ref": "#/components/schemas/prop_alliance_Trophy"
+          },
+          {
+            "$ref": "#/components/schemas/prop_alliance_ChampionshipScore"
+          },
+          {
+            "$ref": "#/components/schemas/prop_alliance_NumberOfMembers"
+          },
+          {
+            "$ref": "#/components/schemas/prop_alliance_NumberOfApprovedMembers"
+          }
+        ],
+        "minItems": 5,
+        "maxItems": 8,
+        "examples": [
+          "[43395, \"Legion Basilea\", 0, 0, 204370, 13, 94, 94]",
+          "[44514, \"Dynasty Savages\", 0, 0, 178174, 25, 76, 74]"
+        ]
+      },
+      "AllianceUploadArray": {
+        "description": "An array of Alliance objects as denoted in a data Collection JSON file of schema version 4 or above.",
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/AllianceUpload"
+        },
+        "minItems": 0,
+        "maxItems": 101,
+        "examples": [
+          "[[43395, \"Legion Basilea\", 0, 0, 204370, 13, 94, 94], [44514, \"Dynasty Savages\", 0, 0, 178174, 25, 76, 74]]"
+        ]
+      },
+      "CollectionCreate": {
+        "description": "A single, complete data Collection run with a schema version of 4 or higher.",
+        "properties": {
+          "metadata": {
+            "$ref": "#/components/schemas/CollectionMetadataCreate"
+          },
+          "alliances": {
+            "description": "A list of partial PSS Alliances.",
+            "nullable": false,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AllianceCreate"
+            },
+            "minItems": 0,
+            "maxItems": 101
+          },
+          "users": {
+            "description": "A list of partial PSS Users.",
+            "nullable": false,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserCreate"
+            },
+            "minItems": 0,
+            "maxItems": 10100
+          }
+        },
+        "required": [
+          "metadata",
+          "alliances",
+          "users"
+        ]
+      },
+      "CollectionMetadataCreate": {
+        "description": "An object describing a single data Collection run with a schema version of 4 or higher.",
+        "properties": {
+          "timestamp": {
+            "$ref": "#/components/schemas/prop_collection_Timestamp_create"
+          },
+          "duration": {
+            "$ref": "#/components/schemas/prop_collection_Duration"
+          },
+          "fleetCount": {
+            "$ref": "#/components/schemas/prop_collection_FleetCount"
+          },
+          "userCount": {
+            "$ref": "#/components/schemas/prop_collection_UserCount"
+          },
+          "tourneyRunning": {
+            "$ref": "#/components/schemas/prop_collection_Timestamp_create"
+          },
+          "maxTournamentBattleAttempts": {
+            "$ref": "#/components/schemas/prop_collection_MaxTournamentBattleAttempts"
+          },
+          "schemaVersion": {
+            "$ref": "#/components/schemas/prop_collection_SchemaVersion"
+          }
+        },
+        "required": [
+          "timestamp",
+          "duration",
+          "fleet_count",
+          "user_count",
+          "tourney_running",
+          "schema_version"
+        ]
+      },
+      "CollectionMetadataOut": {
+        "description": "An object describing a single data Collection run.",
+        "properties": {
+          "collectionId": {
+            "$ref": "#/components/schemas/prop_collection_CollectionId"
+          },
+          "timestamp": {
+            "$ref": "#/components/schemas/prop_collection_Timestamp_out"
+          },
+          "duration": {
+            "$ref": "#/components/schemas/prop_collection_Duration"
+          },
+          "fleetCount": {
+            "$ref": "#/components/schemas/prop_collection_FleetCount"
+          },
+          "userCount": {
+            "$ref": "#/components/schemas/prop_collection_UserCount"
+          },
+          "tournamentRunning": {
+            "$ref": "#/components/schemas/prop_collection_TournamentRunning_out"
+          },
+          "maxTournamentBattleAttempts": {
+            "$ref": "#/components/schemas/prop_collection_MaxTournamentBattleAttempts"
+          }
+        },
+        "required": [
+          "collectionId",
+          "timestamp",
+          "duration",
+          "fleetCount",
+          "userCount",
+          "tournamentRunning"
+        ]
+      },
+      "CollectionMetadataUpload": {
+        "description": "An object describing a single data Collection run with a schema version of 4 or higher.",
+        "properties": {
+          "timestamp": {
+            "$ref": "#/components/schemas/prop_collection_Timestamp_create"
+          },
+          "duration": {
+            "$ref": "#/components/schemas/prop_collection_Duration"
+          },
+          "fleet_count": {
+            "$ref": "#/components/schemas/prop_collection_FleetCount"
+          },
+          "user_count": {
+            "$ref": "#/components/schemas/prop_collection_UserCount"
+          },
+          "tourney_running": {
+            "$ref": "#/components/schemas/prop_collection_Timestamp_create"
+          },
+          "max_tournament_battle_attempts": {
+            "$ref": "#/components/schemas/prop_collection_MaxTournamentBattleAttempts"
+          },
+          "schema_version": {
+            "$ref": "#/components/schemas/prop_collection_SchemaVersion"
+          }
+        },
+        "required": [
+          "timestamp",
+          "duration",
+          "fleet_count",
+          "user_count",
+          "tourney_running",
+          "schema_version"
+        ]
+      },
+      "CollectionOut": {
+        "description": "A complete collection of top 100 Alliances, their members and top 100 Users not in a top 100 Alliance at a given point in time.",
+        "properties": {
+          "metadata": {
+            "$ref": "#/components/schemas/CollectionMetadataOut"
+          },
+          "alliances": {
+            "description": "A list of partial PSS Alliances.",
+            "nullable": false,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AllianceOut"
+            },
+            "minItems": 0,
+            "maxItems": 101
+          },
+          "users": {
+            "description": "A list of partial PSS Users.",
+            "nullable": false,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserOut"
+            },
+            "minItems": 0,
+            "maxItems": 10100
+          }
+        },
+        "required": [
+          "metadata",
+          "alliances",
+          "users"
+        ]
+      },
+      "CollectionUpload": {
+        "description": "A complete Collection as denoted in a data Collection JSON file of schema version 4 or above.",
+        "type": "object",
+        "properties": {
+          "meta": {
+            "$ref": "#/components/schemas/CollectionMetadataUpload"
+          },
+          "fleets": {
+            "$ref": "#/components/schemas/AllianceUploadArray"
+          },
+          "users": {
+            "$ref": "#/components/schemas/UserUploadArray"
+          }
+        },
+        "required": [
+          " meta",
+          "fleets",
+          "users",
+          "data"
+        ],
+        "externalDocs": {
+          "description": "A detailed description of the different schema versions can be found here.",
+          "url": "https://github.com/Zukunftsmusik/pss-fleet-data?tab=readme-ov-file#schema-descriptions"
+        }
+      },
+      "Error": {
+        "description": "An object representing detailed error information in the case of an API error.",
+        "properties": {
+          "code": {
+            "$ref": "#/components/schemas/enum_error_code"
+          },
+          "message": {
+            "$ref": "#/components/schemas/prop_error_message"
+          },
+          "details": {
+            "$ref": "#/components/schemas/prop_error_details"
+          },
+          "timestamp": {
+            "$ref": "#/components/schemas/prop_timestamp"
+          },
+          "path": {
+            "$ref": "#/components/schemas/prop_error_path"
+          },
+          "suggestion": {
+            "$ref": "#/components/schemas/prop_error_suggestion"
+          }
+        },
+        "required": [
+          "code",
+          "message",
+          "timestamp",
+          "path",
+          "details"
+        ],
+        "examples": []
+      },
+      "ErrorList": {
+        "description": "A list of errors that occurred while processing the request.",
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Error"
+        },
+        "minItems": 1,
+        "maxItems": 100
+      },
+      "LegacyAllianceCreate": {
+        "description": "An object partially representing a PSS Alliance (fleet).",
+        "properties": {
+          "allianceId": {
+            "$ref": "#/components/schemas/prop_alliance_AllianceId"
+          },
+          "allianceName": {
+            "$ref": "#/components/schemas/prop_alliance_AllianceName"
+          },
+          "score": {
+            "$ref": "#/components/schemas/prop_alliance_Score"
+          },
+          "divisionDesignId": {
+            "$ref": "#/components/schemas/prop_alliance_DivisionDesignId"
+          }
+        },
+        "required": [
+          "allianceId",
+          "allianceName",
+          "score"
+        ]
+      },
+      "LegacyAllianceUpload": {
+        "description": "An array with 3 or 4 elements (AllianceId, AllianceName, Score, optional: DivisionDesignId).",
+        "type": "array",
+        "items": [
+          {
+            "$ref": "#/components/schemas/prop_alliance_AllianceId_asString"
+          },
+          {
+            "$ref": "#/components/schemas/prop_alliance_AllianceName"
+          },
+          {
+            "$ref": "#/components/schemas/prop_alliance_Score_asString"
+          },
+          {
+            "$ref": "#/components/schemas/prop_alliance_DivisionDesignId_asString"
+          }
+        ],
+        "minItems": 3,
+        "maxItems": 4,
+        "examples": [
+          "[\"5938\", \"Nod Imperium\", \"234\", \"1\"]",
+          "[\"22864\", \"Triad\", \"0\"]"
+        ]
+      },
+      "LegacyAllianceUploadArray": {
+        "description": "An array of Alliance objects as denoted in a data Collection JSON file of schema version 3 or below.",
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/LegacyAllianceUpload"
+        },
+        "minItems": 0,
+        "maxItems": 101,
+        "examples": [
+          "[[\"22864\", \"Triad\", \"12123\"], [\"5938\", \"Nod Imperium\", \"2252\"]]",
+          "[[\"22864\", \"Triad\", \"11723\", \"2\"], [\"5938\", \"Nod Imperium\", \"1149\", \"3\"]]"
+        ]
+      },
+      "LegacyCollectionCreate": {
+        "description": "A single, complete data Collection run with a schema version of 3 or lower.",
+        "properties": {
+          "metadata": {
+            "$ref": "#/components/schemas/LegacyCollectionMetadataCreate"
+          },
+          "alliances": {
+            "description": "A list of partial PSS Alliances.",
+            "nullable": false,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LegacyAllianceCreate"
+            },
+            "minItems": 0,
+            "maxItems": 101
+          },
+          "users": {
+            "description": "A list of partial PSS Users.",
+            "nullable": false,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LegacyUserCreate"
+            },
+            "minItems": 0,
+            "maxItems": 10100
+          },
+          "data": {
+            "description": "A list of Users' data.",
+            "nullable": false,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LegacyDataCreate"
+            },
+            "minItems": 0,
+            "maxItems": 10100
+          }
+        },
+        "required": [
+          "metadata",
+          "alliances",
+          "users",
+          "data"
+        ]
+      },
+      "LegacyCollectionMetadataCreate": {
+        "description": "An object describing a single data Collection run with a schema version of 3 or lower.",
+        "properties": {
+          "timestamp": {
+            "$ref": "#/components/schemas/prop_collection_Timestamp_createLegacy"
+          },
+          "duration": {
+            "$ref": "#/components/schemas/prop_collection_Duration"
+          },
+          "fleet_count": {
+            "$ref": "#/components/schemas/prop_collection_FleetCount"
+          },
+          "user_count": {
+            "$ref": "#/components/schemas/prop_collection_UserCount"
+          },
+          "tourney_running": {
+            "$ref": "#/components/schemas/prop_collection_TournamentRunning_createLegacy"
+          }
+        },
+        "required": [
+          "timestamp",
+          "duration",
+          "fleet_count",
+          "user_count",
+          "tourney_running"
+        ]
+      },
+      "LegacyCollectionMetadataUpload": {
+        "description": "An object describing a single data Collection run with a schema version of 4 or higher.",
+        "properties": {
+          "timestamp": {
+            "$ref": "#/components/schemas/prop_collection_Timestamp_create"
+          },
+          "duration": {
+            "$ref": "#/components/schemas/prop_collection_Duration"
+          },
+          "fleet_count": {
+            "$ref": "#/components/schemas/prop_collection_FleetCount"
+          },
+          "user_count": {
+            "$ref": "#/components/schemas/prop_collection_UserCount"
+          },
+          "tourney_running": {
+            "$ref": "#/components/schemas/prop_collection_Timestamp_create"
+          },
+          "max_tournament_battle_attempts": {
+            "$ref": "#/components/schemas/prop_collection_MaxTournamentBattleAttempts"
+          },
+          "schema_version": {
+            "$ref": "#/components/schemas/prop_collection_SchemaVersion"
+          }
+        },
+        "required": [
+          "timestamp",
+          "duration",
+          "fleet_count",
+          "user_count",
+          "tourney_running",
+          "schema_version"
+        ]
+      },
+      "LegacyCollectionUpload": {
+        "description": "A complete Collection as denoted in a data Collection JSON file of schema version 3 or below.",
+        "type": "object",
+        "properties": {
+          "meta": {
+            "$ref": "#/components/schemas/LegacyCollectionMetadataUpload"
+          },
+          "fleets": {
+            "$ref": "#/components/schemas/LegacyAllianceUploadArray"
+          },
+          "users": {
+            "$ref": "#/components/schemas/LegacyUserUploadArray"
+          },
+          "data": {
+            "$ref": "#/components/schemas/LegacyDataUploadArray"
+          }
+        },
+        "required": [
+          "meta",
+          "fleets",
+          "users",
+          "data"
+        ],
+        "externalDocs": {
+          "description": "A detailed description of the different schema versions can be found here.",
+          "url": "https://github.com/Zukunftsmusik/pss-fleet-data?tab=readme-ov-file#schema-version-3"
+        }
+      },
+      "LegacyDataCreate": {
+        "description": "An object partially representing a PSS User's (player's) performance data.",
+        "properties": {
+          "user_id": {
+            "$ref": "#/components/schemas/prop_user_Id"
+          },
+          "allianceId": {
+            "$ref": "#/components/schemas/prop_user_AllianceId"
+          },
+          "trophy": {
+            "$ref": "#/components/schemas/prop_user_Trophy"
+          },
+          "alliance_score": {
+            "$ref": "#/components/schemas/prop_user_AllianceScore"
+          },
+          "allianceMembership": {
+            "$ref": "#/components/schemas/prop_user_AllianceMembership_createLegacy"
+          },
+          "alliance_join_date": {
+            "$ref": "#/components/schemas/prop_user_AllianceJoinDate_createLegacy"
+          },
+          "last_login_date": {
+            "$ref": "#/components/schemas/prop_user_LastLoginDate_createLegacy"
+          }
+        },
+        "required": [
+          "user_id",
+          "allianceId",
+          "trophy",
+          "alliance_score",
+          "allianceMembership",
+          "alliance_join_date",
+          "last_login_date"
+        ]
+      },
+      "LegacyDataUpload": {
+        "description": "An array with 7 elements (UserId, AllianceId, Trophy, AllianceScore, AllianceMembership, AllianceJoinDate, LastLoginDate).",
+        "type": "array",
+        "items": [
+          {
+            "$ref": "#/components/schemas/prop_user_Id_asString"
+          },
+          {
+            "$ref": "#/components/schemas/prop_user_AllianceId_asString"
+          },
+          {
+            "$ref": "#/components/schemas/prop_user_Trophy_asString"
+          },
+          {
+            "$ref": "#/components/schemas/prop_user_AllianceScore_asString"
+          },
+          {
+            "$ref": "#/components/schemas/prop_user_AllianceMembership_createLegacy"
+          },
+          {
+            "$ref": "#/components/schemas/prop_user_AllianceJoinDate_createLegacy"
+          },
+          {
+            "$ref": "#/components/schemas/prop_user_LastLoginDate_createLegacy"
+          }
+        ],
+        "minItems": 7,
+        "maxItems": 7,
+        "examples": [
+          "[\"876543210\", \"22864\", \"5800\", \"604\", \"Ensign\", \"2019-05-01T04:11:45\", \"2019-11-30T22:07:50\"]",
+          "[\"987654321\", \"13019\", \"5315\", \"1014\", \"Lieutenant\", \"1900-01-01T00:00:00\", \"2019-11-30T17:06:13\"]"
+        ]
+      },
+      "LegacyDataUploadArray": {
+        "description": "An array of Data objects as denoted in a data Collection JSON file of schema version 3 or below.",
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/LegacyDataUpload"
+        },
+        "minItems": 0,
+        "maxItems": 10100,
+        "examples": [
+          "[[\"876543210\", \"22864\", \"5800\", \"604\", \"Commander\", \"2019-05-01T04:11:45\", \"2019-11-30T22:07:50\"], [\"987654321\", \"13019\", \"5315\", \"1014\", \"ViceAdmiral\", \"1900-01-01T00:00:00\", \"2019-11-30T17:06:13\"]]"
+        ]
+      },
+      "LegacyUserCreate": {
+        "description": "An object partially representing a PSS User (player).",
+        "properties": {
+          "user_id": {
+            "$ref": "#/components/schemas/prop_user_Id"
+          },
+          "user_name": {
+            "$ref": "#/components/schemas/prop_user_Name"
+          }
+        },
+        "required": [
+          "user_id",
+          "user_name"
+        ]
+      },
+      "LegacyUserUpload": {
+        "description": "An array with 2 elements (Id, Name).",
+        "type": "array",
+        "items": [
+          {
+            "$ref": "#/components/schemas/prop_user_Id_asString"
+          },
+          {
+            "$ref": "#/components/schemas/prop_user_Name"
+          }
+        ],
+        "minItems": 2,
+        "maxItems": 2,
+        "examples": [
+          "[\"876543210\", \"Some username\"]",
+          "[\"987654321\", \"Some other name\"]"
+        ]
+      },
+      "LegacyUserUploadArray": {
+        "description": "An array of User objects as denoted in a data Collection JSON file of schema version 3 or below.",
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/LegacyUserUpload"
+        },
+        "minItems": 0,
+        "maxItems": 10100,
+        "examples": [
+          "[[\"876543210\", \"Some username\"], [\"987654321\", \"Some other name\"]]"
+        ]
+      },
+      "UserCreate": {
+        "description": "An object partially representing a PSS User (player).",
+        "properties": {
+          "userId": {
+            "$ref": "#/components/schemas/prop_user_Id"
+          },
+          "userName": {
+            "$ref": "#/components/schemas/prop_user_Name"
+          },
+          "allianceId": {
+            "$ref": "#/components/schemas/prop_user_AllianceId"
+          },
+          "trophy": {
+            "$ref": "#/components/schemas/prop_user_Trophy"
+          },
+          "allianceScore": {
+            "$ref": "#/components/schemas/prop_user_AllianceScore"
+          },
+          "allianceMembership": {
+            "$ref": "#/components/schemas/prop_user_AllianceMembership_create"
+          },
+          "allianceJoinDate": {
+            "$ref": "#/components/schemas/prop_user_AllianceJoinDate_create"
+          },
+          "lastLoginDate": {
+            "$ref": "#/components/schemas/prop_user_LastLoginDate_create"
+          },
+          "lastHeartBeatDate": {
+            "$ref": "#/components/schemas/prop_user_LastHeartBeatDate_create"
+          },
+          "crewDonated": {
+            "$ref": "#/components/schemas/prop_user_CrewDonated"
+          },
+          "crewReceived": {
+            "$ref": "#/components/schemas/prop_user_CrewReceived"
+          },
+          "pvpAttackWins": {
+            "$ref": "#/components/schemas/prop_user_PvpAttackWins"
+          },
+          "pvpAttackLosses": {
+            "$ref": "#/components/schemas/prop_user_PvpAttackLosses"
+          },
+          "pvpAttackDraws": {
+            "$ref": "#/components/schemas/prop_user_PvpAttackDraws"
+          },
+          "pvpDefenceWins": {
+            "$ref": "#/components/schemas/prop_user_PvpDefenceWins"
+          },
+          "pvpDefenceLosses": {
+            "$ref": "#/components/schemas/prop_user_PvpDefenceLosses"
+          },
+          "pvpDefenceDraws": {
+            "$ref": "#/components/schemas/prop_user_PvpDefenceDraws"
+          },
+          "championshipScore": {
+            "$ref": "#/components/schemas/prop_user_ChampionshipScore"
+          },
+          "highestTrophy": {
+            "$ref": "#/components/schemas/prop_user_HighestTrophy"
+          },
+          "tournamentBonusScore": {
+            "$ref": "#/components/schemas/prop_user_TournamentBonusScore"
+          }
+        },
+        "required": [
+          "userId",
+          "userName",
+          "allianceId",
+          "trophy",
+          "allianceScore",
+          "allianceMembership",
+          "allianceJoinDate",
+          "lastLoginDate",
+          "lastHeartBeatDate",
+          "crewDonated",
+          "crewReceived",
+          "pvpAttackWins",
+          "pvpAttackLosses",
+          "pvpAttackDraws",
+          "pvpDefenceWins",
+          "pvpDefenceLosses",
+          "pvpDefenceDraws"
+        ]
+      },
+      "UserHistoryOut": {
+        "description": "An object representing a point in a PSS User's history.",
+        "properties": {
+          "collection": {
+            "$ref": "#/components/schemas/CollectionMetadataOut"
+          },
+          "user": {
+            "$ref": "#/components/schemas/UserOut"
+          }
+        },
+        "required": [
+          "collection",
+          "user"
+        ]
+      },
+      "UserOut": {
+        "description": "An object partially representing a PSS User (player).",
+        "properties": {
+          "userId": {
+            "$ref": "#/components/schemas/prop_user_Id"
+          },
+          "userName": {
+            "$ref": "#/components/schemas/prop_user_Name"
+          },
+          "allianceId": {
+            "$ref": "#/components/schemas/prop_user_AllianceId"
+          },
+          "trophy": {
+            "$ref": "#/components/schemas/prop_user_Trophy"
+          },
+          "allianceScore": {
+            "$ref": "#/components/schemas/prop_user_AllianceScore"
+          },
+          "allianceMembership": {
+            "$ref": "#/components/schemas/prop_user_AllianceMembership_out"
+          },
+          "allianceJoinDate": {
+            "$ref": "#/components/schemas/prop_user_AllianceJoinDate_out"
+          },
+          "lastLoginDate": {
+            "$ref": "#/components/schemas/prop_user_LastLoginDate_out"
+          },
+          "lastHeartBeatDate": {
+            "$ref": "#/components/schemas/prop_user_LastHeartBeatDate_out"
+          },
+          "crewDonated": {
+            "$ref": "#/components/schemas/prop_user_CrewDonated"
+          },
+          "crewReceived": {
+            "$ref": "#/components/schemas/prop_user_CrewReceived"
+          },
+          "pvpAttackWins": {
+            "$ref": "#/components/schemas/prop_user_PvpAttackWins"
+          },
+          "pvpAttackLosses": {
+            "$ref": "#/components/schemas/prop_user_PvpAttackLosses"
+          },
+          "pvpAttackDraws": {
+            "$ref": "#/components/schemas/prop_user_PvpAttackDraws"
+          },
+          "pvpDefenceWins": {
+            "$ref": "#/components/schemas/prop_user_PvpDefenceWins"
+          },
+          "pvpDefenceLosses": {
+            "$ref": "#/components/schemas/prop_user_PvpDefenceLosses"
+          },
+          "pvpDefenceDraws": {
+            "$ref": "#/components/schemas/prop_user_PvpDefenceDraws"
+          },
+          "championshipScore": {
+            "$ref": "#/components/schemas/prop_user_ChampionshipScore"
+          },
+          "highestTrophy": {
+            "$ref": "#/components/schemas/prop_user_HighestTrophy"
+          },
+          "tournamentAttemptsLeft": {
+            "$ref": "#/components/schemas/prop_user_TournamentAttemptsLeft_out"
+          },
+          "alliance": {
+            "$ref": "#/components/schemas/AllianceOut"
+          }
+        },
+        "required": [
+          "userId",
+          "userName",
+          "allianceId",
+          "trophy",
+          "allianceScore",
+          "allianceMembership",
+          "allianceJoinDate",
+          "lastLoginDate",
+          "lastHeartBeatDate",
+          "crewDonated",
+          "crewReceived",
+          "pvpAttackWins",
+          "pvpAttackLosses",
+          "pvpAttackDraws",
+          "pvpDefenceWins",
+          "pvpDefenceLosses",
+          "pvpDefenceDraws"
+        ]
+      },
+      "UserUpload": {
+        "description": "An array with 17, 18, 19 or 20 elements (Id, Name, AllianceId, Trophy, AllianceScore, AllianceMembership, AllianceJoinDate, LastoginDate, LastHeartBeatDate, CrewDonated, CrewReceived, PVPAttackWins, PVPAttackLosses, PVPAttackDraws, PVPDefenceWins, PVPDefenceLosses, PVPDefenceDraws, optional: ChampionshipScore, optional: HighestTrophy, optional: TournamentBonusScore).",
+        "type": "array",
+        "items": [
+          {
+            "$ref": "#/components/schemas/prop_user_Id_asString"
+          },
+          {
+            "$ref": "#/components/schemas/prop_user_Name"
+          },
+          {
+            "$ref": "#/components/schemas/prop_user_AllianceId"
+          },
+          {
+            "$ref": "#/components/schemas/prop_user_Trophy"
+          },
+          {
+            "$ref": "#/components/schemas/prop_user_AllianceScore"
+          },
+          {
+            "$ref": "#/components/schemas/prop_user_AllianceMembership_create"
+          },
+          {
+            "$ref": "#/components/schemas/prop_user_AllianceJoinDate_create"
+          },
+          {
+            "$ref": "#/components/schemas/prop_user_LastLoginDate_create"
+          },
+          {
+            "$ref": "#/components/schemas/prop_user_LastHeartBeatDate_create"
+          },
+          {
+            "$ref": "#/components/schemas/prop_user_CrewDonated"
+          },
+          {
+            "$ref": "#/components/schemas/prop_user_CrewReceived"
+          },
+          {
+            "$ref": "#/components/schemas/prop_user_PvpAttackWins"
+          },
+          {
+            "$ref": "#/components/schemas/prop_user_PvpAttackLosses"
+          },
+          {
+            "$ref": "#/components/schemas/prop_user_PvpAttackDraws"
+          },
+          {
+            "$ref": "#/components/schemas/prop_user_PvpDefenceWins"
+          },
+          {
+            "$ref": "#/components/schemas/prop_user_PvpDefenceLosses"
+          },
+          {
+            "$ref": "#/components/schemas/prop_user_PvpDefenceDraws"
+          },
+          {
+            "$ref": "#/components/schemas/prop_user_ChampionshipScore"
+          },
+          {
+            "$ref": "#/components/schemas/prop_user_HighestTrophy"
+          },
+          {
+            "$ref": "#/components/schemas/prop_user_TournamentBonusScore"
+          }
+        ],
+        "minItems": 17,
+        "maxItems": 20,
+        "examples": [
+          "[876543210, \"Some username\", 43801, 4847, 0, 4, 191925293, 265343984, 265344565, 3339, 3178, 4764, 447, 61, 241, 729, 9, 0, 5000, 0]",
+          "[987654321, \"Some other name\", 43801, 4836, 0, 5, 210719841, 264613066, 264614336, 498, 1096, 5165, 235, 4, 500, 3323, 11, 0, 4885, 0]"
+        ]
+      },
+      "UserUploadArray": {
+        "description": "An array of User objects as denoted in a data Collection JSON file of schema version 4 or above.",
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/UserUpload"
+        },
+        "minItems": 0,
+        "maxItems": 10100,
+        "examples": [
+          "[[876543210, \"Some username\", 43801, 4847, 0, 4, 191925293, 265343984, 265344565, 3339, 3178, 4764, 447, 61, 241, 729, 9, 0, 5000, 0], [987654321, \"Some other name\", 43801, 4836, 0, 5, 210719841, 264613066, 264614336, 498, 1096, 5165, 235, 4, 500, 3323, 11, 0, 4885, 0]]"
+        ]
+      },
+      "enum_error_code": {
+        "description": "A custom error code, more detailed than the HTTP status code.",
+        "oneOf": [
+          {
+            "title": "Duplicate Collection",
+            "const": "DUPLICATE_COLLECTION",
+            "description": "A collection with this timestamp already exists."
+          },
+          {
+            "title": "Invalid Parameter Format",
+            "const": "INVALID_PARAMETER_FORMAT",
+            "description": "A parameter is not of the expected type representation. Check the error message and description for more details."
+          },
+          {
+            "title": "Parameter Out of Bounds",
+            "const": "PARAMETER_OUT_OF_BOUNDS",
+            "description": "A parameter value is not within the expected range. Check the error message and description for more details."
+          },
+          {
+            "title": "Invalid Parameter Value",
+            "const": "INVALID_PARAMETER_VALUE",
+            "description": "A parameter received an invalid value. Check the error message and description for more details."
+          },
+          {
+            "title": "Invalid Parameter Values",
+            "const": "INVALID_PARAMETER_VALUES",
+            "description": "Two or more parameters received an invalid value. Check the error message and description for more details."
+          }
+        ],
+        "examples": [
+          "INVALID_PARAMETER_VALUE"
+        ]
+      },
+      "enum_param_allianceProperties": {
+        "description": "Choose, which properties should be included in the Alliance object(s) in the response. Specify no value to have all properties returned.",
+        "anyOf": [
+          {
+            "title": "Alliance ID",
+            "const": "allianceId",
+            "description": "Include the fleet's ID in the response."
+          },
+          {
+            "title": "Alliance Name",
+            "const": "allianceName",
+            "description": "Include the fleet's name in the response."
+          },
+          {
+            "title": "Championship Score",
+            "const": "championshipScore",
+            "description": "Include the fleet's championship score in the response."
+          },
+          {
+            "title": "Division Design ID",
+            "const": "divisionDesignId",
+            "description": "Include the fleet's division design ID in the response."
+          },
+          {
+            "title": "Number of Approved Members",
+            "const": "numberOfApprovedMembers",
+            "description": "Include the number of the fleet's approved members in the response."
+          },
+          {
+            "title": "Number of Members",
+            "const": "numberOfMembers",
+            "description": "Include the number of the fleet's members in the response."
+          },
+          {
+            "title": "Score",
+            "const": "score",
+            "description": "Include the fleet's star count in the response."
+          },
+          {
+            "title": "Trophy",
+            "const": "trophy",
+            "description": "Include the fleet's trophy count in the response."
+          },
+          {
+            "title": "Members",
+            "const": "allianceMembers",
+            "description": "Include the fleet's members in the response."
+          }
+        ]
+      },
+      "enum_param_interval": {
+        "description": "Specify the interval of the data returned.",
+        "oneOf": [
+          {
+            "title": "Hourly",
+            "const": "hour",
+            "description": "Return hourly data recorded 1 minute before a given full hour, if possible. Hourly data may not be available."
+          },
+          {
+            "title": "Daily",
+            "const": "day",
+            "description": "Return daily data recorded 1 minute before daily reset, if possible. Daily data may not be available."
+          },
+          {
+            "title": "Monthly",
+            "const": "month",
+            "description": "Return monthly data recorded 1 minute before monthly reset, if possible. Monthly data may not be available."
+          }
+        ],
+        "default": "month",
+        "example": "day"
+      },
+      "enum_param_metadataProperties": {
+        "description": "Choose, which properties should be included in the CollectionMetadata object(s) in the response. Specify no value to have all properties returned.",
+        "anyOf": [
+          {
+            "title": "Collection ID",
+            "const": "collection_id",
+            "description": "Include the collection's ID in the response."
+          },
+          {
+            "title": "Timestamp",
+            "const": "timestamp",
+            "description": "Include the collection's timestamp in the response."
+          },
+          {
+            "title": "Duration",
+            "const": "duration",
+            "description": "Include the collection's duration in the response."
+          },
+          {
+            "title": "Fleet Count",
+            "const": "fleet_count",
+            "description": "Include the collection's fleet count in the response."
+          },
+          {
+            "title": "User Count",
+            "const": "user_count",
+            "description": "Include the collection's user count in the response."
+          },
+          {
+            "title": "Tournament Running",
+            "const": "tournament_running",
+            "description": "Include, whether a tournament was active during the collection in the response."
+          },
+          {
+            "title": "Max Tournament Battle Attempts",
+            "const": "max_tournament_battle_attempts",
+            "description": "Include the collection's maximum tournament battle attempts in the response."
+          }
+        ]
+      },
+      "enum_param_userProperties": {
+        "description": "Choose, which properties should be included in the User object(s) in the response. Specify no value to have all properties returned.",
+        "anyOf": [
+          {
+            "title": "User ID",
+            "const": "user_id",
+            "description": "Include the user's ID in the response."
+          },
+          {
+            "title": "User Name",
+            "const": "user_name",
+            "description": "Include the user's name in the response."
+          },
+          {
+            "title": "Alliance ID",
+            "const": "allianceId",
+            "description": "Include the user's fleet ID in the response."
+          },
+          {
+            "title": "Trophy",
+            "const": "trophy",
+            "description": "Include the user's trophy count in the response."
+          },
+          {
+            "title": "Alliance Score",
+            "const": "alliance_score",
+            "description": "Include the user's star count in the response."
+          },
+          {
+            "title": "Alliance Membership",
+            "const": "allianceMembership",
+            "description": "Include the user's fleet rank in the response."
+          },
+          {
+            "title": "Alliance Join Date",
+            "const": "alliance_join_date",
+            "description": "Include the user's fleet join date in the response."
+          },
+          {
+            "title": "Last Login Date",
+            "const": "last_login_date",
+            "description": "Include the user's last login date in the response."
+          },
+          {
+            "title": "Last Heart Beat Date",
+            "const": "last_heart_beat_date",
+            "description": "Include the user's last heartbeat date in the response."
+          },
+          {
+            "title": "Crew Donated",
+            "const": "crew_donated",
+            "description": "Include the user's donated crews count in the response."
+          },
+          {
+            "title": "Crew Received",
+            "const": "crew_received",
+            "description": "Include the user's borrowed crews count in the response."
+          },
+          {
+            "title": "PvP Attack Wins",
+            "const": "pvp_attack_wins",
+            "description": "Include the user's PvP attack wins in the response."
+          },
+          {
+            "title": "PvP Attack Losses",
+            "const": "pvp_attack_losses",
+            "description": "Include the user's PvP attack losses in the response."
+          },
+          {
+            "title": "PvP Attack Draws",
+            "const": "pvp_attack_draws",
+            "description": "Include the user's PvP attack draws in the response."
+          },
+          {
+            "title": "PvP Defense Wins",
+            "const": "pvp_defence_wins",
+            "description": "Include the user's PvP defense wins in the response."
+          },
+          {
+            "title": "PvP Defense Losses",
+            "const": "pvp_defence_losses",
+            "description": "Include the user's PvP defense losses in the response."
+          },
+          {
+            "title": "PvP Defense Draws",
+            "const": "pvp_defence_draws",
+            "description": "Include the user's PvP defense draws in the response."
+          },
+          {
+            "title": "Championship Score",
+            "const": "championshipScore",
+            "description": "Include the user's championship score in the response."
+          },
+          {
+            "title": "Highest Trophy",
+            "const": "highest_trophy",
+            "description": "Include the user's highest trophy count in the response."
+          },
+          {
+            "title": "Tournament Attempts Left",
+            "const": "tournament_attempts_left",
+            "description": "Include the user's remaining tournament battle attemtps in the response."
+          },
+          {
+            "title": "Alliance",
+            "const": "alliance",
+            "description": "Include the user's alliance in the response."
+          }
+        ]
+      },
+      "enum_user_AllianceMembership_create": {
+        "oneOf": [
+          {
+            "title": "None",
+            "const": -1,
+            "description": "This User is not member of an Alliance."
+          },
+          {
+            "title": "FleetAdmiral",
+            "const": 0,
+            "description": "This User is of rank FleetAdmiral."
+          },
+          {
+            "title": "ViceAdmiral",
+            "const": 1,
+            "description": "This User is of rank ViceAdmiral."
+          },
+          {
+            "title": "Commander",
+            "const": 2,
+            "description": "This User is of rank Commander."
+          },
+          {
+            "title": "Major",
+            "const": 3,
+            "description": "This User is of rank Major."
+          },
+          {
+            "title": "Lieutenant",
+            "const": 4,
+            "description": "This User is of rank Lieutenant."
+          },
+          {
+            "title": "Ensign",
+            "const": 5,
+            "description": "This User is of rank Ensign."
+          },
+          {
+            "title": "Candidate",
+            "const": 6,
+            "description": "This User is of rank Candidate."
+          }
+        ],
+        "description": "A mapping of the PSS property `AllianceMembership` of the User to integer values."
+      },
+      "enum_user_AllianceMembership_createLegacy": {
+        "oneOf": [
+          {
+            "title": "None",
+            "const": "None",
+            "description": "This User is not member of an Alliance."
+          },
+          {
+            "title": "FleetAdmiral",
+            "const": "FleetAdmiral",
+            "description": "This User is of rank FleetAdmiral."
+          },
+          {
+            "title": "ViceAdmiral",
+            "const": "ViceAdmiral",
+            "description": "This User is of rank ViceAdmiral."
+          },
+          {
+            "title": "Commander",
+            "const": "Commander",
+            "description": "This User is of rank Commander."
+          },
+          {
+            "title": "Major",
+            "const": "Major",
+            "description": "This User is of rank Major."
+          },
+          {
+            "title": "Lieutenant",
+            "const": "Lieutenant",
+            "description": "This User is of rank Lieutenant."
+          },
+          {
+            "title": "Ensign",
+            "const": "Ensign",
+            "description": "This User is of rank Ensign."
+          },
+          {
+            "title": "Candidate",
+            "const": "Candidate",
+            "description": "This User is of rank Candidate."
+          }
+        ],
+        "description": "The PSS property `AllianceMembership` (fleet rank) of the User as returned by the PSS API."
+      },
+      "enum_user_AllianceMembership_out": {
+        "$ref": "#/components/schemas/enum_user_AllianceMembership_createLegacy"
+      },
+      "link_allianceHistory_getAllianceById": {
+        "description": "A `collectionId` value and the `allianceId` value in the response can be used as the `collectionId` and `allianceId` parameters in `GET /collections/{collectionId}/alliances/{allianceId}`.",
+        "operationId": "getAlliance",
+        "parameters": {
+          "allianceId": "$response.body#/0/alliance/allianceId",
+          "collectionId": "$response.body#/0/collection/collectionId"
+        }
+      },
+      "link_allianceHistory_getUserById": {
+        "description": "A `collectionId` value and a `userId` value in the response can be used as the `collectionId` and `userId` parameters in `GET /collections/{collectionId}/users/{userId}`.",
+        "operationId": "getUser",
+        "parameters": {
+          "collectionId": "$response.body#/0/collection/collectionId",
+          "userId": "$response.body#/0/alliance/allianceMembers/0/userId"
+        }
+      },
+      "link_allianceHistory_getUserHistoryById": {
+        "description": "A `userId` value in the response can be used as the `userId` parameter in `GET /users/{userId}`.",
+        "operationId": "getUserHistory",
+        "parameters": {
+          "userId": "$response.body#/0/alliance/allianceMembers/0/userId"
+        }
+      },
+      "link_collection_alliance_getAllianceHistoryById": {
+        "description": "The `allianceId` value in the response can be used as the `allianceId` parameter in `GET /alliances/{allianceId}`.",
+        "operationId": "getAllianceHistory",
+        "parameters": {
+          "allianceId": "$response.body#/allianceId"
+        }
+      },
+      "link_collection_alliance_getUserById": {
+        "description": "The `collectionId` parameter in the path and a `userId` value in the response can be used as the `collectionId` and `userId` parameters in `GET /collections/{collectionId}/users/{userId}`.",
+        "operationId": "getUser",
+        "parameters": {
+          "collectionId": "$request.path.collectionId",
+          "userId": "$response.body#/allianceMembers/0/userId"
+        }
+      },
+      "link_collection_alliance_getUserHistoryById": {
+        "description": "A `userId` value in the response can be used as the `userId` parameter in `GET /users/{userId}`.",
+        "operationId": "getUserHistory",
+        "parameters": {
+          "userId": "$response.body#/allianceMembers/0/userId"
+        }
+      },
+      "link_collection_alliances_getUserById": {
+        "description": "The `collectionId` parameter in the path and a `userId` value in the response can be used as the `collectionId` and `userId` parameters in `GET /collections/{collectionId}/users/{userId}`.",
+        "operationId": "getUser",
+        "parameters": {
+          "collectionId": "$request.path.collectionId",
+          "userId": "$response.body#/0/allianceMembers/0/userId"
+        }
+      },
+      "link_collection_alliances_getUserHistoryById": {
+        "description": "A `userId` value in the response can be used as the `userId` parameter in `GET /users/{userId}`.",
+        "operationId": "getUserHistory",
+        "parameters": {
+          "userId": "$response.body#/0/allianceMembers/0/userId"
+        }
+      },
+      "link_collection_deleteCollectionById": {
+        "description": "The `collectionId` parameter in the path can be used as the `collectionId` parameter in `DELETE /collections/{collectionId}`.",
+        "operationId": "deleteCollection",
+        "parameters": {
+          "collectionId": "$request.path.collectionId"
+        }
+      },
+      "link_collection_getAllianceById": {
+        "description": "The `collectionId` parameter in the path and an `allianceId` value in the response can be used as the `collectionId` and `allianceId` parameters in `GET /collections/{collectionId}/alliances/{allianceId}`.",
+        "operationId": "getAlliance",
+        "parameters": {
+          "allianceId": "$response.body#/alliances/0/allianceId",
+          "collectionId": "$request.path.collectionId"
+        }
+      },
+      "link_collection_getCollectionAlliances": {
+        "description": "The `collectionId` parameter in the path can be used as the `collectionId` parameter in `GET /collections/{collectionId}/alliances`.",
+        "operationId": "getAlliances",
+        "parameters": {
+          "collectionId": "$request.path.collectionId"
+        }
+      },
+      "link_collection_getCollectionById": {
+        "description": "The `collectionId` parameter in the path can be used as the `collectionId` parameter in `GET /collections/{collectionId}`.",
+        "operationId": "getCollection",
+        "parameters": {
+          "collectionId": "$request.path.collectionId"
+        }
+      },
+      "link_collection_getUserById": {
+        "description": "The `collectionId` parameter in the path and a `userId` value in the response can be used as the `collectionId` and `userId` parameters in `GET /collections/{collectionId}/users/{userId}`.",
+        "operationId": "getUser",
+        "parameters": {
+          "collectionId": "$request.path.collectionId",
+          "userId": "$response.body#/users/0/userId"
+        }
+      },
+      "link_collection_getAllianceHistoryById": {
+        "description": "An `allianceId` value in the response can be used as the `allianceId` parameter in `GET /alliances/{allianceId}`.",
+        "operationId": "getAllianceHistory",
+        "parameters": {
+          "allianceId": "$response.body#/alliances/0/allianceId"
+        }
+      },
+      "link_collection_getCollectionTop100": {
+        "description": "A `collectionId` value in the response can be used as the `collectionId` parameter in `GET /collections/{collectionId}/top100Users`.",
+        "operationId": "getTop100Users",
+        "parameters": {
+          "collectionId": "$response.body#/0/collection/collectionId"
+        }
+      },
+      "link_collection_getCollectionUsers": {
+        "description": "The `collectionId` parameter in the path can be used as the `collectionId` parameter in `GET /collections/{collectionId}/users`.",
+        "operationId": "getUser",
+        "parameters": {
+          "collectionId": "$request.path.collectionId"
+        }
+      },
+      "link_collection_getUserHistoryById": {
+        "description": "A `userId` value in the response can be used as the `userId` parameter in `GET /users/{userId}`.",
+        "operationId": "getUserHistory",
+        "parameters": {
+          "allianceId": "$response.body#/users/0/userId"
+        }
+      },
+      "link_collection_updateCollectionById": {
+        "description": "The `collectionId` parameter in the path can be used as the `collectionId` parameter in `PUT /collections/{collectionId}`.",
+        "operationId": "updateCollection",
+        "parameters": {
+          "collectionId": "$request.path.collectionId"
+        }
+      },
+      "link_collections_deleteCollectionById": {
+        "description": "A `collectionId` value in the response can be used as the `collectionId` parameter in `DELETE /collections/{collectionId}`.",
+        "operationId": "deleteCollection",
+        "parameters": {
+          "collectionId": "$response.body#/0/metadata/collectionId"
+        }
+      },
+      "link_collections_getCollectionAlliances": {
+        "description": "A `collectionId` value in the response can be used as the `collectionId` parameter in `GET /collections/{collectionId}/alliances`.",
+        "operationId": "getAlliances",
+        "parameters": {
+          "collectionId": "$response.body#/0/metadata/collectionId"
+        }
+      },
+      "link_collections_getCollectionById": {
+        "description": "A `collectionId` value in the response can be used as the `collectionId` parameter in `GET /collections/{collectionId}`.",
+        "operationId": "getCollection",
+        "parameters": {
+          "collectionId": "$response.body#/0/metadata/collectionId"
+        }
+      },
+      "link_collections_getCollectionTop100": {
+        "description": "A `collectionId` value in the response can be used as the `collectionId` parameter in `GET /collections/{collectionId}/top100Users`.",
+        "operationId": "getTop100Users",
+        "parameters": {
+          "collectionId": "$response.body#/0/metadata/collectionId"
+        }
+      },
+      "link_collections_getCollectionUsers": {
+        "description": "A `collectionId` value in the response can be used as the `collectionId` parameter in `GET /collections/{collectionId}/users`.",
+        "operationId": "getUsers",
+        "parameters": {
+          "collectionId": "$response.body#/0/metadata/collectionId"
+        }
+      },
+      "link_collections_updateCollectionById": {
+        "description": "A `collectionId` value in the response can be used as the `collectionId` parameter in `PUT /collections/{collectionId}`.",
+        "operationId": "updateCollection",
+        "parameters": {
+          "collectionId": "$response.body#/0/metadata/collectionId"
+        }
+      },
+      "link_history_deleteCollectionById": {
+        "description": "A `collectionId` value in the response can be used as the `collectionId` parameter in `DELETE /collections/{collectionId}`.",
+        "operationId": "deleteCollection",
+        "parameters": {
+          "collectionId": "$response.body#/0/collection/collectionId"
+        }
+      },
+      "link_history_getCollectionAlliances": {
+        "description": "A `collectionId` value in the response can be used as the `collectionId` parameter in `GET /collections/{collectionId}/alliances`.",
+        "operationId": "getAlliances",
+        "parameters": {
+          "collectionId": "$response.body#/0/collection/collectionId"
+        }
+      },
+      "link_history_getCollectionById": {
+        "description": "A `collectionId` value in the response can be used as the `collectionId` parameter in `GET /collections/{collectionId}`.",
+        "operationId": "getCollection",
+        "parameters": {
+          "collectionId": "$response.body#/0/collection/collectionId"
+        }
+      },
+      "link_history_getCollectionTop100": {
+        "description": "A `collectionId` value in the response can be used as the `collectionId` parameter in `GET /collections/{collectionId}/top100Users`.",
+        "operationId": "getTop100Users",
+        "parameters": {
+          "collectionId": "$response.body#/0/collection/collectionId"
+        }
+      },
+      "link_history_getCollectionUsers": {
+        "description": "A `collectionId` value in the response can be used as the `collectionId` parameter in `GET /collections/{collectionId}/users`.",
+        "operationId": "getUsers",
+        "parameters": {
+          "collectionId": "$response.body#/0/collection/collectionId"
+        }
+      },
+      "link_history_updateCollectionById": {
+        "description": "A `collectionId` value in the response can be used as the `collectionId` parameter in `PUT /collections/{collectionId}`.",
+        "operationId": "updateCollection",
+        "parameters": {
+          "collectionId": "$response.body#/0/collection/collectionId"
+        }
+      },
+      "link_collection_user_getAllianceById": {
+        "description": "The `collectionId` parameter in the path and the `allianceId` value in the response can be used as the `collectionId` and `allianceId` parameters in `GET /collections/{collectionId}/alliances/{allianceId}`.",
+        "operationId": "getAlliance",
+        "parameters": {
+          "allianceId": "$response.body#/user/alliance/allianceId",
+          "collectionId": "$request.path.collectionId"
+        }
+      },
+      "link_collection_user_getAllianceHistoryById": {
+        "description": "The `allianceId` value in the response can be used as the `allianceId` parameter in `GET /alliances/{allianceId}`.",
+        "operationId": "getAllianceHistory",
+        "parameters": {
+          "allianceId": "$response.body#/user/alliance/allianceId"
+        }
+      },
+      "link_collection_users_getAllianceById": {
+        "description": "The `collectionId` parameter in the path and an `allianceId` value in the response can be used as the `collectionId` and `allianceId` parameters in `GET /collections/{collectionId}/alliances/{allianceId}`.",
+        "operationId": "getAlliance",
+        "parameters": {
+          "allianceId": "$response.body#/users/0/allianceId",
+          "collectionId": "$request.path.collectionId"
+        }
+      },
+      "link_collection_users_getAllianceHistoryById": {
+        "description": "An `allianceId` value in the response can be used as the `allianceId` parameter in `GET /alliances/{allianceId}`.",
+        "operationId": "getAllianceHistory",
+        "parameters": {
+          "allianceId": "$response.body#/users/0/allianceId"
+        }
+      },
+      "link_collection_user_getUserHistoryById": {
+        "description": "The `userId` value in the response can be used as the `userId` parameter in `GET /users/{userId}`.",
+        "operationId": "getUserHistory",
+        "parameters": {
+          "allianceId": "$response.body#/user/userId"
+        }
+      },
+      "link_userHistory_getAllianceById": {
+        "description": "A `collectionId` value and an `allianceId` value in the response can be used as the `collectionId` and `allianceId` parameters in `GET /collections/{collectionId}/alliances/{allianceId}`.",
+        "operationId": "getAlliance",
+        "parameters": {
+          "allianceId": "$response.body#/0/user/allianceId",
+          "collectionId": "$response.body#/0/collection/collectionId"
+        }
+      },
+      "link_userHistory_getAllianceHistoryById": {
+        "description": "An `allianceId` value in the response can be used as the `allianceId` parameter in `GET /alliances/{allianceId}`.",
+        "operationId": "getAllianceHistory",
+        "parameters": {
+          "allianceId": "$response.body#/0/user/allianceId"
+        }
+      },
+      "link_userHistory_getUserById": {
+        "description": "A `collectionId` value and the `userId` value in the response can be used as the `collectionId` and `userId` parameters in `GET /collections/{collectionId}/users/{userId}`.",
+        "operationId": "getUser",
+        "parameters": {
+          "collectionId": "$response.body#/0/collection/collectionId",
+          "userId": "$response.body#/0/user/userId"
+        }
+      },
+      "prop_alliance_AllianceId": {
+        "name": "allianceId",
+        "description": "The PSS property `AllianceId` of the Alliance as returned by the PSS API.",
+        "nullable": false,
+        "type": "integer",
+        "format": "int32",
+        "minimum": 0,
+        "maximum": 2147483647,
+        "examples": [
+          9343
+        ]
+      },
+      "prop_alliance_AllianceId_asString": {
+        "description": "The PSS property `AllianceId` of the Alliance as returned by the PSS API. Must represent a non-negative 32 bit integer value.",
+        "nullable": false,
+        "type": "string",
+        "pattern": "^\\d{1,10}$",
+        "minLength": 1,
+        "maxLength": 10,
+        "examples": [
+          "9343"
+        ]
+      },
+      "prop_alliance_AllianceName": {
+        "name": "allianceName",
+        "description": "The PSS property `AllianceName` of the Alliance as returned by the PSS API.",
+        "nullable": false,
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 16,
+        "examples": [
+          "Trek Federation"
+        ]
+      },
+      "prop_alliance_ChampionshipScore": {
+        "name": "championshipScore",
+        "description": "The PSS property `ChampionshipScore` of the Alliance as returned by the PSS API.",
+        "nullable": true,
+        "type": "integer",
+        "format": "int32",
+        "minimum": 0,
+        "maximum": 2147483647,
+        "examples": [
+          280
+        ]
+      },
+      "prop_alliance_DivisionDesignId": {
+        "name": "divisionDesignId",
+        "description": "The PSS property `DivisionDesignId` of the Alliance as returned by the PSS API.",
+        "nullable": false,
+        "type": "integer",
+        "format": "int32",
+        "minimum": 0,
+        "maximum": 2147483647,
+        "examples": [
+          1
+        ]
+      },
+      "prop_alliance_DivisionDesignId_asString": {
+        "description": "The PSS property `DivisionDesignId` of the Alliance as returned by the PSS API.  Must represent a non-negative 32 bit integer value. Might not be present at all in any of the Alliances.",
+        "nullable": false,
+        "type": "string",
+        "pattern": "^\\d{1,10}$",
+        "minLength": 1,
+        "maxLength": 10,
+        "examples": [
+          "1"
+        ]
+      },
+      "prop_alliance_NumberOfMembers": {
+        "name": "numberOfMembers",
+        "description": "The PSS property `NumberOfMembers` of the Alliance as returned by the PSS API.",
+        "nullable": true,
+        "type": "integer",
+        "format": "int32",
+        "minimum": 0,
+        "maximum": 100,
+        "examples": [
+          95
+        ]
+      },
+      "prop_alliance_NumberOfApprovedMembers": {
+        "description": "The PSS property `NumberOfApprovedMembers` of the Alliance as returned by the PSS API.",
+        "nullable": true,
+        "type": "integer",
+        "format": "int32",
+        "minimum": 0,
+        "maximum": 100,
+        "examples": [
+          94
+        ]
+      },
+      "prop_alliance_Score": {
+        "name": "score",
+        "description": "The PSS property `Score` (stars) of the Alliance as returned by the PSS API.",
+        "nullable": false,
+        "type": "integer",
+        "format": "int32",
+        "minimum": 0,
+        "maximum": 2147483647,
+        "examples": [
+          21242
+        ]
+      },
+      "prop_alliance_Score_asString": {
+        "description": "The PSS property `Score` (stars) of the Alliance as returned by the PSS API. Must represent a non-negative 32 bit integer value.",
+        "nullable": false,
+        "type": "string",
+        "pattern": "^\\d{1,10}$",
+        "minLength": 1,
+        "maxLength": 10,
+        "examples": [
+          "21242"
+        ]
+      },
+      "prop_alliance_Trophy": {
+        "name": "trophy",
+        "description": "The PSS property `Trophy` of the Alliance as returned by the PSS API.",
+        "nullable": false,
+        "type": "integer",
+        "format": "int32",
+        "minimum": 0,
+        "maximum": 2147483647,
+        "examples": [
+          506276
+        ]
+      },
+      "prop_collection_CollectionId": {
+        "name": "collection_id",
+        "description": "The ID of the Collection.",
+        "nullable": false,
+        "type": "integer",
+        "format": "int64",
+        "minimum": 0,
+        "maximum": 9223372036854776000,
+        "examples": [
+          1
+        ]
+      },
+      "prop_collection_Duration": {
+        "name": "duration",
+        "description": "The duration of the Collection run in seconds.",
+        "nullable": false,
+        "type": "number",
+        "format": "double",
+        "minimum": 0,
+        "maximum": 3600,
+        "examples": [
+          1.2
+        ]
+      },
+      "prop_collection_FleetCount": {
+        "name": "fleet_count",
+        "description": "The number of Alliances (fleets) in this Collection.",
+        "nullable": false,
+        "type": "integer",
+        "format": "int32",
+        "minimum": 0,
+        "maximum": 101,
+        "examples": [
+          100
+        ]
+      },
+      "prop_collection_MaxTournamentBattleAttempts": {
+        "name": "max_tournament_battle_attempts",
+        "description": "The maximum number of daily tournament battle attempts at the time of retrieving the data.",
+        "nullable": true,
+        "type": "integer",
+        "format": "int32",
+        "minimum": 0,
+        "maximum": 2147483647,
+        "examples": [
+          6
+        ]
+      },
+      "prop_collection_SchemaVersion": {
+        "name": "schema_version",
+        "description": "The schema version of the data in this Collection.",
+        "nullable": false,
+        "type": "integer",
+        "format": "int32",
+        "minimum": 4,
+        "maximum": 9,
+        "examples": [
+          9
+        ]
+      },
+      "prop_collection_Timestamp_create": {
+        "$ref": "#/components/schemas/prop_collection_Timestamp_createLegacy"
+      },
+      "prop_collection_Timestamp_createLegacy": {
+        "name": "timestamp",
+        "description": "The date and time when the data was retrieved from the PSS API. If no timezone information is given, UTC is assumed.",
+        "nullable": false,
+        "type": "string",
+        "format": "date-time",
+        "minLength": 19,
+        "maxLength": 25,
+        "examples": [
+          "2024-02-29 23:59:00"
+        ]
+      },
+      "prop_collection_Timestamp_out": {
+        "$ref": "#/components/schemas/prop_collection_Timestamp_createLegacy"
+      },
+      "prop_collection_TournamentRunning_create": {
+        "name": "tourney_running",
+        "description": "Determines, if the monthly tournament was running at the time of retrieving the data.",
+        "nullable": false,
+        "type": "boolean",
+        "examples": [
+          true
+        ]
+      },
+      "prop_collection_TournamentRunning_createLegacy": {
+        "$ref": "#/components/schemas/prop_collection_TournamentRunning_create"
+      },
+      "prop_collection_TournamentRunning_out": {
+        "name": "tournament_running",
+        "description": "Determines, if the monthly tournament was running at the time of retrieving the data.",
+        "nullable": false,
+        "type": "boolean",
+        "examples": [
+          true
+        ]
+      },
+      "prop_collection_UserCount": {
+        "name": "user_count",
+        "description": "The number of Users (players) in this Collection.",
+        "nullable": false,
+        "type": "integer",
+        "format": "int32",
+        "minimum": 0,
+        "maximum": 10100,
+        "examples": [
+          8123
+        ]
+      },
+      "prop_error_message": {
+        "description": "An error message matching the code.",
+        "nullable": false,
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 512,
+        "examples": [
+          "The parameter 'from' has received an invalid value."
+        ]
+      },
+      "prop_error_details": {
+        "description": "A detailed error message.",
+        "nullable": false,
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 10000,
+        "examples": [
+          "The parameter 'from' must not be in the future."
+        ]
+      },
+      "prop_error_path": {
+        "description": "The API path that returned the error.",
+        "nullable": false,
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 512,
+        "examples": [
+          "/alliances/{allianceId}"
+        ]
+      },
+      "prop_error_suggestion": {
+        "description": "A suggestion for the client on how to fix the error.",
+        "nullable": true,
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 10000,
+        "examples": [
+          "Specify a date and time in the past."
+        ]
+      },
+      "prop_user_AllianceId": {
+        "name": "allianceId",
+        "description": "The PSS property `AllianceId` of the User as returned by the PSS API.",
+        "nullable": true,
+        "type": "integer",
+        "format": "int32",
+        "minimum": 0,
+        "maximum": 2147483647,
+        "examples": [
+          21
+        ]
+      },
+      "prop_user_AllianceId_asString": {
+        "name": "allianceId",
+        "description": "The PSS property `AllianceId` of the User as returned by the PSS API. Must represent a non-negative 32 bit integer value.",
+        "nullable": true,
+        "type": "string",
+        "pattern": "^\\d{1,10}$",
+        "minLength": 1,
+        "maxLength": 10,
+        "examples": [
+          "21"
+        ]
+      },
+      "prop_user_AllianceJoinDate_create": {
+        "name": "alliance_join_date",
+        "type": "integer",
+        "format": "int64",
+        "description": "The PSS property `AllianceJoinDate` of the User converted to the number of seconds since Jan 6th, 2016 (start date of PSS).",
+        "minimum": 0,
+        "maximum": 9223372036854776000,
+        "examples": [
+          252885827
+        ]
+      },
+      "prop_user_AllianceJoinDate_createLegacy": {
+        "name": "alliance_join_date",
+        "description": "The PSS property `AllianceJoinDate` of the User as returned by the PSS API. If no timezone information is given, UTC is assumed.",
+        "nullable": true,
+        "type": "string",
+        "format": "date-time",
+        "minLength": 19,
+        "maxLength": 25,
+        "examples": [
+          "2019-09-28T02:19:46"
+        ]
+      },
+      "prop_user_AllianceJoinDate_out": {
+        "name": "alliance_join_date",
+        "description": "The PSS property `AllianceJoinDate` of the User as returned by the PSS API. If no timezone information is given, UTC is assumed.",
+        "nullable": true,
+        "type": "string",
+        "format": "date-time",
+        "minLength": 19,
+        "maxLength": 25,
+        "examples": [
+          "2019-09-28T02:19:46Z"
+        ]
+      },
+      "prop_user_AllianceMembership_create": {
+        "$ref": "#/components/schemas/enum_user_AllianceMembership_create"
+      },
+      "prop_user_AllianceMembership_createLegacy": {
+        "$ref": "#/components/schemas/enum_user_AllianceMembership_createLegacy"
+      },
+      "prop_user_AllianceMembership_out": {
+        "$ref": "#/components/schemas/enum_user_AllianceMembership_out"
+      },
+      "prop_user_AllianceScore": {
+        "name": "alliance_score",
+        "description": "The PSS property `AllianceScore` (stars) of the User as returned by the PSS API.",
+        "nullable": true,
+        "type": "integer",
+        "format": "int32",
+        "minimum": 0,
+        "maximum": 2147483647,
+        "examples": [
+          270
+        ]
+      },
+      "prop_user_AllianceScore_asString": {
+        "name": "alliance_score",
+        "description": "The PSS property `AllianceScore` (stars) of the User as returned by the PSS API.",
+        "nullable": true,
+        "type": "string",
+        "pattern": "^\\d{1,10}$",
+        "minLength": 1,
+        "maxLength": 10,
+        "examples": [
+          "270"
+        ]
+      },
+      "prop_user_ChampionshipScore": {
+        "name": "championshipScore",
+        "description": "The PSS property `ChampionshipScore` of the User as returned by the PSS API.",
+        "nullable": true,
+        "type": "integer",
+        "format": "int32",
+        "minimum": 0,
+        "maximum": 2147483647,
+        "examples": [
+          240
+        ]
+      },
+      "prop_user_CrewDonated": {
+        "name": "crew_donated",
+        "description": "The PSS property `CrewDonated` of the User as returned by the PSS API.",
+        "nullable": true,
+        "type": "integer",
+        "format": "int32",
+        "minimum": 0,
+        "maximum": 2147483647,
+        "examples": [
+          456
+        ]
+      },
+      "prop_user_CrewReceived": {
+        "name": "crew_received",
+        "description": "The PSS property `CrewReceived` of the User as returned by the PSS API.",
+        "nullable": true,
+        "type": "integer",
+        "format": "int32",
+        "minimum": 0,
+        "maximum": 2147483647,
+        "examples": [
+          183
+        ]
+      },
+      "prop_user_HighestTrophy": {
+        "name": "highest_trophy",
+        "description": "The PSS property `HighestTrophy` of the User as returned by the PSS API.",
+        "nullable": true,
+        "type": "integer",
+        "format": "int32",
+        "minimum": 0,
+        "maximum": 2147483647,
+        "examples": [
+          5000
+        ]
+      },
+      "prop_user_Id": {
+        "name": "user_id",
+        "description": "The PSS property `Id` of the User as returned by the PSS API.",
+        "nullable": true,
+        "type": "integer",
+        "format": "int32",
+        "minimum": 0,
+        "maximum": 2147483647,
+        "examples": [
+          876543210
+        ]
+      },
+      "prop_user_Id_asString": {
+        "name": "user_id",
+        "description": "The PSS property `Id` of the User as returned by the PSS API. Must represent a non-negative 32 bit integer value.",
+        "nullable": true,
+        "type": "string",
+        "pattern": "^\\d{1,10}$",
+        "minLength": 1,
+        "maxLength": 10,
+        "examples": [
+          "876543210"
+        ]
+      },
+      "prop_user_LastHeartBeatDate_create": {
+        "name": "last_heart_beat_date",
+        "type": "integer",
+        "format": "int64",
+        "description": "The PSS property `LastHeartBeatDate` of the User converted to the number of seconds since Jan 6th, 2016 (start date of PSS).",
+        "minimum": 0,
+        "maximum": 9223372036854776000,
+        "examples": [
+          252885827
+        ]
+      },
+      "prop_user_LastHeartBeatDate_out": {
+        "name": "last_heart_beat_date",
+        "description": "The PSS property `LastHeartBeatDate` of the User as returned by the PSS API. If no timezone information is given, UTC is assumed.",
+        "nullable": true,
+        "type": "string",
+        "format": "date-time",
+        "minLength": 19,
+        "maxLength": 25,
+        "examples": [
+          "2019-09-28T02:19:46Z"
+        ]
+      },
+      "prop_user_LastLoginDate_create": {
+        "name": "last_login_date",
+        "type": "integer",
+        "format": "int64",
+        "description": "The PSS property `LastLoginDate` of the User converted to the number of seconds since Jan 6th, 2016 (start date of PSS).",
+        "minimum": 0,
+        "maximum": 9223372036854776000,
+        "examples": [
+          252885827
+        ]
+      },
+      "prop_user_LastLoginDate_createLegacy": {
+        "name": "last_login_date",
+        "description": "The PSS property `LastLoginDate` of the User as returned by the PSS API. If no timezone information is given, UTC is assumed.",
+        "nullable": true,
+        "type": "string",
+        "format": "date-time",
+        "minLength": 19,
+        "maxLength": 25,
+        "examples": [
+          "2019-09-28T02:19:46"
+        ]
+      },
+      "prop_user_LastLoginDate_out": {
+        "$ref": "#/components/schemas/prop_user_LastLoginDate_createLegacy"
+      },
+      "prop_user_Name": {
+        "name": "user_name",
+        "description": "The PSS property `Name` of the User as returned by the PSS API.",
+        "nullable": true,
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 16,
+        "examples": [
+          "The worst."
+        ]
+      },
+      "prop_user_PvpAttackDraws": {
+        "name": "pvp_attack_draws",
+        "description": "The PSS property `PVPAttackWins` of the User as returned by the PSS API.",
+        "nullable": true,
+        "type": "integer",
+        "format": "int32",
+        "minimum": 0,
+        "maximum": 2147483647,
+        "examples": [
+          4
+        ]
+      },
+      "prop_user_PvpAttackLosses": {
+        "name": "pvp_attack_losses",
+        "description": "The PSS property `PVPAttackLosses` of the User as returned by the PSS API.",
+        "nullable": true,
+        "type": "integer",
+        "format": "int32",
+        "minimum": 0,
+        "maximum": 2147483647,
+        "examples": [
+          583
+        ]
+      },
+      "prop_user_PvpAttackWins": {
+        "name": "pvp_attack_wins",
+        "description": "The PSS property `PVPAttackWins` of the User as returned by the PSS API.",
+        "nullable": true,
+        "type": "integer",
+        "format": "int32",
+        "minimum": 0,
+        "maximum": 2147483647,
+        "examples": [
+          7114
+        ]
+      },
+      "prop_user_PvpDefenceDraws": {
+        "name": "pvp_defence_draws",
+        "description": "The PSS property `PVPDefenceDrawss` of the User as returned by the PSS API.",
+        "nullable": true,
+        "type": "integer",
+        "format": "int32",
+        "minimum": 0,
+        "maximum": 2147483647,
+        "examples": [
+          18
+        ]
+      },
+      "prop_user_PvpDefenceLosses": {
+        "name": "pvp_defence_losses",
+        "description": "The PSS property `PVPDefenceLosses` of the User as returned by the PSS API.",
+        "nullable": true,
+        "type": "integer",
+        "format": "int32",
+        "minimum": 0,
+        "maximum": 2147483647,
+        "examples": [
+          4125
+        ]
+      },
+      "prop_user_PvpDefenceWins": {
+        "name": "pvp_defence_wins",
+        "description": "The PSS property `PVPDefenceWins` of the User as returned by the PSS API.",
+        "nullable": true,
+        "type": "integer",
+        "format": "int32",
+        "minimum": 0,
+        "maximum": 2147483647,
+        "examples": [
+          848
+        ]
+      },
+      "prop_user_TournamentAttemptsLeft_out": {
+        "name": "tournament_attempts_left",
+        "description": "A calculated property based on the PSS property `TournamentBonusScore` of the User.",
+        "nullable": true,
+        "type": "integer",
+        "format": "int32",
+        "minimum": 0,
+        "maximum": 2147483647,
+        "examples": [
+          1
+        ]
+      },
+      "prop_user_TournamentBonusScore": {
+        "name": "tournament_bonus_score",
+        "nullable": true,
+        "type": "integer",
+        "format": "int32",
+        "description": "The PSS property `TournamentBonusScore` of the User as returned by the PSS API.",
+        "minimum": 0,
+        "maximum": 2147483647,
+        "examples": [
+          1
+        ]
+      },
+      "prop_user_Trophy": {
+        "name": "trophy",
+        "description": "The PSS property `Trophy` of the User as returned by the PSS API.",
+        "nullable": true,
+        "type": "integer",
+        "format": "int32",
+        "minimum": 0,
+        "maximum": 2147483647,
+        "examples": [
+          1000
+        ]
+      },
+      "prop_user_Trophy_asString": {
+        "name": "trophy",
+        "description": "The PSS property `Trophy` of the User as returned by the PSS API.",
+        "nullable": true,
+        "type": "string",
+        "pattern": "^\\d{1,10}$",
+        "minLength": 1,
+        "maxLength": 10,
+        "examples": [
+          "1000"
+        ]
+      },
+      "prop_timestamp": {
+        "description": "An ISO 8601 timestamp with timezone information.",
+        "nullable": true,
+        "type": "string",
+        "format": "date-time",
+        "minLength": 20,
+        "maxLength": 25,
+        "examples": [
+          "2019-09-28T02:19:46Z"
+        ]
+      }
+    },
+    "parameters": {
+      "path_allianceId": {
+        "in": "path",
+        "name": "allianceId",
+        "description": "The ID of a PSS Alliance.",
+        "required": true,
+        "schema": {
+          "type": "integer",
+          "format": "int32",
+          "minimum": 0,
+          "maximum": 2147483647,
+          "example": 21
+        }
+      },
+      "path_collectionId": {
+        "in": "path",
+        "name": "collectionId",
+        "description": "The ID of a PSS fleet data Collection.",
+        "required": true,
+        "schema": {
+          "type": "integer",
+          "format": "int64",
+          "minimum": 0,
+          "maximum": 9223372036854776000,
+          "example": 1
+        }
+      },
+      "path_userId": {
+        "in": "path",
+        "name": "userId",
+        "description": "The ID of a PSS User.",
+        "required": true,
+        "schema": {
+          "type": "integer",
+          "format": "int32",
+          "minimum": 0,
+          "maximum": 2147483647,
+          "example": 876543210
+        }
+      },
+      "query_allianceProperties": {
+        "in": "query",
+        "name": "allianceProperties",
+        "description": "The properties of the Alliance object to be included in the response. If not specified, all properties will be returned.",
+        "required": false,
+        "schema": {
+          "$ref": "#/components/schemas/enum_param_allianceProperties"
+        }
+      },
+      "query_desc": {
+        "in": "query",
+        "name": "desc",
+        "required": false,
+        "description": "Return the results in descending order by timestamp.",
+        "schema": {
+          "type": "boolean",
+          "default": false,
+          "example": true
+        }
+      },
+      "query_divisionDesignId": {
+        "in": "query",
+        "name": "divisionDesignId",
+        "description": "The ID of the PSS Monthly Fleet Tournament Division.",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "format": "int32",
+          "minimum": 0,
+          "maximum": 2147483647,
+          "example": 1
+        }
+      },
+      "query_fromDate": {
+        "in": "query",
+        "name": "fromDate",
+        "description": "Return only Collections created after this date and time. May not be in the future. If no timezone information is given, UTC is assumed.",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "format": "date-time",
+          "minLength": 19,
+          "maxLength": 25,
+          "default": "2016-01-06T00:00:00Z",
+          "example": "2019-10-31T23:59:00Z"
+        }
+      },
+      "query_interval": {
+        "in": "query",
+        "name": "interval",
+        "description": "Specify the interval of the data returned.",
+        "required": false,
+        "schema": {
+          "$ref": "#/components/schemas/enum_param_interval"
+        }
+      },
+      "query_metadataProperties": {
+        "in": "query",
+        "name": "metadataProperties",
+        "description": "The properties of the Collection Metadata object to be included in the response. If not specified, all properties will be returned.",
+        "required": false,
+        "schema": {
+          "$ref": "#/components/schemas/enum_param_metadataProperties"
+        }
+      },
+      "query_skip": {
+        "in": "query",
+        "name": "skip",
+        "required": false,
+        "description": "Skip this number of results from the result set.",
+        "schema": {
+          "type": "integer",
+          "format": "int32",
+          "minimum": 0,
+          "maximum": 2147483647,
+          "default": 0,
+          "example": 50
+        }
+      },
+      "query_take": {
+        "in": "query",
+        "name": "take",
+        "required": false,
+        "description": "Limit the number of results returned.",
+        "schema": {
+          "type": "integer",
+          "format": "int32",
+          "minimum": 0,
+          "maximum": 100,
+          "default": 100,
+          "example": 25
+        }
+      },
+      "query_toDate": {
+        "in": "query",
+        "name": "toDate",
+        "required": false,
+        "description": "Return only Collections created before this date and time. If no timezone information is given, UTC is assumed.",
+        "schema": {
+          "type": "string",
+          "format": "date-time",
+          "minLength": 19,
+          "maxLength": 25,
+          "example": "2024-01-01T00:00:00Z"
+        }
+      },
+      "query_userProperties": {
+        "in": "query",
+        "name": "userProperties",
+        "description": "The properties of the User object to be included in the response. If not specified, all properties will be returned.",
+        "required": false,
+        "schema": {
+          "$ref": "#/components/schemas/enum_param_userProperties"
+        }
+      }
+    },
+    "requestBodies": {
+      "collectionPost": {
+        "required": false,
+        "description": "A Collection object of schema version 4 or above.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/CollectionCreate"
+            }
+          }
+        }
+      },
+      "collectionPostLegacy": {
+        "required": false,
+        "description": "A Collection object of schema version 3 or below.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/LegacyCollectionCreate"
+            }
+          }
+        }
+      },
+      "collectionPostUpload": {
+        "required": false,
+        "description": "A Collection object of schema version 4 or above.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/CollectionUpload"
+            }
+          }
+        }
+      },
+      "collectionPostUploadLegacy": {
+        "required": false,
+        "description": "A Collection object of schema version 3 or below.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/LegacyCollectionUpload"
+            }
+          }
+        }
+      },
+      "collectionPut": {
+        "required": false,
+        "description": "A Collection object of schema version 4 or above, including the Collection ID.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/CollectionOut"
+            }
+          }
+        }
+      }
+    },
+    "responses": {
+      "200_getAllianceHistory": {
+        "description": "A list of Alliance history entries matching the specified parameters.",
+        "headers": {
+          "X-RateLimit-Limit": {
+            "$ref": "#/components/headers/X-RateLimit-Limit"
+          },
+          "X-RateLimit-Remaining": {
+            "$ref": "#/components/headers/X-RateLimit-Remaining"
+          },
+          "X-RateLimit-Reset": {
+            "$ref": "#/components/headers/X-RateLimit-Reset"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "description": "A list of objects with a timestamp and an Alliance object with the specified properties. Does not include Alliance members.",
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/AllianceHistoryOut"
+              },
+              "maxItems": 2147483647
+            }
+          }
+        },
+        "links": {
+          "DeleteCollectionById": {
+            "$ref": "#/components/schemas/link_history_deleteCollectionById"
+          },
+          "GetCollectionAllianceById": {
+            "$ref": "#/components/schemas/link_allianceHistory_getAllianceById"
+          },
+          "GetCollectionAlliances": {
+            "$ref": "#/components/schemas/link_history_getCollectionAlliances"
+          },
+          "GetCollectionById": {
+            "$ref": "#/components/schemas/link_history_getCollectionById"
+          },
+          "GetCollectionTop100": {
+            "$ref": "#/components/schemas/link_history_getCollectionTop100"
+          },
+          "GetCollectionUserById": {
+            "$ref": "#/components/schemas/link_allianceHistory_getUserById"
+          },
+          "GetCollectionUsers": {
+            "$ref": "#/components/schemas/link_history_getCollectionUsers"
+          },
+          "GetUserHistoryById": {
+            "$ref": "#/components/schemas/link_allianceHistory_getUserHistoryById"
+          },
+          "UpdateCollectionById": {
+            "$ref": "#/components/schemas/link_history_updateCollectionById"
+          }
+        }
+      },
+      "200_getCollection": {
+        "description": "The requested Collection's metadata, Alliances and Users with the specified metadata, Alliance and User properties.",
+        "headers": {
+          "X-RateLimit-Limit": {
+            "$ref": "#/components/headers/X-RateLimit-Limit"
+          },
+          "X-RateLimit-Remaining": {
+            "$ref": "#/components/headers/X-RateLimit-Remaining"
+          },
+          "X-RateLimit-Reset": {
+            "$ref": "#/components/headers/X-RateLimit-Reset"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/CollectionOut"
+            }
+          }
+        },
+        "links": {
+          "DeleteCollectionById": {
+            "$ref": "#/components/schemas/link_collection_deleteCollectionById"
+          },
+          "GetAllianceHistoryById": {
+            "$ref": "#/components/schemas/link_collection_getAllianceHistoryById"
+          },
+          "GetCollectionAllianceById": {
+            "$ref": "#/components/schemas/link_collection_getAllianceById"
+          },
+          "GetCollectionAlliances": {
+            "$ref": "#/components/schemas/link_collection_getCollectionAlliances"
+          },
+          "GetCollectionTop100": {
+            "$ref": "#/components/schemas/link_collection_getCollectionTop100"
+          },
+          "GetCollectionUserById": {
+            "$ref": "#/components/schemas/link_collection_getUserById"
+          },
+          "GetCollectionUsers": {
+            "$ref": "#/components/schemas/link_collection_getCollectionUsers"
+          },
+          "GetUserHistoryById": {
+            "$ref": "#/components/schemas/link_collection_getUserHistoryById"
+          },
+          "UpdateCollectionById": {
+            "$ref": "#/components/schemas/link_collection_updateCollectionById"
+          }
+        }
+      },
+      "200_getCollection_alliance": {
+        "description": "Returns the requested Alliance and related Users with the specified Alliance and User properties.",
+        "headers": {
+          "X-RateLimit-Limit": {
+            "$ref": "#/components/headers/X-RateLimit-Limit"
+          },
+          "X-RateLimit-Remaining": {
+            "$ref": "#/components/headers/X-RateLimit-Remaining"
+          },
+          "X-RateLimit-Reset": {
+            "$ref": "#/components/headers/X-RateLimit-Reset"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/AllianceHistoryOut"
+            }
+          }
+        },
+        "links": {
+          "DeleteCollectionById": {
+            "$ref": "#/components/schemas/link_collection_deleteCollectionById"
+          },
+          "GetAllianceHistoryById": {
+            "$ref": "#/components/schemas/link_collection_alliance_getAllianceHistoryById"
+          },
+          "GetCollectionAlliances": {
+            "$ref": "#/components/schemas/link_collection_getCollectionAlliances"
+          },
+          "GetCollectionById": {
+            "$ref": "#/components/schemas/link_collection_getCollectionById"
+          },
+          "GetCollectionTop100": {
+            "$ref": "#/components/schemas/link_collection_getCollectionTop100"
+          },
+          "GetCollectionUsers": {
+            "$ref": "#/components/schemas/link_collection_getCollectionUsers"
+          },
+          "GetUserHistoryById": {
+            "$ref": "#/components/schemas/link_collection_alliance_getUserHistoryById"
+          },
+          "GetCollectionUserById": {
+            "$ref": "#/components/schemas/link_collection_alliance_getUserById"
+          },
+          "UpdateCollectionById": {
+            "$ref": "#/components/schemas/link_collection_updateCollectionById"
+          }
+        }
+      },
+      "200_getCollection_alliances": {
+        "description": "Returns the Collection with a list of Alliances. Does not include Users.",
+        "headers": {
+          "X-RateLimit-Limit": {
+            "$ref": "#/components/headers/X-RateLimit-Limit"
+          },
+          "X-RateLimit-Remaining": {
+            "$ref": "#/components/headers/X-RateLimit-Remaining"
+          },
+          "X-RateLimit-Reset": {
+            "$ref": "#/components/headers/X-RateLimit-Reset"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "description": "A list of Alliance objects.",
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/CollectionOut"
+              },
+              "maxItems": 101
+            }
+          }
+        },
+        "links": {
+          "DeleteCollectionById": {
+            "$ref": "#/components/schemas/link_collection_deleteCollectionById"
+          },
+          "GetAllianceHistoryById": {
+            "$ref": "#/components/schemas/link_collection_getAllianceHistoryById"
+          },
+          "GetCollectionAllianceById": {
+            "$ref": "#/components/schemas/link_collection_getAllianceById"
+          },
+          "GetCollectionTop100": {
+            "$ref": "#/components/schemas/link_collection_getCollectionTop100"
+          },
+          "GetCollectionUserById": {
+            "$ref": "#/components/schemas/link_collection_alliances_getUserById"
+          },
+          "GetCollectionUsers": {
+            "$ref": "#/components/schemas/link_collection_getCollectionUsers"
+          },
+          "GetUserHistoryById": {
+            "$ref": "#/components/schemas/link_collection_alliances_getUserHistoryById"
+          },
+          "UpdateCollectionById": {
+            "$ref": "#/components/schemas/link_collection_updateCollectionById"
+          }
+        }
+      },
+      "200_getCollection_top100": {
+        "description": "Returns the Collection with a list of top 100 Users. Includes the Alliance object for each User. Does not include the list of Alliances.",
+        "headers": {
+          "X-RateLimit-Limit": {
+            "$ref": "#/components/headers/X-RateLimit-Limit"
+          },
+          "X-RateLimit-Remaining": {
+            "$ref": "#/components/headers/X-RateLimit-Remaining"
+          },
+          "X-RateLimit-Reset": {
+            "$ref": "#/components/headers/X-RateLimit-Reset"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/CollectionOut"
+              },
+              "maxItems": 100
+            }
+          }
+        },
+        "links": {
+          "DeleteCollectionById": {
+            "$ref": "#/components/schemas/link_collection_deleteCollectionById"
+          },
+          "GetAllianceHistoryById": {
+            "$ref": "#/components/schemas/link_collection_users_getAllianceHistoryById"
+          },
+          "GetCollectionAllianceById": {
+            "$ref": "#/components/schemas/link_collection_users_getAllianceById"
+          },
+          "GetCollectionAlliances": {
+            "$ref": "#/components/schemas/link_collection_getCollectionAlliances"
+          },
+          "GetCollectionUserById": {
+            "$ref": "#/components/schemas/link_collection_getUserById"
+          },
+          "GetCollectionUsers": {
+            "$ref": "#/components/schemas/link_collection_getCollectionUsers"
+          },
+          "GetUserHistoryById": {
+            "$ref": "#/components/schemas/link_collection_getUserHistoryById"
+          },
+          "UpdateCollectionById": {
+            "$ref": "#/components/schemas/link_collection_updateCollectionById"
+          }
+        }
+      },
+      "200_getCollection_user": {
+        "description": "Returns the requested User and its Alliance with the specified Alliance and User properties and the corresponding Collection metadata.",
+        "headers": {
+          "X-RateLimit-Limit": {
+            "$ref": "#/components/headers/X-RateLimit-Limit"
+          },
+          "X-RateLimit-Remaining": {
+            "$ref": "#/components/headers/X-RateLimit-Remaining"
+          },
+          "X-RateLimit-Reset": {
+            "$ref": "#/components/headers/X-RateLimit-Reset"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/UserHistoryOut"
+            }
+          }
+        },
+        "links": {
+          "DeleteCollectionById": {
+            "$ref": "#/components/schemas/link_collection_deleteCollectionById"
+          },
+          "GetAllianceHistoryById": {
+            "$ref": "#/components/schemas/link_collection_user_getAllianceHistoryById"
+          },
+          "GetCollectionAllianceById": {
+            "$ref": "#/components/schemas/link_collection_user_getAllianceById"
+          },
+          "GetCollectionAlliances": {
+            "$ref": "#/components/schemas/link_collection_getCollectionAlliances"
+          },
+          "GetCollectionById": {
+            "$ref": "#/components/schemas/link_collection_getCollectionById"
+          },
+          "GetCollectionTop100": {
+            "$ref": "#/components/schemas/link_collection_getCollectionTop100"
+          },
+          "GetCollectionUsers": {
+            "$ref": "#/components/schemas/link_collection_getCollectionUsers"
+          },
+          "GetUserHistoryById": {
+            "$ref": "#/components/schemas/link_collection_user_getUserHistoryById"
+          },
+          "UpdateCollectionById": {
+            "$ref": "#/components/schemas/link_collection_updateCollectionById"
+          }
+        }
+      },
+      "200_getCollection_users": {
+        "description": "Returns the Collection with a list of Users. Does not include Users' Alliances.",
+        "headers": {
+          "X-RateLimit-Limit": {
+            "$ref": "#/components/headers/X-RateLimit-Limit"
+          },
+          "X-RateLimit-Remaining": {
+            "$ref": "#/components/headers/X-RateLimit-Remaining"
+          },
+          "X-RateLimit-Reset": {
+            "$ref": "#/components/headers/X-RateLimit-Reset"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/CollectionOut"
+              },
+              "maxItems": 10100
+            }
+          }
+        },
+        "links": {
+          "DeleteCollectionById": {
+            "$ref": "#/components/schemas/link_collection_deleteCollectionById"
+          },
+          "GetAllianceHistoryById": {
+            "$ref": "#/components/schemas/link_collection_users_getAllianceHistoryById"
+          },
+          "GetCollectionAllianceById": {
+            "$ref": "#/components/schemas/link_collection_users_getAllianceById"
+          },
+          "GetCollectionAlliances": {
+            "$ref": "#/components/schemas/link_collection_getCollectionAlliances"
+          },
+          "GetCollectionTop100": {
+            "$ref": "#/components/schemas/link_collection_getCollectionTop100"
+          },
+          "GetCollectionUserById": {
+            "$ref": "#/components/schemas/link_collection_getUserById"
+          },
+          "GetUserHistoryById": {
+            "$ref": "#/components/schemas/link_collection_getUserHistoryById"
+          },
+          "UpdateCollectionById": {
+            "$ref": "#/components/schemas/link_collection_updateCollectionById"
+          }
+        }
+      },
+      "200_getCollections": {
+        "description": "A list of Collection metadata.",
+        "headers": {
+          "X-RateLimit-Limit": {
+            "$ref": "#/components/headers/X-RateLimit-Limit"
+          },
+          "X-RateLimit-Remaining": {
+            "$ref": "#/components/headers/X-RateLimit-Remaining"
+          },
+          "X-RateLimit-Reset": {
+            "$ref": "#/components/headers/X-RateLimit-Reset"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "description": "A list of Collections with only CollectionMetadata objects meeting the criteria specified with the parameters.",
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/CollectionOut"
+              },
+              "maxItems": 2147483647
+            }
+          }
+        },
+        "links": {
+          "DeleteCollectionById": {
+            "$ref": "#/components/schemas/link_collections_deleteCollectionById"
+          },
+          "GetCollectionAlliances": {
+            "$ref": "#/components/schemas/link_collections_getCollectionAlliances"
+          },
+          "GetCollectionById": {
+            "$ref": "#/components/schemas/link_collections_getCollectionById"
+          },
+          "GetCollectionTop100": {
+            "$ref": "#/components/schemas/link_collections_getCollectionTop100"
+          },
+          "GetCollectionUsers": {
+            "$ref": "#/components/schemas/link_collections_getCollectionUsers"
+          },
+          "UpdateCollectionById": {
+            "$ref": "#/components/schemas/link_collections_updateCollectionById"
+          }
+        }
+      },
+      "200_getPing": {
+        "description": "Successfully pinged the API.",
+        "headers": {
+          "X-RateLimit-Limit": {
+            "$ref": "#/components/headers/X-RateLimit-Limit"
+          },
+          "X-RateLimit-Remaining": {
+            "$ref": "#/components/headers/X-RateLimit-Remaining"
+          },
+          "X-RateLimit-Reset": {
+            "$ref": "#/components/headers/X-RateLimit-Reset"
+          }
+        },
+        "content": {
+          "text": {
+            "schema": {
+              "type": "string",
+              "const": "Pong!",
+              "description": "Pong!"
+            }
+          }
+        }
+      },
+      "200_getUserHistory": {
+        "description": "A list of User history entries matching the specified parameters.",
+        "headers": {
+          "X-RateLimit-Limit": {
+            "$ref": "#/components/headers/X-RateLimit-Limit"
+          },
+          "X-RateLimit-Remaining": {
+            "$ref": "#/components/headers/X-RateLimit-Remaining"
+          },
+          "X-RateLimit-Reset": {
+            "$ref": "#/components/headers/X-RateLimit-Reset"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "description": "A list of objects with a timestamp and a User object with the specified properties. Includes the User's Alliance.",
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/UserHistoryOut"
+              },
+              "maxItems": 2147483647
+            }
+          }
+        },
+        "links": {
+          "DeleteCollectionById": {
+            "$ref": "#/components/schemas/link_history_deleteCollectionById"
+          },
+          "GetAllianceHistoryById": {
+            "$ref": "#/components/schemas/link_userHistory_getAllianceHistoryById"
+          },
+          "GetCollectionAllianceById": {
+            "$ref": "#/components/schemas/link_userHistory_getAllianceById"
+          },
+          "GetCollectionAlliances": {
+            "$ref": "#/components/schemas/link_history_getCollectionAlliances"
+          },
+          "GetCollectionById": {
+            "$ref": "#/components/schemas/link_history_getCollectionById"
+          },
+          "GetCollectionTop100": {
+            "$ref": "#/components/schemas/link_history_getCollectionTop100"
+          },
+          "GetCollectionUserById": {
+            "$ref": "#/components/schemas/link_userHistory_getUserById"
+          },
+          "GetCollectionUsers": {
+            "$ref": "#/components/schemas/link_history_getCollectionUsers"
+          },
+          "UpdateCollectionById": {
+            "$ref": "#/components/schemas/link_history_updateCollectionById"
+          }
+        }
+      },
+      "200_putCollection": {
+        "description": "The Collection with the provided ID got updated. Returns the updated Collection metadata including collection ID. Does not include inserted Alliances or Users.",
+        "headers": {
+          "X-RateLimit-Limit": {
+            "$ref": "#/components/headers/X-RateLimit-Limit"
+          },
+          "X-RateLimit-Remaining": {
+            "$ref": "#/components/headers/X-RateLimit-Remaining"
+          },
+          "X-RateLimit-Reset": {
+            "$ref": "#/components/headers/X-RateLimit-Reset"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/CollectionOut"
+            }
+          }
+        },
+        "links": {
+          "DeleteCollectionById": {
+            "$ref": "#/components/schemas/link_collection_deleteCollectionById"
+          },
+          "GetCollectionById": {
+            "$ref": "#/components/schemas/link_collection_getCollectionById"
+          },
+          "UpdateCollectionById": {
+            "$ref": "#/components/schemas/link_collection_updateCollectionById"
+          }
+        }
+      },
+      "201_postCollection": {
+        "description": "A Collection has been created. Returns inserted Collection including new Collection ID. Does not include inserted Alliances or Users.",
+        "headers": {
+          "X-RateLimit-Limit": {
+            "$ref": "#/components/headers/X-RateLimit-Limit"
+          },
+          "X-RateLimit-Remaining": {
+            "$ref": "#/components/headers/X-RateLimit-Remaining"
+          },
+          "X-RateLimit-Reset": {
+            "$ref": "#/components/headers/X-RateLimit-Reset"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/CollectionOut"
+            }
+          }
+        },
+        "links": {
+          "DeleteCollectionById": {
+            "$ref": "#/components/schemas/link_collection_deleteCollectionById"
+          },
+          "GetCollectionById": {
+            "$ref": "#/components/schemas/link_collection_getCollectionById"
+          },
+          "UpdateCollectionById": {
+            "$ref": "#/components/schemas/link_collection_updateCollectionById"
+          }
+        }
+      },
+      "201_putCollection": {
+        "description": "A Collection has been created. Returns inserted Collection including Collection ID. Does not include inserted Alliances or Users.",
+        "headers": {
+          "X-RateLimit-Limit": {
+            "$ref": "#/components/headers/X-RateLimit-Limit"
+          },
+          "X-RateLimit-Remaining": {
+            "$ref": "#/components/headers/X-RateLimit-Remaining"
+          },
+          "X-RateLimit-Reset": {
+            "$ref": "#/components/headers/X-RateLimit-Reset"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/CollectionOut"
+            }
+          }
+        },
+        "links": {
+          "DeleteCollectionById": {
+            "$ref": "#/components/schemas/link_collection_deleteCollectionById"
+          },
+          "GetCollectionById": {
+            "$ref": "#/components/schemas/link_collection_getCollectionById"
+          },
+          "UpdateCollectionById": {
+            "$ref": "#/components/schemas/link_collection_updateCollectionById"
+          }
+        }
+      },
+      "204_allCollectionsDeleted": {
+        "description": "All Collections were deleted.",
+        "headers": {
+          "X-RateLimit-Limit": {
+            "$ref": "#/components/headers/X-RateLimit-Limit"
+          },
+          "X-RateLimit-Remaining": {
+            "$ref": "#/components/headers/X-RateLimit-Remaining"
+          },
+          "X-RateLimit-Reset": {
+            "$ref": "#/components/headers/X-RateLimit-Reset"
+          }
+        }
+      },
+      "204_collectionDeleted": {
+        "description": "The Collection with the specified ID got deleted.",
+        "headers": {
+          "X-RateLimit-Limit": {
+            "$ref": "#/components/headers/X-RateLimit-Limit"
+          },
+          "X-RateLimit-Remaining": {
+            "$ref": "#/components/headers/X-RateLimit-Remaining"
+          },
+          "X-RateLimit-Reset": {
+            "$ref": "#/components/headers/X-RateLimit-Reset"
+          }
+        }
+      },
+      "204_noDataForParameters": {
+        "description": "There is no data for the given parameters `from`, `to`, `interval`, `skip` & `take`.",
+        "headers": {
+          "X-RateLimit-Limit": {
+            "$ref": "#/components/headers/X-RateLimit-Limit"
+          },
+          "X-RateLimit-Remaining": {
+            "$ref": "#/components/headers/X-RateLimit-Remaining"
+          },
+          "X-RateLimit-Reset": {
+            "$ref": "#/components/headers/X-RateLimit-Reset"
+          }
+        },
+        "content": {}
+      },
+      "400_from_to": {
+        "description": "One or more errors occurred due to invalid parameters or an invalid request body, because the parameter `from` is in the future or because the parameter `from` is after the parameter `to`.",
+        "headers": {
+          "X-RateLimit-Limit": {
+            "$ref": "#/components/headers/X-RateLimit-Limit"
+          },
+          "X-RateLimit-Remaining": {
+            "$ref": "#/components/headers/X-RateLimit-Remaining"
+          },
+          "X-RateLimit-Reset": {
+            "$ref": "#/components/headers/X-RateLimit-Reset"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorList"
+            }
+          }
+        }
+      },
+      "400_general": {
+        "description": "One or more errors occurred due to invalid parameters or an invalid request body.",
+        "headers": {
+          "X-RateLimit-Limit": {
+            "$ref": "#/components/headers/X-RateLimit-Limit"
+          },
+          "X-RateLimit-Remaining": {
+            "$ref": "#/components/headers/X-RateLimit-Remaining"
+          },
+          "X-RateLimit-Reset": {
+            "$ref": "#/components/headers/X-RateLimit-Reset"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorList"
+            }
+          }
+        }
+      },
+      "401_noApiKeyProvided": {
+        "description": "No api key was provided.",
+        "headers": {
+          "X-RateLimit-Limit": {
+            "$ref": "#/components/headers/X-RateLimit-Limit"
+          },
+          "X-RateLimit-Remaining": {
+            "$ref": "#/components/headers/X-RateLimit-Remaining"
+          },
+          "X-RateLimit-Reset": {
+            "$ref": "#/components/headers/X-RateLimit-Reset"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorList"
+            }
+          }
+        }
+      },
+      "403_apiKeyNotAuthorized": {
+        "description": "The provided api key is not authorized.",
+        "headers": {
+          "X-RateLimit-Limit": {
+            "$ref": "#/components/headers/X-RateLimit-Limit"
+          },
+          "X-RateLimit-Remaining": {
+            "$ref": "#/components/headers/X-RateLimit-Remaining"
+          },
+          "X-RateLimit-Reset": {
+            "$ref": "#/components/headers/X-RateLimit-Reset"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorList"
+            }
+          }
+        }
+      },
+      "409_duplicateCollectionTimestamp": {
+        "description": "A Collection with that timestamp already exists.",
+        "headers": {
+          "X-RateLimit-Limit": {
+            "$ref": "#/components/headers/X-RateLimit-Limit"
+          },
+          "X-RateLimit-Remaining": {
+            "$ref": "#/components/headers/X-RateLimit-Remaining"
+          },
+          "X-RateLimit-Reset": {
+            "$ref": "#/components/headers/X-RateLimit-Reset"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorList"
+            }
+          }
+        }
+      },
+      "404_allianceId": {
+        "description": "An Alliance with this ID was not found.",
+        "headers": {
+          "X-RateLimit-Limit": {
+            "$ref": "#/components/headers/X-RateLimit-Limit"
+          },
+          "X-RateLimit-Remaining": {
+            "$ref": "#/components/headers/X-RateLimit-Remaining"
+          },
+          "X-RateLimit-Reset": {
+            "$ref": "#/components/headers/X-RateLimit-Reset"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorList"
+            }
+          }
+        }
+      },
+      "404_collectionId": {
+        "description": "A Collection with the provided ID was not found.",
+        "headers": {
+          "X-RateLimit-Limit": {
+            "$ref": "#/components/headers/X-RateLimit-Limit"
+          },
+          "X-RateLimit-Remaining": {
+            "$ref": "#/components/headers/X-RateLimit-Remaining"
+          },
+          "X-RateLimit-Reset": {
+            "$ref": "#/components/headers/X-RateLimit-Reset"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorList"
+            }
+          }
+        }
+      },
+      "404_collectionId_allianceId": {
+        "description": "A Collection with this ID was not found or an Alliance with this ID was not found in the Collection.",
+        "headers": {
+          "X-RateLimit-Limit": {
+            "$ref": "#/components/headers/X-RateLimit-Limit"
+          },
+          "X-RateLimit-Remaining": {
+            "$ref": "#/components/headers/X-RateLimit-Remaining"
+          },
+          "X-RateLimit-Reset": {
+            "$ref": "#/components/headers/X-RateLimit-Reset"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorList"
+            }
+          }
+        }
+      },
+      "404_collectionId_userId": {
+        "description": "A Collection with this ID was not found or a User with this ID was not found in the Collection.",
+        "headers": {
+          "X-RateLimit-Limit": {
+            "$ref": "#/components/headers/X-RateLimit-Limit"
+          },
+          "X-RateLimit-Remaining": {
+            "$ref": "#/components/headers/X-RateLimit-Remaining"
+          },
+          "X-RateLimit-Reset": {
+            "$ref": "#/components/headers/X-RateLimit-Reset"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorList"
+            }
+          }
+        }
+      },
+      "404_userId": {
+        "description": "A User with this ID was not found.",
+        "headers": {
+          "X-RateLimit-Limit": {
+            "$ref": "#/components/headers/X-RateLimit-Limit"
+          },
+          "X-RateLimit-Remaining": {
+            "$ref": "#/components/headers/X-RateLimit-Remaining"
+          },
+          "X-RateLimit-Reset": {
+            "$ref": "#/components/headers/X-RateLimit-Reset"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorList"
+            }
+          }
+        }
+      },
+      "415_bodyFormatNotSupported": {
+        "description": "Request body is not in JSON format.",
+        "headers": {
+          "X-RateLimit-Limit": {
+            "$ref": "#/components/headers/X-RateLimit-Limit"
+          },
+          "X-RateLimit-Remaining": {
+            "$ref": "#/components/headers/X-RateLimit-Remaining"
+          },
+          "X-RateLimit-Reset": {
+            "$ref": "#/components/headers/X-RateLimit-Reset"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorList"
+            }
+          }
+        }
+      },
+      "429_rateLimited": {
+        "description": "You have sent too many requests. Please wait until sending another request.",
+        "headers": {
+          "X-RateLimit-Limit": {
+            "$ref": "#/components/headers/X-RateLimit-Limit"
+          },
+          "X-RateLimit-Remaining": {
+            "$ref": "#/components/headers/X-RateLimit-Remaining"
+          },
+          "X-RateLimit-Reset": {
+            "$ref": "#/components/headers/X-RateLimit-Reset"
+          },
+          "Retry-After": {
+            "$ref": "#/components/headers/Retry-After"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorList"
+            }
+          }
+        }
+      },
+      "500_internalServerError": {
+        "description": "An internal server error occurred.",
+        "headers": {
+          "X-RateLimit-Limit": {
+            "$ref": "#/components/headers/X-RateLimit-Limit"
+          },
+          "X-RateLimit-Remaining": {
+            "$ref": "#/components/headers/X-RateLimit-Remaining"
+          },
+          "X-RateLimit-Reset": {
+            "$ref": "#/components/headers/X-RateLimit-Reset"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorList"
+            }
+          }
+        }
+      }
+    },
+    "headers": {
+      "Retry-After": {
+        "description": "Time in seconds the client has to wait to send another request.",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "format": "int32",
+          "minimum": 0,
+          "maximum": 60
+        },
+        "example": 56
+      },
+      "X-RateLimit-Limit": {
+        "description": "The maximum number of requests per minute.",
+        "required": true,
+        "schema": {
+          "type": "integer",
+          "format": "int32",
+          "minimum": 0,
+          "maximum": 1000
+        },
+        "example": 60
+      },
+      "X-RateLimit-Remaining": {
+        "description": "The remaining number of requests in the current window.",
+        "required": true,
+        "schema": {
+          "type": "integer",
+          "format": "int32",
+          "minimum": 0,
+          "maximum": 1000
+        },
+        "example": 56
+      },
+      "X-RateLimit-Reset": {
+        "description": "The time remaining in the current window, specified in seconds.",
+        "required": true,
+        "schema": {
+          "type": "integer",
+          "format": "int32",
+          "minimum": 0,
+          "maximum": 60
+        },
+        "example": 56
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "alliances",
+      "description": "Get Alliance history data."
+    },
+    {
+      "name": "collections",
+      "description": "Get, delete, insert or update Collections or get data from a specific data Collection."
+    },
+    {
+      "name": "healthcheck",
+      "description": "Used for health checks."
+    },
+    {
+      "name": "legacy",
+      "description": "Insert Legacy Collections data."
+    },
+    {
+      "name": "users",
+      "description": "Get User history data."
+    }
+  ],
+  "servers": [
+    {
+      "url": "https://fleetdata.dolores2.xyz",
+      "description": "The PSS Fleet Data API.",
+      "variables": {}
+    }
+  ],
+  "security": [
+    {}
+  ]
+}

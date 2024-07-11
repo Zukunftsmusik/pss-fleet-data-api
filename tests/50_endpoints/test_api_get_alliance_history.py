@@ -39,11 +39,19 @@ def test_get_alliance_history_non_existing_id(assert_error_code, client: TestCli
 
 @pytest.mark.usefixtures("alliance_history_out_json")
 @pytest.mark.usefixtures("patch_has_alliance_history_true", "patch_get_alliance_history")
-@pytest.mark.parametrize(["alliance_id", "parameters"], test_cases.valid_id_and_filter_parameters)
+@pytest.mark.parametrize(["alliance_id", "parameters", "headers"], test_cases.valid_id_and_filter_parameters)
 def test_get_alliance_history_valid_parameters(
-    alliance_id: int, parameters: dict[str, Union[bool, datetime, int, ParameterInterval]], alliance_history_out_json, client: TestClient
+    alliance_id: int,
+    parameters: dict[str, Union[bool, datetime, int, ParameterInterval]],
+    headers: dict[str, str],
+    alliance_history_out_json,
+    client: TestClient,
 ):
     with client:
-        response = client.get(f"/allianceHistory/{alliance_id}", params=parameters)
+        response = client.get(
+            f"/allianceHistory/{alliance_id}",
+            params=parameters,
+            headers=headers,
+        )
         assert response.status_code == 200
         assert response.json() == [alliance_history_out_json]

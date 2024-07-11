@@ -109,16 +109,20 @@ async def get_session() -> AsyncGenerator[AsyncSession, None]:
         raise RuntimeError(f"ENGINE is `None`. The function {set_up_db_engine.__name__}() needs to get called first!")
 
     connection: AsyncConnection = await ENGINE.connect()
-    async with AsyncSession(bind=connection) as async_session:
-        try:
-            yield async_session
-        except DBAPIError as e:
-            await async_session.rollback()
-            raise e
-        finally:
-            await async_session.close()
-
-    await connection.close()
+    try:
+        async with AsyncSession(bind=connection) as async_session:
+            try:
+                yield async_session
+            except DBAPIError as session_exception:
+                await async_session.rollback()
+                raise session_exception
+            finally:
+                await async_session.close()
+    except DBAPIError as connection_exception:
+        print(connection_exception)
+        raise connection_exception
+    finally:
+        await connection.close()
 
 
 async def initialize_db(drop_tables: bool = False, paths_to_dummy_data: list[str] = None):

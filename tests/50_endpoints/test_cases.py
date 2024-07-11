@@ -3,7 +3,7 @@ from datetime import datetime
 import pytest
 
 from src.api.models.enums import ErrorCode
-from src.tests import conftest
+from tests import conftest
 
 
 does_exist_collection_and_alliance = [
@@ -162,10 +162,10 @@ def invalid_save_collection_payloads() -> list:
 
 invalid_upload_files = [
     # folder_path, file_name, expected_error_code
-    pytest.param("src/tests/test_data", "invalid_json.txt", ErrorCode.INVALID_JSON_FORMAT, id="invalid_json_file"),
-    pytest.param("src/tests/test_data", "some.txt", ErrorCode.INVALID_JSON_FORMAT, id="txt_file"),
+    pytest.param("tests/test_data", "invalid_json.txt", ErrorCode.INVALID_JSON_FORMAT, id="invalid_json_file"),
+    pytest.param("tests/test_data", "some.txt", ErrorCode.INVALID_JSON_FORMAT, id="txt_file"),
     pytest.param(
-        "src/tests/test_data",
+        "tests/test_data",
         "upload_test_data_schema_4_says_schema_9.json",
         ErrorCode.SCHEMA_VERSION_MISMATCH,
         id="schema_version_and_schema_not_match",
@@ -201,26 +201,28 @@ valid_collection_and_child_ids = [
 
 
 valid_id_and_filter_parameters = [
-    # id, parameters
-    pytest.param(1, {}, id="no_params"),
-    pytest.param(1, {"fromDate": "2020-02-01T00:00:00Z", "toDate": "2020-03-01T00:00:00Z"}, id="from_to_date_valid"),
-    pytest.param(1, {"fromDate": "2020-02-01T00:00:00+06:00", "toDate": "2020-03-01T00:00:00Z"}, id="from_to_date_valid_different_timezones"),
-    pytest.param(1, {"fromDate": "2020-02-01T00:00:00", "toDate": "2020-03-01T00:00:00Z"}, id="from_to_date_valid_one_without_timezone"),
-    pytest.param(1, {"skip": 0, "take": 100}, id="skip_take_valid_1"),
-    pytest.param(1, {"skip": 5, "take": 5}, id="skip_take_valid_2"),
+    # id, parameters, headers
+    pytest.param(1, {}, {}, id="no_params"),
+    pytest.param(1, {}, {"Accept-Encoding": "gzip"}, id="no_params_accept_gzip"),
+    pytest.param(1, {"fromDate": "2020-02-01T00:00:00Z", "toDate": "2020-03-01T00:00:00Z"}, {}, id="from_to_date_valid"),
+    pytest.param(1, {"fromDate": "2019-11-30T23:59:00", "toDate": "2024-07-11T14:13:44"}, {}, id="from_to_date_valid_from_examples"),
+    pytest.param(1, {"fromDate": "2020-02-01T00:00:00+06:00", "toDate": "2020-03-01T00:00:00Z"}, {}, id="from_to_date_valid_different_timezones"),
+    pytest.param(1, {"fromDate": "2020-02-01T00:00:00", "toDate": "2020-03-01T00:00:00Z"}, {}, id="from_to_date_valid_one_without_timezone"),
+    pytest.param(1, {"skip": 0, "take": 100}, {}, id="skip_take_valid_1"),
+    pytest.param(1, {"skip": 5, "take": 5}, {}, id="skip_take_valid_2"),
 ]
 """id, parameters"""
 
 
 valid_upload_files = [
     # schema_version, folder_path, file_name, collection_create_cls, to_db_convert_func
-    pytest.param("src/tests/test_data", "upload_test_data_schema_2.json", id="schema_version_3_without_division_design_id"),
-    pytest.param("src/tests/test_data", "upload_test_data_schema_3.json", id="schema_version_3"),
-    pytest.param("src/tests/test_data", "upload_test_data_schema_4.json", id="schema_version_4"),
-    pytest.param("src/tests/test_data", "upload_test_data_schema_5.json", id="schema_version_5"),
-    pytest.param("src/tests/test_data", "upload_test_data_schema_6.json", id="schema_version_6"),
-    pytest.param("src/tests/test_data", "upload_test_data_schema_7.json", id="schema_version_7"),
-    pytest.param("src/tests/test_data", "upload_test_data_schema_8.json", id="schema_version_8"),
-    pytest.param("src/tests/test_data", "upload_test_data_schema_9.json", id="schema_version_9"),
+    pytest.param("tests/test_data", "upload_test_data_schema_2.json", id="schema_version_3_without_division_design_id"),
+    pytest.param("tests/test_data", "upload_test_data_schema_3.json", id="schema_version_3"),
+    pytest.param("tests/test_data", "upload_test_data_schema_4.json", id="schema_version_4"),
+    pytest.param("tests/test_data", "upload_test_data_schema_5.json", id="schema_version_5"),
+    pytest.param("tests/test_data", "upload_test_data_schema_6.json", id="schema_version_6"),
+    pytest.param("tests/test_data", "upload_test_data_schema_7.json", id="schema_version_7"),
+    pytest.param("tests/test_data", "upload_test_data_schema_8.json", id="schema_version_8"),
+    pytest.param("tests/test_data", "upload_test_data_schema_9.json", id="schema_version_9"),
 ]
 """schema_version, folder_path, file_name, collection_create_cls, to_db_convert_func"""

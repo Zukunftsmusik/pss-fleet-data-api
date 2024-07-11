@@ -21,11 +21,19 @@ def test_get_collections_invalid_parameters(
 
 @pytest.mark.usefixtures("collection_metadata_out_json")
 @pytest.mark.usefixtures("patch_get_collections")
-@pytest.mark.parametrize(["_", "parameters"], test_cases.valid_id_and_filter_parameters)
+@pytest.mark.parametrize(["_", "parameters", "headers"], test_cases.valid_id_and_filter_parameters)
 def test_get_collections_valid_parameters(
-    _, parameters: dict[str, Union[bool, datetime, int, ParameterInterval]], collection_metadata_out_json: Any, client: TestClient
+    _,
+    parameters: dict[str, Union[bool, datetime, int, ParameterInterval]],
+    headers: dict[str, str],
+    collection_metadata_out_json: Any,
+    client: TestClient,
 ):
     with client:
-        response = client.get("/collections", params=parameters)
+        response = client.get(
+            "/collections",
+            params=parameters,
+            headers=headers,
+        )
         assert response.status_code == 200
         assert response.json() == [collection_metadata_out_json]

@@ -21,8 +21,24 @@ class Settings:
 
     # Base
     project_name: str = "PSS Fleet Data API"
-    version: str = "1.0"
+    version: str = "1.1"
     description: str = "An API server for Pixel Starships Fleet Data."
+    contact = {
+        "email": "theworstpss@gmail.com",
+        "name": "The worst.",
+        "url": "https://dolores2.xyz",
+    }
+    license = {
+        "name": "MIT",
+        "url": "https://github.com/Zukunftsmusik/pss-fleet-data-api/blob/main/LICENSE",
+    }
+    servers = [
+        {
+            "url": getenv("FLEET_DATA_API_URL_OVERRIDE", "https://fleetdata.dolores2.xyz"),
+            "description": "The original PSS Fleet Data API.",
+            "variables": {},
+        },
+    ]
 
     # Database
     database_engine_echo: bool = getenv("DATABASE_ENGINE_ECHO", "false") == "true"

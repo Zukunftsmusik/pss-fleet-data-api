@@ -45,7 +45,7 @@ allianceHistory_allianceId_get = EndpointDefinition(
 collections_get = EndpointDefinition(
     summary="Get metadata of all Collections or a subset of Collections.",
     description="Get the metadata of a subset of all Collections. You can use the parameters to limit the result set.",
-    operation_id=OperationId.GET_COLLECTION,
+    operation_id=OperationId.GET_COLLECTIONS,
     status_code=status.HTTP_200_OK,
     response_description="A list of Collection Metadata objects.",
     responses={
@@ -282,6 +282,24 @@ collections_upload_post = EndpointDefinition(
         ),
         status.HTTP_201_CREATED: _collections_post_response_201,
     },
+)
+
+
+homepage_get = EndpointDefinition(
+    summary="Get the home page.",
+    description="Get the home page.",
+    operation_id=OperationId.GET_HOME_PAGE,
+    status_code=status.HTTP_200_OK,
+    response_description="The home page.",
+    responses={
+        status.HTTP_200_OK: {
+            "description": "A list of objects denoting the requested User at a specific point in time.",
+            "links": {
+                OperationId.GET_COLLECTIONS: links.homepage_getCollections,
+            },
+        },
+    },
+    include_in_schema=False,
 )
 
 

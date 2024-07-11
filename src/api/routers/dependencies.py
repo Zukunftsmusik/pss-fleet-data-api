@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Annotated, Optional
+from typing import Annotated, Any, Optional
 
 from fastapi import Depends, Header, Path, Query, Request
 
@@ -100,8 +100,8 @@ async def from_to_date_parameters(
     Returns:
         DatetimeFilter: An object encapsulating the added parameters.
     """
-    from_date: datetime = utils.localize_to_utc(from_date)
-    to_date: datetime = utils.localize_to_utc(to_date)
+    from_date: datetime = utils.remove_timezone(utils.localize_to_utc(from_date)).replace(microsecond=0) if from_date else None
+    to_date: datetime = utils.remove_timezone(utils.localize_to_utc(to_date)).replace(microsecond=0) if to_date else None
     if from_date and to_date and to_date < from_date:
         raise FromDateAfterToDateError("Parameter `toDate` must not be earlier than parameter `fromDate`.")
 
@@ -146,7 +146,7 @@ def root_api_key() -> str:
 
 async def verify_api_key(
     request: Request,
-    api_key: Annotated[Optional[str], Header(alias="Authorization", description="Your API key.")] = "",
+    api_key: Annotated[str, Header(alias="Authorization", description="Your API key.")],
     root_api_key: str = Depends(root_api_key),
 ):
     """Verifies, if an api key has been provided in the 'Authorization' header and if it's authorized to access the endpoint.
@@ -194,6 +194,9 @@ def _check_is_authorized(request: Request, api_key: str, root_api_key: str) -> b
     return api_key == root_api_key
 
 
+authorization_dependencies: list[Any] = [Depends(verify_api_key)] if root_api_key() else []
+
+
 __all__ = [
     # classes
     DatetimeFilter.__name__,
@@ -208,4 +211,6 @@ __all__ = [
     skip_take_parameters.__name__,
     user_id.__name__,
     verify_api_key.__name__,
+    # conditional dependencies
+    "authorization_dependencies",
 ]

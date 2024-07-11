@@ -1,11 +1,12 @@
 import json
 from typing import AsyncGenerator, Union
 
-from alembic import command
-from alembic.config import Config as AlembicConfig
 from sqlalchemy.exc import DBAPIError
 from sqlalchemy.ext.asyncio import AsyncConnection, AsyncEngine, create_async_engine
 from sqlmodel.ext.asyncio.session import AsyncSession
+
+from alembic import command
+from alembic.config import Config as AlembicConfig
 
 from .. import utils
 from ..config import SETTINGS

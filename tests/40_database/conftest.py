@@ -15,7 +15,7 @@ from src.api.database.models import CollectionDB
 @pytest.fixture(scope="session", autouse=True)
 async def initialize_database():
     db.set_up_db_engine(SETTINGS.database_connection_str, echo=SETTINGS.database_engine_echo)
-    await db.initialize_db(True, ["src/tests/test_data/test_data.json"])
+    await db.initialize_db(True, ["tests/test_data/test_data.json"])
     await db.ENGINE.dispose()
 
 
@@ -56,7 +56,7 @@ async def session(async_engine: AsyncEngine) -> AsyncGenerator[AsyncSession, Non
 
 @pytest.fixture(scope="session")
 def test_data() -> dict:
-    with open("src/tests/test_data/insert_test_data.json", "r") as fp:
+    with open("tests/test_data/insert_test_data.json", "r") as fp:
         return json.load(fp)
 
 

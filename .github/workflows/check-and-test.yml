@@ -65,7 +65,7 @@ jobs:
           
       - name: Test with pytest
         run: |
-          pytest ./src/tests -x
+          pytest ./tests -x
         env:
           DATABASE_NAME: pss-fleet-data-test
           DATABASE_URL: pguser:pgpassword@postgres:5432

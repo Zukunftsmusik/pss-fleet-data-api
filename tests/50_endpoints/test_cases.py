@@ -3,7 +3,7 @@ from datetime import datetime
 import pytest
 
 from src.api.models.enums import ErrorCode
-from src.tests import conftest
+from tests import conftest
 
 
 does_exist_collection_and_alliance = [
@@ -162,10 +162,10 @@ def invalid_save_collection_payloads() -> list:
 
 invalid_upload_files = [
     # folder_path, file_name, expected_error_code
-    pytest.param("src/tests/test_data", "invalid_json.txt", ErrorCode.INVALID_JSON_FORMAT, id="invalid_json_file"),
-    pytest.param("src/tests/test_data", "some.txt", ErrorCode.INVALID_JSON_FORMAT, id="txt_file"),
+    pytest.param("tests/test_data", "invalid_json.txt", ErrorCode.INVALID_JSON_FORMAT, id="invalid_json_file"),
+    pytest.param("tests/test_data", "some.txt", ErrorCode.INVALID_JSON_FORMAT, id="txt_file"),
     pytest.param(
-        "src/tests/test_data",
+        "tests/test_data",
         "upload_test_data_schema_4_says_schema_9.json",
         ErrorCode.SCHEMA_VERSION_MISMATCH,
         id="schema_version_and_schema_not_match",
@@ -216,13 +216,13 @@ valid_id_and_filter_parameters = [
 
 valid_upload_files = [
     # schema_version, folder_path, file_name, collection_create_cls, to_db_convert_func
-    pytest.param("src/tests/test_data", "upload_test_data_schema_2.json", id="schema_version_3_without_division_design_id"),
-    pytest.param("src/tests/test_data", "upload_test_data_schema_3.json", id="schema_version_3"),
-    pytest.param("src/tests/test_data", "upload_test_data_schema_4.json", id="schema_version_4"),
-    pytest.param("src/tests/test_data", "upload_test_data_schema_5.json", id="schema_version_5"),
-    pytest.param("src/tests/test_data", "upload_test_data_schema_6.json", id="schema_version_6"),
-    pytest.param("src/tests/test_data", "upload_test_data_schema_7.json", id="schema_version_7"),
-    pytest.param("src/tests/test_data", "upload_test_data_schema_8.json", id="schema_version_8"),
-    pytest.param("src/tests/test_data", "upload_test_data_schema_9.json", id="schema_version_9"),
+    pytest.param("tests/test_data", "upload_test_data_schema_2.json", id="schema_version_3_without_division_design_id"),
+    pytest.param("tests/test_data", "upload_test_data_schema_3.json", id="schema_version_3"),
+    pytest.param("tests/test_data", "upload_test_data_schema_4.json", id="schema_version_4"),
+    pytest.param("tests/test_data", "upload_test_data_schema_5.json", id="schema_version_5"),
+    pytest.param("tests/test_data", "upload_test_data_schema_6.json", id="schema_version_6"),
+    pytest.param("tests/test_data", "upload_test_data_schema_7.json", id="schema_version_7"),
+    pytest.param("tests/test_data", "upload_test_data_schema_8.json", id="schema_version_8"),
+    pytest.param("tests/test_data", "upload_test_data_schema_9.json", id="schema_version_9"),
 ]
 """schema_version, folder_path, file_name, collection_create_cls, to_db_convert_func"""

@@ -55,7 +55,7 @@ async def test_upload_valid(path: str, file_name: str, collection_metadata_out_j
 
 
 def test_upload_not_authenticated(assert_error_code, client: TestClient):
-    path = "src/tests/test_data"
+    path = "tests/test_data"
     file_name = "upload_test_data_schema_9.json"
     file_path = os.path.join(path, file_name)
 
@@ -71,7 +71,7 @@ def test_upload_not_authenticated(assert_error_code, client: TestClient):
 def test_upload_not_authorized(assert_error_code, client: TestClient):
     api_key = "123456"
 
-    path = "src/tests/test_data"
+    path = "tests/test_data"
     file_name = "upload_test_data_schema_9.json"
     file_path = os.path.join(path, file_name)
 
@@ -94,7 +94,7 @@ def test_upload_not_authorized(assert_error_code, client: TestClient):
 def test_upload_authenticated_and_authorized(collection_metadata_out_json: Any, client: TestClient):
     api_key = "123456"
 
-    path = "src/tests/test_data"
+    path = "tests/test_data"
     file_name = "upload_test_data_schema_9.json"
     file_path = os.path.join(path, file_name)
 
@@ -122,7 +122,7 @@ def test_upload_no_authorization_required(root_api_key: str, collection_metadata
 
     main.app.dependency_overrides[dependencies.root_api_key] = override_root_api_key
 
-    path = "src/tests/test_data"
+    path = "tests/test_data"
     file_name = "upload_test_data_schema_9.json"
     file_path = os.path.join(path, file_name)
 

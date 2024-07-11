@@ -1,11 +1,12 @@
 import json
 from typing import AsyncGenerator, Union
 
-from alembic import command
-from alembic.config import Config as AlembicConfig
 from sqlalchemy.exc import DBAPIError
 from sqlalchemy.ext.asyncio import AsyncConnection, AsyncEngine, create_async_engine
 from sqlmodel.ext.asyncio.session import AsyncSession
+
+from alembic import command
+from alembic.config import Config as AlembicConfig
 
 from .. import utils
 from ..config import SETTINGS
@@ -149,7 +150,7 @@ async def run_migrations():
         raise RuntimeError(f"ENGINE is `None`. The function {set_up_db_engine.__name__}() needs to get called first!")
 
     async with ENGINE.begin() as connection:
-        await connection.run_sync(run_upgrade, AlembicConfig("alembic.ini"))
+        await connection.run_sync(run_upgrade, AlembicConfig("src/alembic.ini"))
 
 
 def run_upgrade(connection: AsyncConnection, alembic_config: AlembicConfig):

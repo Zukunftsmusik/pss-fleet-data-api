@@ -2,6 +2,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.exceptions import RequestValidationError
+from fastapi.middleware.gzip import GZipMiddleware
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from . import exception_handlers
@@ -46,6 +47,9 @@ app.include_router(alliances.router)
 app.include_router(collections.router)
 app.include_router(users.router)
 app.include_router(root.router)
+
+
+app.add_middleware(GZipMiddleware, minimum_size=1)
 
 
 app.add_exception_handler(StarletteHTTPException, exception_handlers.handle_http_exception)

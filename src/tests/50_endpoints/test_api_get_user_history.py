@@ -39,11 +39,19 @@ def test_get_user_history_non_existing_id(assert_error_code, client: TestClient)
 
 @pytest.mark.usefixtures("user_history_db", "user_history_out")
 @pytest.mark.usefixtures("patch_has_user_history_true", "patch_get_user_history")
-@pytest.mark.parametrize(["user_id", "parameters"], test_cases.valid_id_and_filter_parameters)
+@pytest.mark.parametrize(["user_id", "parameters", "headers"], test_cases.valid_id_and_filter_parameters)
 def test_get_user_history_valid_parameters(
-    user_id: int, parameters: dict[str, Union[bool, datetime, int, ParameterInterval]], user_history_out_json: Any, client: TestClient
+    user_id: int,
+    parameters: dict[str, Union[bool, datetime, int, ParameterInterval]],
+    headers: dict[str, str],
+    user_history_out_json: Any,
+    client: TestClient,
 ):
     with client:
-        response = client.get(f"/userHistory/{user_id}", params=parameters)
+        response = client.get(
+            f"/userHistory/{user_id}",
+            params=parameters,
+            headers=headers,
+        )
         assert response.status_code == 200
         assert response.json() == [user_history_out_json]

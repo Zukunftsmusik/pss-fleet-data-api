@@ -201,13 +201,14 @@ valid_collection_and_child_ids = [
 
 
 valid_id_and_filter_parameters = [
-    # id, parameters
-    pytest.param(1, {}, id="no_params"),
-    pytest.param(1, {"fromDate": "2020-02-01T00:00:00Z", "toDate": "2020-03-01T00:00:00Z"}, id="from_to_date_valid"),
-    pytest.param(1, {"fromDate": "2020-02-01T00:00:00+06:00", "toDate": "2020-03-01T00:00:00Z"}, id="from_to_date_valid_different_timezones"),
-    pytest.param(1, {"fromDate": "2020-02-01T00:00:00", "toDate": "2020-03-01T00:00:00Z"}, id="from_to_date_valid_one_without_timezone"),
-    pytest.param(1, {"skip": 0, "take": 100}, id="skip_take_valid_1"),
-    pytest.param(1, {"skip": 5, "take": 5}, id="skip_take_valid_2"),
+    # id, parameters, headers
+    pytest.param(1, {}, {}, id="no_params"),
+    pytest.param(1, {}, {"Accept-Encoding": "gzip"}, id="no_params_accept_gzip"),
+    pytest.param(1, {"fromDate": "2020-02-01T00:00:00Z", "toDate": "2020-03-01T00:00:00Z"}, {}, id="from_to_date_valid"),
+    pytest.param(1, {"fromDate": "2020-02-01T00:00:00+06:00", "toDate": "2020-03-01T00:00:00Z"}, {}, id="from_to_date_valid_different_timezones"),
+    pytest.param(1, {"fromDate": "2020-02-01T00:00:00", "toDate": "2020-03-01T00:00:00Z"}, {}, id="from_to_date_valid_one_without_timezone"),
+    pytest.param(1, {"skip": 0, "take": 100}, {}, id="skip_take_valid_1"),
+    pytest.param(1, {"skip": 5, "take": 5}, {}, id="skip_take_valid_2"),
 ]
 """id, parameters"""
 

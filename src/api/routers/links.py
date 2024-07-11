@@ -376,6 +376,12 @@ history_getUsersFromCollection = LinkDefinition(
 )
 
 
+# /
+
+
+homepage_getCollections = LinkDefinition(description="Get Collections.", operationId=OperationId.GET_COLLECTIONS, parameters={})
+
+
 # /userHistory/{userId}
 
 
@@ -460,6 +466,7 @@ __all__ = [
     "history_getCollection",
     "history_getTop100UsersFromCollection",
     "history_getUsersFromCollection",
+    "homepage_getCollections",
     "userHistory_getAllianceFromCollection",
     "userHistory_getAllianceHistory",
     "userHistory_getUserFromCollection",

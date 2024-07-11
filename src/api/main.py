@@ -16,7 +16,7 @@ from .models.exceptions import (
     ParameterValidationError,
     ServerError,
 )
-from .routers import alliances, collections, users
+from .routers import alliances, collections, root, users
 
 
 @asynccontextmanager
@@ -40,9 +40,13 @@ app = FastAPI(
     # servers=[{"url": "https://fleetdata.dolores2.xyz", "description": "The PSS Fleet Data API.", "variables": {}}],
     lifespan=lifespan,
 )
+
+
 app.include_router(alliances.router)
 app.include_router(collections.router)
 app.include_router(users.router)
+app.include_router(root.router)
+
 
 app.add_exception_handler(StarletteHTTPException, exception_handlers.handle_http_exception)
 app.add_exception_handler(NotAuthenticatedError, exception_handlers.handle_not_authenticated)

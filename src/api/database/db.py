@@ -149,7 +149,7 @@ async def run_migrations():
         raise RuntimeError(f"ENGINE is `None`. The function {set_up_db_engine.__name__}() needs to get called first!")
 
     async with ENGINE.begin() as connection:
-        await connection.run_sync(run_upgrade, AlembicConfig("alembic.ini"))
+        await connection.run_sync(run_upgrade, AlembicConfig("src/alembic.ini"))
 
 
 def run_upgrade(connection: AsyncConnection, alembic_config: AlembicConfig):

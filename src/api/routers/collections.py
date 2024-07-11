@@ -43,7 +43,7 @@ async def get_collections(
     return result
 
 
-@router.post("/", **endpoints.collections_post, dependencies=[Depends(dependencies.verify_api_key)])
+@router.post("/", **endpoints.collections_post, dependencies=dependencies.authorization_dependencies)
 async def create_collection(
     collection: Annotated[CollectionCreate9, Body()], session: AsyncSession = Depends(db.get_session)
 ) -> CollectionMetadataOut:
@@ -57,7 +57,7 @@ async def create_collection(
     return result.metadata
 
 
-@router.delete("/{collectionId}", **endpoints.collections_collectionId_delete, dependencies=[Depends(dependencies.verify_api_key)])
+@router.delete("/{collectionId}", **endpoints.collections_collectionId_delete, dependencies=dependencies.authorization_dependencies)
 async def delete_collection(
     collection_id: Annotated[int, Depends(dependencies.collection_id)], session: AsyncSession = Depends(db.get_session)
 ) -> None:
@@ -183,7 +183,7 @@ schema_version_to_converter = {
 }
 
 
-@router.post("/upload", **endpoints.collections_upload_post, dependencies=[Depends(dependencies.verify_api_key)])
+@router.post("/upload", **endpoints.collections_upload_post, dependencies=dependencies.authorization_dependencies)
 async def upload_collection(
     collection_file: Annotated[UploadFile, File(media_type="application/json")], session: AsyncSession = Depends(db.get_session)
 ) -> CollectionMetadataOut:

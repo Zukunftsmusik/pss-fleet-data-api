@@ -100,8 +100,8 @@ async def from_to_date_parameters(
     Returns:
         DatetimeFilter: An object encapsulating the added parameters.
     """
-    from_date: datetime = utils.localize_to_utc(from_date)
-    to_date: datetime = utils.localize_to_utc(to_date)
+    from_date: datetime = utils.remove_timezone(utils.localize_to_utc(from_date)).replace(microsecond=0) if from_date else None
+    to_date: datetime = utils.remove_timezone(utils.localize_to_utc(to_date)).replace(microsecond=0) if to_date else None
     if from_date and to_date and to_date < from_date:
         raise FromDateAfterToDateError("Parameter `toDate` must not be earlier than parameter `fromDate`.")
 
@@ -194,7 +194,7 @@ def _check_is_authorized(request: Request, api_key: str, root_api_key: str) -> b
     return api_key == root_api_key
 
 
-authorization_dependencies: list[Any] = [Depends(verify_api_key)] if root_api_key() else None
+authorization_dependencies: list[Any] = [Depends(verify_api_key)] if root_api_key() else []
 
 
 __all__ = [

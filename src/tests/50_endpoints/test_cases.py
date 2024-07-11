@@ -205,6 +205,7 @@ valid_id_and_filter_parameters = [
     pytest.param(1, {}, {}, id="no_params"),
     pytest.param(1, {}, {"Accept-Encoding": "gzip"}, id="no_params_accept_gzip"),
     pytest.param(1, {"fromDate": "2020-02-01T00:00:00Z", "toDate": "2020-03-01T00:00:00Z"}, {}, id="from_to_date_valid"),
+    pytest.param(1, {"fromDate": "2019-11-30T23:59:00", "toDate": "2024-07-11T14:13:44"}, {}, id="from_to_date_valid_from_examples"),
     pytest.param(1, {"fromDate": "2020-02-01T00:00:00+06:00", "toDate": "2020-03-01T00:00:00Z"}, {}, id="from_to_date_valid_different_timezones"),
     pytest.param(1, {"fromDate": "2020-02-01T00:00:00", "toDate": "2020-03-01T00:00:00Z"}, {}, id="from_to_date_valid_one_without_timezone"),
     pytest.param(1, {"skip": 0, "take": 100}, {}, id="skip_take_valid_1"),

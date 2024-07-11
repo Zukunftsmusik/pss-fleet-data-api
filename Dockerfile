@@ -8,4 +8,4 @@ RUN PYTHONDONTWRITEBYTECODE=1 pip install --no-cache-dir -r requirements.lock
 
 COPY src ./src
 
-ENTRYPOINT ["fastapi", "run", "app/src/main.py", "--port", "80"]
+ENTRYPOINT ["fastapi", "run", "src/api/main.py", "--port", "80"]

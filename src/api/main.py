@@ -36,9 +36,9 @@ app = FastAPI(
     version=SETTINGS.version,
     title=SETTINGS.project_name,
     description=SETTINGS.description,
-    contact={"email": "theworstpss@gmail.com", "name": "The worst.", "url": "https://dolores2.xyz"},
-    license={"name": "MIT", "url": "https://github.com/Zukunftsmusik/pss-fleet-data-api/blob/main/LICENSE"},
-    # servers=[{"url": "https://fleetdata.dolores2.xyz", "description": "The PSS Fleet Data API.", "variables": {}}],
+    contact=SETTINGS.contact,
+    license=SETTINGS.license,
+    servers=SETTINGS.servers,
     lifespan=lifespan,
 )
 

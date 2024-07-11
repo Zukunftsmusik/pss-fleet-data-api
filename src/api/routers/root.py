@@ -9,8 +9,10 @@ router: APIRouter = APIRouter(tags=["root"], prefix="")
 
 @router.get("/", **endpoints.homepage_get)
 async def get_home() -> HTMLResponse:
-    with open("src/api/routers/home.html", "r") as fp:
+    with open("src/api/html/home.html", "r") as fp:
         return HTMLResponse(content=fp.read())
 
 
-__all__ = ["router"]
+__all__ = [
+    "router",
+]

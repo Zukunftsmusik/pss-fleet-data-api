@@ -119,6 +119,7 @@ async def get_session() -> AsyncGenerator[AsyncSession, None]:
             finally:
                 await async_session.close()
     except DBAPIError as connection_exception:
+        print(connection_exception)
         raise connection_exception
     finally:
         await connection.close()

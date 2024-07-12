@@ -8,6 +8,10 @@ from .link import Link
 
 
 class ErrorOut(BaseModel):
+    """
+    Represents an Error sent to the client in the case of an exception.
+    """
+
     code: str
     message: str
     details: str
@@ -18,6 +22,10 @@ class ErrorOut(BaseModel):
 
 
 class RequestValidationErrorOut(BaseModel):
+    """
+    Represents a RequestValidationError used to send an Error to the client in the case of an exception.
+    """
+
     type: str
     loc: tuple[Union[int, str], ...]
     msg: str
@@ -38,8 +46,21 @@ class RequestValidationErrorOut(BaseModel):
 
 
 class ErrorConverter:
+    """
+    Convert an ApiError instance.
+    """
+
     @staticmethod
     def to_error_out(error: ApiError, url: str) -> "ErrorOut":
+        """Converts an `ApiError` to a user-friendly format to be returned in a response.
+
+        Args:
+            error (ApiError): The exception that occured.
+            url (str): The URL of the endpoint that raised the exception.
+
+        Returns:
+            ErrorOut: A human-readable error object.
+        """
         if isinstance(error.timestamp, str):
             timestamp = utils.parse_datetime(error.timestamp)
         else:

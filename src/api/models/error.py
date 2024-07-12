@@ -34,14 +34,23 @@ class RequestValidationErrorOut(BaseModel):
 
     @property
     def param_location(self) -> str:
+        """
+        The location where the request validation failed.
+        """
         return self.loc[0]
 
     @property
     def param_name(self) -> str:
+        """
+        The name of the parameter for which the verification failed.
+        """
         return self.loc[-1]
 
     @property
     def param_path(self) -> tuple[str, ...]:
+        """
+        The path from the `param_location` to the `param_name`, if the parameter isn't on the top level.
+        """
         return tuple(self.loc[1:-1])
 
 

@@ -20,7 +20,7 @@ class ApiError(Exception):
     details: str
     timestamp: Union[datetime, str] = field(default_factory=lambda: datetime.now(tz=timezone.utc))
     suggestion: str = field(default="")
-    links: list[Link] = field(default_factory=lambda: [])
+    links: list[Link] = field(default_factory=lambda: list())
 
 
 # HTTP 401

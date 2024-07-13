@@ -5,6 +5,7 @@ from pydantic import BaseModel
 from .. import utils
 from .exceptions import ApiError
 from .link import Link
+from ..models.enums import ErrorCode
 
 
 class ErrorOut(BaseModel):
@@ -74,10 +75,15 @@ class ErrorConverter:
             timestamp = utils.parse_datetime(error.timestamp)
         else:
             timestamp = error.timestamp
+
+        details = error.details
+        if error.code == ErrorCode.SERVER_ERROR and error.__cause__:
+            details += f"\n{error.__cause__}"
+
         return ErrorOut(
             code=str(error.code),
             message=error.message,
-            details=error.details,
+            details=details,
             timestamp=f"{timestamp.isoformat()}",
             url=url,
             suggestion=error.suggestion or "",

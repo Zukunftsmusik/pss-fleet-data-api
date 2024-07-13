@@ -23,6 +23,7 @@ from .models.exceptions import (
     NotFoundError,
     ParameterValidationError,
     ServerError,
+    ToDateTooEarlyError,
     UnsupportedSchemaError,
 )
 
@@ -144,11 +145,11 @@ async def handle_request_validation(request: Request, exc: RequestValidationErro
     error = RequestValidationErrorOut(**exc._errors[0])
     match error.param_location:
         case "path":
-            _raise_path_parameter_error(error)
+            _raise_path_parameter_error(error, exc)
         case "query":
-            _raise_query_parameter_error(error)
+            _raise_query_parameter_error(error, exc)
         case "body":
-            _raise_body_parameter_error(error)
+            _raise_body_parameter_error(error, exc)
 
 
 async def handle_server(request: Request, exception: ServerError) -> ORJSONResponse:
@@ -182,7 +183,7 @@ async def _handle_api_error(request: Request, exception: ApiError, status_code: 
     return ORJSONResponse(dict(error_out), status_code=status_code)
 
 
-def _raise_body_parameter_error(error: RequestValidationErrorOut):
+def _raise_body_parameter_error(error: RequestValidationErrorOut, exc: RequestValidationError):
     """Handles a `RequestValidationError` (422) raised upon a failed validation of a body parameter and raises an appropriate detailed exception to be handled.
 
     Args:
@@ -193,13 +194,13 @@ def _raise_body_parameter_error(error: RequestValidationErrorOut):
         ServerError: Raised, if the functions mentioned above don't raise an exception.
     """
     if error.param_path:
-        _raise_nested_body_parameter_error(error)
+        _raise_nested_body_parameter_error(error, exc)
     else:
-        _raise_non_nested_body_parameter_error(error)
-    raise ServerError("An error occured while raising an error for an invalid body parameter.")
+        _raise_non_nested_body_parameter_error(error, exc)
+    raise ServerError("An error occured while raising an error for an invalid body parameter.") from exc
 
 
-def _raise_nested_body_parameter_error(error: RequestValidationErrorOut):
+def _raise_nested_body_parameter_error(error: RequestValidationErrorOut, exc: RequestValidationError):
     """Handles a `RequestValidationError` (422) raised upon a failed validation of a nested body parameter and raises an appropriate detailed exception to be handled.
 
     Args:
@@ -258,7 +259,7 @@ def _raise_nested_body_parameter_error(error: RequestValidationErrorOut):
             )
 
 
-def _raise_non_nested_body_parameter_error(error: RequestValidationErrorOut):
+def _raise_non_nested_body_parameter_error(error: RequestValidationErrorOut, exc: RequestValidationError):
     """Handles a `RequestValidationError` (422) raised upon a failed validation of a flat (non-nested) body parameter and raises an appropriate detailed exception to be handled.
 
     Args:
@@ -298,7 +299,7 @@ def _raise_non_nested_body_parameter_error(error: RequestValidationErrorOut):
                 )
 
 
-def _raise_path_parameter_error(error: RequestValidationErrorOut):
+def _raise_path_parameter_error(error: RequestValidationErrorOut, exc: RequestValidationError):
     """Handles a `RequestValidationError` (422) raised upon a failed validation of a path parameter and raises an appropriate detailed exception to be handled.
 
     Args:
@@ -317,10 +318,10 @@ def _raise_path_parameter_error(error: RequestValidationErrorOut):
             raise InvalidCollectionIdError(error.msg)
         case "userId":
             raise InvalidUserIdError(error.msg)
-    raise ServerError("An error occured while raising an error for an invalid path parameter.")
+    raise ServerError("An error occured while raising an error for an invalid path parameter.") from exc
 
 
-def _raise_query_parameter_error(error: RequestValidationErrorOut):
+def _raise_query_parameter_error(error: RequestValidationErrorOut, exc: RequestValidationError):
     """Handles a `RequestValidationError` (422) raised upon a failed validation of a query parameter and raises an appropriate detailed exception to be handled.
 
     Args:
@@ -344,6 +345,7 @@ def _raise_query_parameter_error(error: RequestValidationErrorOut):
         case "toDate":
             if not error.input or error.type == "datetime_from_date_parsing":
                 raise InvalidToDateError(error.msg)
+            raise ToDateTooEarlyError(error.msg)
         case "interval":
             raise InvalidIntervalError(error.msg)
         case "desc":
@@ -352,4 +354,4 @@ def _raise_query_parameter_error(error: RequestValidationErrorOut):
             raise InvalidSkipError(error.msg)
         case "take":
             raise InvalidTakeError(error.msg)
-    raise ServerError("An error occured while raising an error for an invalid query parameter.")
+    raise ServerError("An error occured while raising an error for an invalid query parameter.") from exc

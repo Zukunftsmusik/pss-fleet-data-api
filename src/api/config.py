@@ -21,7 +21,7 @@ class Settings:
 
     # Base
     project_name: str = "PSS Fleet Data API"
-    version: str = "1.1.1"
+    version: str = "1.2.0"
     description: str = "An API server for Pixel Starships Fleet Data."
     contact = {
         "email": "theworstpss@gmail.com",

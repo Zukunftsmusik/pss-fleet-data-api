@@ -1,4 +1,6 @@
+from contextlib import AbstractContextManager
 from datetime import datetime
+from typing import Any, Optional
 
 import pytest
 from dateutil.parser import parse as parse_datetime
@@ -29,12 +31,12 @@ test_cases_valid = [
 
 
 @pytest.mark.parametrize(["value", "expected_exception"], test_cases_invalid)
-def test_remove_timezone_invalid(value, expected_exception):
+def test_remove_timezone_invalid(value: Any, expected_exception: AbstractContextManager):
     with expected_exception:
         _ = remove_timezone(value)
 
 
 @pytest.mark.parametrize(["value", "expected_result"], test_cases_valid)
-def test_remove_timezone_valid(value, expected_result):
+def test_remove_timezone_valid(value: Optional[datetime], expected_result: Optional[datetime]):
     result = remove_timezone(value)
     assert result == expected_result

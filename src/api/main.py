@@ -22,6 +22,11 @@ from .routers import alliances, collections, root, users
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    """Manages setup and teardown of the Fleet Data API.
+
+    Args:
+        app (FastAPI): The FastAPI app.
+    """
     print(f"Initializing {app.title}")
     print(f"Version: {app.version}")
     print(f"Latest schema version: {CONSTANTS.latest_schema_version}")

@@ -17,28 +17,17 @@ class EndpointDefinition(BaseModel, Mapping):
     summary: str
 
     def keys(self) -> list[str]:
-        return self.__dict__.keys()
+        return self.model_dump().keys()
 
     def __iter__(self):
-        for item in self.__dict__.items():
+        for item in self.model_dump().items():
             yield item
 
     def __len__(self) -> int:
-        return len(self.__dict__)
+        return len(self.model_dump())
 
     def __getitem__(self, key) -> Any:
-        return self.__dict__[key]
-
-    def __dict__(self) -> dict[str, Any]:
-        result = {
-            "description": self.description,
-            "operation_id": self.operation_id,
-            "response_description": self.response_description,
-            "responses": self.responses,
-            "status_code": self.status_code,
-            "summary": self.summary,
-        }
-        return result
+        return self.model_dump()[key]
 
 
 __all__ = [

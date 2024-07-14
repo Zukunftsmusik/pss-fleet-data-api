@@ -3,9 +3,10 @@ from typing import Any, Optional, Union
 from pydantic import BaseModel
 
 from .. import utils
+from ..config import SETTINGS
+from ..models.enums import ErrorCode
 from .exceptions import ApiError
 from .link import Link
-from ..models.enums import ErrorCode
 
 
 class ErrorOut(BaseModel):
@@ -77,7 +78,7 @@ class ErrorConverter:
             timestamp = error.timestamp
 
         details = error.details
-        if error.code == ErrorCode.SERVER_ERROR and error.__cause__:
+        if SETTINGS.debug and error.code == ErrorCode.SERVER_ERROR and error.__cause__:
             details += f"\n{error.__cause__}"
 
         return ErrorOut(

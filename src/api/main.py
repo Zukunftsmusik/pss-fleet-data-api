@@ -6,7 +6,7 @@ from fastapi.middleware.gzip import GZipMiddleware
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from . import exception_handlers
-from .config import SETTINGS
+from .config import CONSTANTS, SETTINGS
 from .database import db
 from .models.exceptions import (
     ConflictError,
@@ -22,6 +22,14 @@ from .routers import alliances, collections, root, users
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    print(f"Initializing {app.title}")
+    print(f"Version: {app.version}")
+    print(f"Latest schema version: {CONSTANTS.latest_schema_version}")
+    print(f"Debug mode: {SETTINGS.debug}")
+    print(f"Reinitialize database: {SETTINGS.reinitialize_database_on_startup}")
+    print(f"Insert dummy data: {SETTINGS.create_dummy_data_on_startup}")
+    print(f"In github action: {SETTINGS.in_github_actions}")
+
     await initialize_app(
         app,
         SETTINGS.database_connection_str,

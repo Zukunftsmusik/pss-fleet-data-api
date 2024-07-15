@@ -1,5 +1,6 @@
+from contextlib import AbstractContextManager
 from datetime import datetime, timezone
-from typing import Union
+from typing import Any, Optional, Union
 
 import pytest
 
@@ -31,12 +32,12 @@ test_cases_valid = [
 
 
 @pytest.mark.parametrize(["value", "expected_exception"], test_cases_invalid)
-def test_parse_datetime_invalid(value, expected_exception):
+def test_parse_datetime_invalid(value: Any, expected_exception: AbstractContextManager):
     with expected_exception:
         _ = parse_datetime(value)
 
 
 @pytest.mark.parametrize(["value", "expected_result"], test_cases_valid)
-def test_parse_datetime_valid(value: Union[datetime, int, str], expected_result: datetime):
+def test_parse_datetime_valid(value: Optional[Union[datetime, int, str]], expected_result: Optional[datetime]):
     result = parse_datetime(value)
     assert result == expected_result

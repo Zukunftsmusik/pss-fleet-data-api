@@ -1,4 +1,6 @@
+from contextlib import AbstractContextManager
 from datetime import datetime
+from typing import Any, Optional
 
 import pytest
 
@@ -42,12 +44,12 @@ test_cases_valid = [
 
 
 @pytest.mark.parametrize(["value", "expected_exception"], test_cases_invalid)
-def test_decode_alliance_membership_invalid(value, expected_exception):
+def test_decode_alliance_membership_invalid(value: Any, expected_exception: AbstractContextManager):
     with expected_exception:
         _ = decode_alliance_membership(value)
 
 
 @pytest.mark.parametrize(["value", "expected_result"], test_cases_valid)
-def test_decode_alliance_membership_valid(value, expected_result):
+def test_decode_alliance_membership_valid(value: Optional[datetime], expected_result: Optional[datetime]):
     result = decode_alliance_membership(value)
     assert result == expected_result

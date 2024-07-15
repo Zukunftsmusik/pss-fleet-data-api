@@ -59,6 +59,7 @@ invalid_filter_parameters = [
     pytest.param({"toDate": None}, ErrorCode.PARAMETER_TO_DATE_INVALID, id="to_date_none"),
     pytest.param({"toDate": "abc"}, ErrorCode.PARAMETER_TO_DATE_INVALID, id="to_date_random_string"),
     pytest.param({"toDate": "2016-13-01T00:00:00"}, ErrorCode.PARAMETER_TO_DATE_INVALID, id="to_date_not_a_valid_date"),
+    pytest.param({"toDate": "2016-01-01T00:00:00"}, ErrorCode.PARAMETER_TO_DATE_TOO_EARLY, id="to_date_too_early"),
     pytest.param(
         {"fromDate": "2020-02-01T00:00:00Z", "toDate": "2020-01-01T00:00:00Z"},
         ErrorCode.FROM_DATE_AFTER_TO_DATE,

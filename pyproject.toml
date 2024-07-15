@@ -1,6 +1,6 @@
 [project]
 name = "pss-fleet-data-api"
-version = "1.1.0"
+version = "1.2.0"
 license = "MIT"
 description = "An API server for Pixelstarships Fleet Data"
 authors = [
@@ -64,7 +64,6 @@ line_length = 150
 lines_after_imports = 2
 
 [tool.vulture]
-
 min_confidence = 100
 paths = ["./src/api"]
 sort_by_size = true

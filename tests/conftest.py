@@ -240,6 +240,7 @@ def _create_collection_create_9() -> CollectionCreate9:
 def _create_collection_db() -> CollectionDB:
     return CollectionDB(
         collection_id=1,
+        data_version=9,
         collected_at=datetime(2016, 1, 6, 23, 59),
         duration=11.2,
         fleet_count=1,
@@ -260,14 +261,22 @@ def _create_collection_metadata_create_3() -> CollectionMetadataCreate3:
 
 
 def _create_collection_metadata_create_4(schema_version: int = None) -> CollectionMetadataCreate4:
+    schema_version = schema_version or 4
     return CollectionMetadataCreate4(
-        timestamp=datetime(2016, 1, 6, 23, 59), duration=11.2, fleet_count=1, user_count=1, tourney_running=False, schema_version=schema_version or 4
+        timestamp=datetime(2016, 1, 6, 23, 59),
+        data_version=schema_version,
+        duration=11.2,
+        fleet_count=1,
+        user_count=1,
+        tourney_running=False,
+        schema_version=schema_version,
     )
 
 
 def _create_collection_metadata_create_9() -> CollectionMetadataCreate9:
     return CollectionMetadataCreate9(
         timestamp=datetime(2016, 1, 6, 23, 59),
+        data_version=9,
         duration=11.2,
         fleet_count=1,
         user_count=1,

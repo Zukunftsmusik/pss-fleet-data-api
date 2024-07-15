@@ -69,7 +69,7 @@ class FromDB:
         Returns:
             AllianceHistoryOut: The converted Alliance History.
         """
-        collection = FromDB.to_collection(source[0], False, False).metadata
+        collection = FromDB.to_collection_metadata(source[0])
         alliance = FromDB.to_alliance(source[1])
         users = [FromDB.to_user(user)[0] for user in source[1].users if user] if source[1].users else []
         return AllianceHistoryOut(collection=collection, fleet=alliance, users=users)
@@ -85,18 +85,31 @@ class FromDB:
             CollectionOut: The converted Collection.
         """
         return CollectionOut(
-            metadata=CollectionMetadataOut(
-                collection_id=source.collection_id,
-                timestamp=utils.localize_to_utc(source.collected_at),
-                duration=source.duration,
-                fleet_count=source.fleet_count,
-                user_count=source.user_count,
-                tourney_running=source.tournament_running,
-                max_tournament_battle_attempts=source.max_tournament_battle_attempts,
-                schema_version=CONSTANTS.latest_schema_version,
-            ),
+            metadata=FromDB.to_collection_metadata(source),
             fleets=[FromDB.to_alliance(alliance) for alliance in source.alliances if alliance] if include_alliances and source.alliances else [],
             users=[FromDB.to_user(user) for user in source.users if user] if include_users and source.users else [],
+        )
+
+    @staticmethod
+    def to_collection_metadata(source: CollectionDB) -> CollectionMetadataOut:
+        """Takes a Collection from the database and converts it to a CollectionMetadata to be returned by the API.
+
+        Args:
+            source (CollectionDB): The Collection to be converted.
+
+        Returns:
+            CollectionMetadataOut: The converted Collection.
+        """
+        return CollectionMetadataOut(
+            collection_id=source.collection_id,
+            data_version=source.data_version,
+            timestamp=utils.localize_to_utc(source.collected_at),
+            duration=source.duration,
+            fleet_count=source.fleet_count,
+            user_count=source.user_count,
+            tourney_running=source.tournament_running,
+            max_tournament_battle_attempts=source.max_tournament_battle_attempts,
+            schema_version=CONSTANTS.latest_schema_version,
         )
 
     @staticmethod
@@ -110,16 +123,7 @@ class FromDB:
             CollectionWithFleetsOut: The converted Collection.
         """
         return CollectionWithFleetsOut(
-            metadata=CollectionMetadataOut(
-                collection_id=source.collection_id,
-                timestamp=utils.localize_to_utc(source.collected_at),
-                duration=source.duration,
-                fleet_count=source.fleet_count,
-                user_count=source.user_count,
-                tourney_running=source.tournament_running,
-                max_tournament_battle_attempts=source.max_tournament_battle_attempts,
-                schema_version=CONSTANTS.latest_schema_version,
-            ),
+            metadata=FromDB.to_collection_metadata(source),
             fleets=[FromDB.to_alliance(alliance) for alliance in source.alliances if alliance] if source.alliances else [],
         )
 
@@ -134,16 +138,7 @@ class FromDB:
             CollectionWithUsersOut: The converted Collection.
         """
         return CollectionWithUsersOut(
-            metadata=CollectionMetadataOut(
-                collection_id=source.collection_id,
-                timestamp=utils.localize_to_utc(source.collected_at),
-                duration=source.duration,
-                fleet_count=source.fleet_count,
-                user_count=source.user_count,
-                tourney_running=source.tournament_running,
-                max_tournament_battle_attempts=source.max_tournament_battle_attempts,
-                schema_version=CONSTANTS.latest_schema_version,
-            ),
+            metadata=FromDB.to_collection_metadata(source),
             users=[FromDB.to_user(user) for user in source.users if user] if source.users else [],
         )
 
@@ -190,7 +185,7 @@ class FromDB:
         Returns:
             UserHistoryOut: The converted User History.
         """
-        collection = FromDB.to_collection(source[0], False, False).metadata
+        collection = FromDB.to_collection_metadata(source[0])
         user = FromDB.to_user(source[1])
         alliance = FromDB.to_alliance(source[1].alliance) if source[1].alliance else None
         return UserHistoryOut(collection=collection, user=user, fleet=alliance)

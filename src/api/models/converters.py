@@ -71,7 +71,7 @@ class FromDB:
         """
         collection = FromDB.to_collection_metadata(source[0])
         alliance = FromDB.to_alliance(source[1])
-        users = [FromDB.to_user(user)[0] for user in source[1].users if user] if source[1].users else []
+        users = [FromDB.to_user(user) for user in source[1].users if user] if source[1].users else []
         return AllianceHistoryOut(collection=collection, fleet=alliance, users=users)
 
     @staticmethod

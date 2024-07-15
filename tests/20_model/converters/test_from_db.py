@@ -34,6 +34,20 @@ def test_to_alliance_history(alliance_history_db: AllianceHistoryDB):
     _check_alliance_out(alliance_history.fleet)
 
     assert isinstance(alliance_history.users, list)
+    assert not alliance_history.users
+
+
+@pytest.mark.usefixtures("alliance_history_db_with_member")
+def test_to_alliance_history_with_members(alliance_history_db_with_member: AllianceHistoryDB):
+    alliance_history = FromDB.to_alliance_history(alliance_history_db_with_member)
+
+    assert isinstance(alliance_history, AllianceHistoryOut)
+
+    _check_collection_metadata_out(alliance_history.collection)
+    _check_alliance_out(alliance_history.fleet)
+
+    assert isinstance(alliance_history.users, list)
+    assert alliance_history.users
     for user in alliance_history.users:
         _check_user_out(user)
 
@@ -81,8 +95,18 @@ def test_to_user_history(user_history_db: UserHistoryDB):
 
     _check_collection_metadata_out(user_history.collection)
     _check_user_out(user_history.user)
-    if user_history.fleet:
-        _check_alliance_out(user_history.fleet)
+    assert not user_history.fleet
+
+
+@pytest.mark.usefixtures("user_history_db_with_alliance")
+def test_to_user_history_with_alliance(user_history_db_with_alliance: UserHistoryDB):
+    user_history = FromDB.to_user_history(user_history_db_with_alliance)
+
+    assert isinstance(user_history, UserHistoryOut)
+
+    _check_collection_metadata_out(user_history.collection)
+    _check_user_out(user_history.user)
+    _check_alliance_out(user_history.fleet)
 
 
 # Helpers

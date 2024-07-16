@@ -1,15 +1,18 @@
-from typing import Any
+from typing import Any, Callable
 
 import pytest
 import test_cases
 from fastapi.testclient import TestClient
+from httpx import Response as HttpXResponse
 
 from src.api.models.enums import ErrorCode
 
 
 @pytest.mark.usefixtures("assert_error_code")
 @pytest.mark.parametrize(["collection_id"], test_cases.invalid_ids)
-def test_get_top_100_users_from_collection_invalid_id(collection_id: int, assert_error_code, client: TestClient):
+def test_get_top_100_users_from_collection_invalid_id(
+    collection_id: int, assert_error_code: Callable[[HttpXResponse, ErrorCode], None], client: TestClient
+):
     with client:
         response = client.get(f"/collections/{collection_id}/top100Users")
         assert response.status_code == 422
@@ -18,7 +21,7 @@ def test_get_top_100_users_from_collection_invalid_id(collection_id: int, assert
 
 @pytest.mark.usefixtures("assert_error_code")
 @pytest.mark.usefixtures("patch_has_collection_false")
-def test_get_top_100_users_from_collection_non_existing_id(assert_error_code, client: TestClient):
+def test_get_top_100_users_from_collection_non_existing_id(assert_error_code: Callable[[HttpXResponse, ErrorCode], None], client: TestClient):
     with client:
         response = client.get("/collections/1/top100Users")
         assert response.status_code == 404

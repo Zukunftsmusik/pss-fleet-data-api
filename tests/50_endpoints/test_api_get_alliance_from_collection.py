@@ -1,8 +1,9 @@
-from typing import Any
+from typing import Any, Callable
 
 import pytest
 import test_cases
 from fastapi.testclient import TestClient
+from httpx import Response as HttpXResponse
 
 from src.api.database import crud
 from src.api.database.models import AllianceDB
@@ -12,7 +13,11 @@ from src.api.models.enums import ErrorCode
 @pytest.mark.usefixtures("assert_error_code")
 @pytest.mark.parametrize(["collection_id", "alliance_id", "expected_error_code"], test_cases.invalid_collection_and_alliance_ids)
 def test_get_alliance_from_collection_invalid_ids(
-    collection_id: int, alliance_id: int, expected_error_code: ErrorCode, assert_error_code, client: TestClient
+    collection_id: int,
+    alliance_id: int,
+    expected_error_code: ErrorCode,
+    assert_error_code: Callable[[HttpXResponse, ErrorCode], None],
+    client: TestClient,
 ):
     with client:
         response = client.get(f"/collections/{collection_id}/alliances/{alliance_id}")

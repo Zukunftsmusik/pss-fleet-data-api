@@ -175,6 +175,14 @@ invalid_upload_files = [
 """folder_path, file_name, expected_error_code"""
 
 
+not_authenticated_headers = [
+    # headers
+    pytest.param(None, id="autorization_header_missing"),
+    pytest.param({"Authorization": ""}, id="autorization_header_empty"),
+]
+"""headers"""
+
+
 root_api_keys = [
     # root_api_key
     pytest.param(None, id="none"),

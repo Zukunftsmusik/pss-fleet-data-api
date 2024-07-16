@@ -47,6 +47,14 @@ def client():
     yield client
 
 
+@pytest.fixture(scope="session")
+def client_without_headers():
+    client = TestClient(
+        main.app,
+    )
+    yield client
+
+
 @pytest.fixture(scope="function")
 def collection_metadata_out_json(collection_out_without_children: CollectionOut) -> Any:
     return json.loads(collection_out_without_children.metadata.model_dump_json())

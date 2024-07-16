@@ -1,8 +1,9 @@
-from typing import Any
+from typing import Any, Callable
 
 import pytest
 import test_cases
 from fastapi.testclient import TestClient
+from httpx import Response as HttpXResponse
 
 from src.api.database import crud
 from src.api.database.models import UserDB
@@ -12,7 +13,11 @@ from src.api.models.enums import ErrorCode
 @pytest.mark.usefixtures("assert_error_code")
 @pytest.mark.parametrize(["collection_id", "user_id", "expected_error_code"], test_cases.invalid_collection_and_user_ids)
 def test_get_user_from_collection_invalid_ids(
-    collection_id: int, user_id: int, expected_error_code: ErrorCode, assert_error_code, client: TestClient
+    collection_id: int,
+    user_id: int,
+    expected_error_code: ErrorCode,
+    assert_error_code: Callable[[HttpXResponse, ErrorCode], None],
+    client: TestClient,
 ):
     with client:
         response = client.get(f"/collections/{collection_id}/users/{user_id}")
@@ -24,7 +29,13 @@ def test_get_user_from_collection_invalid_ids(
 @pytest.mark.usefixtures("user_db")
 @pytest.mark.parametrize(["collection_exists", "user_exists", "expected_error_code"], test_cases.does_exist_collection_and_user)
 def test_get_user_from_collection_non_existing_ids(
-    user_db: UserDB, collection_exists: bool, user_exists: bool, expected_error_code: ErrorCode, assert_error_code, client: TestClient, monkeypatch
+    user_db: UserDB,
+    collection_exists: bool,
+    user_exists: bool,
+    expected_error_code: ErrorCode,
+    assert_error_code: Callable[[HttpXResponse, ErrorCode], None],
+    client: TestClient,
+    monkeypatch,
 ):
     async def mock_has_collection(*args):
         return collection_exists

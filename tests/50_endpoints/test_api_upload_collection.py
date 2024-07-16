@@ -1,9 +1,10 @@
 import os
-from typing import Any
+from typing import Any, Callable
 
 import pytest
 import test_cases
 from fastapi.testclient import TestClient
+from httpx import Response as HttpXResponse
 
 from src.api import main
 from src.api.models.enums import ErrorCode
@@ -13,7 +14,9 @@ from src.api.routers import dependencies
 @pytest.mark.usefixtures("assert_error_code")
 @pytest.mark.usefixtures("patch_check_is_authenticated_true", "patch_check_is_authorized_true")
 @pytest.mark.parametrize(["path", "file_name", "expected_error_code"], test_cases.invalid_upload_files)
-async def test_upload_invalid_JSON(path: str, file_name: str, expected_error_code: ErrorCode, assert_error_code, client: TestClient):
+async def test_upload_invalid_JSON(
+    path: str, file_name: str, expected_error_code: ErrorCode, assert_error_code: Callable[[HttpXResponse, ErrorCode], None], client: TestClient
+):
     file_path = os.path.join(path, file_name)
 
     with open(file_path, "rb") as fp:
@@ -28,7 +31,9 @@ async def test_upload_invalid_JSON(path: str, file_name: str, expected_error_cod
 @pytest.mark.usefixtures("patch_check_is_authenticated_true", "patch_check_is_authorized_true")
 @pytest.mark.usefixtures("patch_get_collection_by_timestamp")
 @pytest.mark.parametrize(["path", "file_name"], test_cases.valid_upload_files)
-async def test_upload_non_unique_timestamp(path: str, file_name: str, assert_error_code, client: TestClient):
+async def test_upload_non_unique_timestamp(
+    path: str, file_name: str, assert_error_code: Callable[[HttpXResponse, ErrorCode], None], client: TestClient
+):
     file_path = os.path.join(path, file_name)
 
     with open(file_path, "rb") as fp:
@@ -54,21 +59,24 @@ async def test_upload_valid(path: str, file_name: str, collection_metadata_out_j
             assert response.json() == collection_metadata_out_json
 
 
-def test_upload_not_authenticated(assert_error_code, client: TestClient):
+@pytest.mark.parametrize(["headers"], test_cases.not_authenticated_headers)
+def test_upload_not_authenticated(
+    headers: dict[str, str], assert_error_code: Callable[[HttpXResponse, ErrorCode], None], client_without_headers: TestClient
+):
     path = "tests/test_data"
     file_name = "upload_test_data_schema_9.json"
     file_path = os.path.join(path, file_name)
 
     with open(file_path, "rb") as fp:
         files = {"collection_file": (file_name, fp, "application/json")}
-        with client:
-            response = client.post("/collections/upload", files=files)
+        with client_without_headers:
+            response = client_without_headers.post("/collections/upload", files=files, headers=headers)
             assert response.status_code == 401
             assert_error_code(response, ErrorCode.NOT_AUTHENTICATED)
 
 
 @pytest.mark.usefixtures("patch_check_is_authenticated_true")
-def test_upload_not_authorized(assert_error_code, client: TestClient):
+def test_upload_not_authorized(assert_error_code: Callable[[HttpXResponse, ErrorCode], None], client: TestClient):
     api_key = "123456"
 
     path = "tests/test_data"

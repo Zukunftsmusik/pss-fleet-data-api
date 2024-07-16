@@ -124,7 +124,7 @@ class InvalidDateTimeError(ParameterFormatError):
 
 class InvalidJsonUpload(ParameterFormatError):
     code = ErrorCode.INVALID_JSON_FORMAT
-    message = "The uploaded file is not a valid json file"
+    message = "The uploaded file is not a valid json file."
 
 
 class InvalidNumberError(ParameterFormatError):

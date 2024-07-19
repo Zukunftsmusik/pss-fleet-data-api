@@ -1,26 +1,19 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta property="title" content="PSS Fleet Data" />
-<meta property="description" content="Get historic data for top 100 fleets in the game Pixel Starships." />
-	
-<meta property="og:title" content="PSS Fleet Data" />
-<meta property="og:type" content="website" />
-<meta property="og:url" content="https://fleetdata.dolores2.xyz" />
-<meta property="og:image" content="https://cdn.discordapp.com/icons/565819215731228672/e32e82c9c188976542b3d20f55d79971.png" />
-<meta property="og:description" content="Get historic data for top 100 fleets in the game Pixel Starships." />
+<meta name="title" property="og:title" content="PSS Fleet Data API" />
+<meta name="description" property="og:description" content="Get historic data for top 100 fleets in the game Pixel Starships." />
+<meta name="hostname" property="og:hostname" content="github.com">	
+
+<meta name="type" property="og:type" content="website" />
+<meta name="url" property="og:url" content="https://fleetdata.dolores2.xyz" />
+<meta name="image" property="og:image" content="https://cdn.discordapp.com/icons/565819215731228672/e32e82c9c188976542b3d20f55d79971.png" />
 <meta name="theme-color" content="#dab420">
 
 <!-- Google / Search Engine Tags -->
-<meta itemprop="name" content="PSS Fleet Data">
+<meta itemprop="name" content="PSS Fleet Data API">
 <meta itemprop="description" content="Get historic data for top 100 fleets in the game Pixel Starships.">
 <meta itemprop="image" content="https://cdn.discordapp.com/icons/565819215731228672/e32e82c9c188976542b3d20f55d79971.png">
-
-<!-- Facebook Meta Tags -->
-<meta property="og:title" content="PSS Fleet Data" />
-<meta property="og:type" content="website" />
-<meta property="og:url" content="https://fleetdata.dolores2.xyz" />
-<meta property="og:image" content="https://cdn.discordapp.com/icons/565819215731228672/e32e82c9c188976542b3d20f55d79971.png" />
 
 <!-- Twitter Meta Tags -->
 <meta name="twitter:card" content="summary_large_image">
@@ -40,6 +33,17 @@
     -moz-transform: translateX(-50%) translateY(-50%);
     -webkit-transform: translateX(-50%) translateY(-50%);
     transform: translateX(-50%) translateY(-50%);
+    max-width: 800px;
+}
+
+.title {
+  font-size: 18pt;
+  text-align: center;
+}
+
+.subtitle {
+  font-size: 12pt;
+  text-align: center;
 }
 
 a {
@@ -60,44 +64,45 @@ body {
 }
 </style>
 	
-<title>PSS Fleet Data API</title>
+<title>PSS Fleet Data API - Home</title>
 </head>
 <body>
 <div class="container">
   <p>
-    <p>Welcome to the Pixel Starships Fleet Data API.<br />Check out the links below to get started!</p>
-    <p><a href="/docs">API documentation made with Swagger UI.</a></p>
-    <p><a href="/redoc">API documentation made with ReDoc.</a></p>
-	  <p></p>
-    <p>
-      <h3 align="center">Links</h3>
-      <p><a href="https://github.com/Zukunftsmusik/pss-fleet-data-api" target="_blank">Fleet Data API Server on github</a></p>
-      <p><a href="https://github.com/PSS-Tools-Development/pss-fleet-data-cpent" target="_blank">Fleet Data API Client for Python on github</a></p>
-      <p><a href="https://github.com/Zukunftsmusik/pss-fleet-data-importer" target="_blank">Fleet Data API Importer for Python on github</a></p>
-      <p><a href="https://github.com/Zukunftsmusik/pss-fleet-data" target="_blank">Fleet Data Collector on github</a></p>
-      <p><a href="https://drive.google.com/drive/folders/10wOZgAQk_0St2Y_jC3UW497LVpBNxWmP" target="_blank">Collected Fleet Data on Google Drive</a></p>
-    </p>
+    <div class="title">Welcome to the Pixel Starships Fleet Data API</div>
+    <div class="subtitle">Check out the links below to get started!</div>
+    <p><a href="/docs">API documentation powered by Swagger UI</a></p>
+    <p><a href="/redoc">API documentation powered by ReDoc</a></p>
   </p>
+	<p>&nbsp;</p>
+  <p>
+    <h3 align="center">References</h3>
+    <p><a href="https://github.com/Zukunftsmusik/pss-fleet-data-api" target="_blank">Fleet Data API Server on github</a></p>
+    <p><a href="https://github.com/PSS-Tools-Development/pss-fleet-data-cpent" target="_blank">Fleet Data API Client for Python on github</a></p>
+    <p><a href="https://github.com/Zukunftsmusik/pss-fleet-data-importer" target="_blank">Fleet Data API Importer for Python on github</a></p>
+    <p><a href="https://github.com/Zukunftsmusik/pss-fleet-data" target="_blank">Fleet Data Collector on github</a></p>
+    <p><a href="https://drive.google.com/drive/folders/10wOZgAQk_0St2Y_jC3UW497LVpBNxWmP" target="_blank">Collected Fleet Data on Google Drive</a></p>
+  </p>
+  <script
+    data-name="BMC-Widget"
+    data-cfasync="false"
+    src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js"
+    data-id="the_worst_pss"
+    data-description="Support me on Buy me a coffee!"
+    data-message="Support me"
+    data-color="#dab420"
+    data-position="left"
+    data-x_margin="18"
+    data-y_margin="70">
+  </script>
+  <script>
+    kofiWidgetOverlay.draw('theworstpss', {
+      'type': 'floating-chat',
+      'floating-chat.donateButton.text': 'Support me',
+      'floating-chat.donateButton.background-color': '#dab420',
+      'floating-chat.donateButton.text-color': '#323842'
+    });
+  </script>
 </div>
-<script
-  data-name="BMC-Widget"
-  data-cfasync="false"
-  src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js"
-  data-id="the_worst_pss"
-  data-description="Support me on Buy me a coffee!"
-  data-message="Support me"
-  data-color="#dab420"
-  data-position="left"
-  data-x_margin="18"
-  data-y_margin="70">
-</script>
-<script>
-  kofiWidgetOverlay.draw('theworstpss', {
-    'type': 'floating-chat',
-    'floating-chat.donateButton.text': 'Support me',
-    'floating-chat.donateButton.background-color': '#dab420',
-    'floating-chat.donateButton.text-color': '#323842'
-  });
-</script>
 </body>
 </html>

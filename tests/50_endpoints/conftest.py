@@ -57,7 +57,7 @@ def client_without_headers():
 
 @pytest.fixture(scope="function")
 def collection_metadata_out_json(collection_out_without_children: CollectionOut) -> Any:
-    return json.loads(collection_out_without_children.metadata.model_dump_json())
+    return json.loads(collection_out_without_children.meta.model_dump_json())
 
 
 @pytest.fixture(scope="function")

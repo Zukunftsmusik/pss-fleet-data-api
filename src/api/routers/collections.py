@@ -39,7 +39,7 @@ async def get_collections(
     collections = await crud.get_collections(
         session, datetime_filter.from_date, datetime_filter.to_date, list_filter.interval, list_filter.desc, skip_take.skip, skip_take.take
     )
-    result = [FromDB.to_collection(collection, False, False).metadata for collection in collections]
+    result = [FromDB.to_collection(collection, False, False).meta for collection in collections]
     return result
 
 
@@ -47,14 +47,14 @@ async def get_collections(
 async def create_collection(
     collection: Annotated[CollectionCreate9, Body()], session: AsyncSession = Depends(db.get_session)
 ) -> CollectionMetadataOut:
-    collection_with_same_timestamp = await crud.get_collection_by_timestamp(session, collection.metadata.timestamp)
+    collection_with_same_timestamp = await crud.get_collection_by_timestamp(session, collection.meta.timestamp)
     if collection_with_same_timestamp is not None:
-        raise exceptions.non_unique_timestamp(collection.metadata.timestamp, collection_with_same_timestamp.collection_id)
+        raise exceptions.non_unique_timestamp(collection.meta.timestamp, collection_with_same_timestamp.collection_id)
 
     collection_db = ToDB.from_collection_9(collection)
     collection_db = await crud.save_collection(session, collection_db, True, True)
     result = FromDB.to_collection(collection_db, False, False)
-    return result.metadata
+    return result.meta
 
 
 @router.delete("/{collectionId}", **endpoints.collections_collectionId_delete, dependencies=dependencies.authorization_dependencies)
@@ -193,9 +193,10 @@ async def upload_collection(
     except json.decoder.JSONDecodeError as json_decoder_error:
         raise exceptions.invalid_json_upload(json_decoder_error) from json_decoder_error
 
-    if "metadata" in decoded_json:
-        expected_schema_version = int(decoded_json["metadata"].get("schema_version", 3))
-        collected_at = utils.parse_datetime(decoded_json["metadata"].get("timestamp"))
+    metadata = decoded_json.get("meta")
+    if metadata:
+        expected_schema_version = int(metadata.get("schema_version", 3))
+        collected_at = utils.parse_datetime(metadata.get("timestamp"))
     else:
         raise exceptions.unsupported_schema()
 
@@ -213,7 +214,7 @@ async def upload_collection(
     collection_db = to_db_converter_func(collection)
     collection_db = await crud.save_collection(session, collection_db, True, True)
 
-    result = FromDB.to_collection(collection_db, False, False).metadata
+    result = FromDB.to_collection(collection_db, False, False).meta
     return result
 
 

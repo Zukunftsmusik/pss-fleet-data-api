@@ -40,8 +40,8 @@ def create_collections_from_dummy_data(data: Union[dict, list[dict]]) -> list[Co
             user.last_login_date = utils.parse_datetime(user.last_login_date).replace(tzinfo=None) if user.last_login_date else None
             user.last_heartbeat_date = utils.parse_datetime(user.last_heartbeat_date).replace(tzinfo=None) if user.last_heartbeat_date else None
 
-        collected_data["metadata"]["data_version"] = collected_data["metadata"].pop("schema_version", 3)
-        collection = CollectionDB(**(collected_data["metadata"]), alliances=alliances, users=users)
+        collected_data["meta"]["data_version"] = collected_data["meta"].pop("schema_version", 3)
+        collection = CollectionDB(**(collected_data["meta"]), alliances=alliances, users=users)
         collection.collected_at = utils.parse_datetime(collection.collected_at).replace(tzinfo=None) if collection.collected_at else None
 
         for i, alliance in enumerate(alliances):
@@ -76,17 +76,17 @@ async def create_dummy_data(paths_to_dummy_data: list[str]):
 
         collections.extend(create_collections_from_dummy_data(data))
 
-    await insert_dummy_collection(collections)
+    await insert_dummy_collections(collections)
 
 
-async def insert_dummy_collection(collections: list[CollectionDB]):
+async def insert_dummy_collections(collections: list[CollectionDB]):
     """Attempts to insert the provided `collections` into the database. If inserting a Collection fails, the transaction will be rolled back and the error will be printed to stdout.
 
     Args:
         collections (list[CollectionDB]): The Collections to be inserted.
     """
-    for collection in collections:
-        async for session in get_session():
+    async for session in get_session():
+        for collection in collections:
             try:
                 collection = await crud.save_collection(session, collection, True, True)
             except DBAPIError as exc:

@@ -121,7 +121,7 @@ def _check_alliance_out(alliance: AllianceOut):
 def _check_collection_out(collection: Union[CollectionOut, CollectionWithFleetsOut, CollectionWithUsersOut]):
     assert collection
     assert isinstance(collection, CollectionOut)
-    _check_collection_metadata_out(collection.metadata)
+    _check_collection_metadata_out(collection.meta)
 
     assert isinstance(collection.fleets, list)
     for fleet in collection.fleets:
@@ -135,7 +135,7 @@ def _check_collection_out(collection: Union[CollectionOut, CollectionWithFleetsO
 def _check_collection_with_fleets_out(collection: CollectionWithFleetsOut):
     assert collection
     assert isinstance(collection, CollectionWithFleetsOut)
-    _check_collection_metadata_out(collection.metadata)
+    _check_collection_metadata_out(collection.meta)
 
     assert isinstance(collection.fleets, list)
     for fleet in collection.fleets:
@@ -147,7 +147,7 @@ def _check_collection_with_fleets_out(collection: CollectionWithFleetsOut):
 def _check_collection_with_users_out(collection: CollectionWithUsersOut):
     assert collection
     assert isinstance(collection, CollectionWithUsersOut)
-    _check_collection_metadata_out(collection.metadata)
+    _check_collection_metadata_out(collection.meta)
 
     assert not hasattr(collection, "fleets")
 

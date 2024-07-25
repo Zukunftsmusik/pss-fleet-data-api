@@ -247,7 +247,7 @@ def _raise_nested_body_parameter_error(error: RequestValidationErrorOut, exc: Re
             if error.type == "missing":
                 fleet_index = error.loc[-2]
                 raise UnsupportedSchemaError(f"The fleet at index {fleet_index} is missing one or more values.")
-        case "metadata":
+        case "meta":
             if error.type == "missing":
                 raise UnsupportedSchemaError(f"The field {error.param_name} is missing from the metadata.")
             match error.param_name:
@@ -305,7 +305,7 @@ def _raise_non_nested_body_parameter_error(error: RequestValidationErrorOut, exc
                 raise UnsupportedSchemaError(
                     "The provided schema does not include the list of fleets.", suggestion="If no fleets were collected, add an empty list."
                 )
-        case "metadata":
+        case "meta":
             if error.type == "missing" or error.input is None:
                 raise UnsupportedSchemaError("The provided schema does not include any metadata.", suggestion="Add metadata to the Collection.")
         case "users":

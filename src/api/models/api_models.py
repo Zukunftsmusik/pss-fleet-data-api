@@ -79,13 +79,13 @@ See also: https://github.com/Zukunftsmusik/pss-fleet-data?tab=readme-ov-file#sch
 """
 
 
-class CollectionBase(BaseModel):
+class CollectionCreateBase(BaseModel):
     """
     A snapshot of fleet and player data in PSS.
     See also: https://github.com/Zukunftsmusik/pss-fleet-data?tab=readme-ov-file#schema-descriptions
     """
 
-    metadata: "CollectionMetadataCreateBase"
+    meta: "CollectionMetadataCreateBase"
     """The metadata of this Collection."""
     fleets: list
     """The fleets recorded in this Collection."""
@@ -93,7 +93,7 @@ class CollectionBase(BaseModel):
     """The players recorded in this Collection."""
 
 
-class CollectionCreate3(CollectionBase):
+class CollectionCreate3(CollectionCreateBase):
     """
     A snapshot of fleet and player data in PSS. Schema version 3.
     See also: https://github.com/Zukunftsmusik/pss-fleet-data?tab=readme-ov-file#schema-version-3
@@ -107,13 +107,13 @@ class CollectionCreate3(CollectionBase):
     """The players' data recorded in this Collection."""
 
 
-class CollectionCreate4(CollectionBase):
+class CollectionCreate4(CollectionCreateBase):
     """
     A snapshot of fleet and player data in PSS. Schema version 4.
     See also: https://github.com/Zukunftsmusik/pss-fleet-data?tab=readme-ov-file#schema-version-5
     """
 
-    metadata: "CollectionMetadataCreate4"
+    meta: "CollectionMetadataCreate4"
     """The metadata of this Collection."""
     fleets: list["AllianceCreate4"]
     """The fleets recorded in this Collection."""
@@ -127,7 +127,7 @@ class CollectionCreate5(CollectionCreate4):
     See also: https://github.com/Zukunftsmusik/pss-fleet-data?tab=readme-ov-file#schema-version-4
     """
 
-    metadata: "CollectionMetadataCreate4"
+    meta: "CollectionMetadataCreate4"
     """The metadata of this Collection."""
     fleets: list["AllianceCreate4"]
     """The fleets recorded in this Collection."""
@@ -173,7 +173,7 @@ class CollectionCreate9(CollectionCreate8):
     See also: https://github.com/Zukunftsmusik/pss-fleet-data?tab=readme-ov-file#schema-version-9
     """
 
-    metadata: "CollectionMetadataCreate9"
+    meta: "CollectionMetadataCreate9"
     """The metadata of this Collection."""
     users: list["UserCreate9"]
     """The players recorded in this Collection."""
@@ -472,7 +472,7 @@ class CollectionOut(CollectionCreate9):
     See also: https://github.com/Zukunftsmusik/pss-fleet-data?tab=readme-ov-file#schema-descriptions
     """
 
-    metadata: "CollectionMetadataOut"
+    meta: "CollectionMetadataOut"
     """The metadata of this Collection."""
     fleets: list["AllianceOut"]
     """The fleets recorded in this Collection."""
@@ -486,7 +486,7 @@ class CollectionWithFleetsOut(BaseModel):
     See also: https://github.com/Zukunftsmusik/pss-fleet-data?tab=readme-ov-file#schema-descriptions
     """
 
-    metadata: "CollectionMetadataOut"
+    meta: "CollectionMetadataOut"
     """The metadata of this Collection."""
     fleets: list["AllianceOut"]
     """The fleets recorded in this Collection."""
@@ -498,7 +498,7 @@ class CollectionWithUsersOut(BaseModel):
     See also: https://github.com/Zukunftsmusik/pss-fleet-data?tab=readme-ov-file#schema-descriptions
     """
 
-    metadata: "CollectionMetadataOut"
+    meta: "CollectionMetadataOut"
     """The metadata of this Collection."""
     users: list["UserOut"]
     """The players recorded in this Collection."""

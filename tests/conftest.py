@@ -223,7 +223,7 @@ def _create_alliance_db_with_member() -> AllianceDB:
 
 def _create_collection_create_3() -> CollectionCreate3:
     return CollectionCreate3(
-        metadata=_create_collection_metadata_create_3(),
+        meta=_create_collection_metadata_create_3(),
         fleets=[_create_alliance_create_3()],
         users=[_create_user_create_3()],
         data=[_create_user_data_create_3()],
@@ -231,35 +231,35 @@ def _create_collection_create_3() -> CollectionCreate3:
 
 
 def _create_collection_create_4() -> CollectionCreate4:
-    return CollectionCreate4(metadata=_create_collection_metadata_create_4(), fleets=[_create_alliance_create_4()], users=[_create_user_create_4()])
+    return CollectionCreate4(meta=_create_collection_metadata_create_4(), fleets=[_create_alliance_create_4()], users=[_create_user_create_4()])
 
 
 def _create_collection_create_5() -> CollectionCreate5:
     return CollectionCreate5(
-        metadata=_create_collection_metadata_create_4(schema_version=5), fleets=[_create_alliance_create_5()], users=[_create_user_create_5()]
+        meta=_create_collection_metadata_create_4(schema_version=5), fleets=[_create_alliance_create_5()], users=[_create_user_create_5()]
     )
 
 
 def _create_collection_create_6() -> CollectionCreate6:
     return CollectionCreate6(
-        metadata=_create_collection_metadata_create_4(schema_version=6), fleets=[_create_alliance_create_6()], users=[_create_user_create_6()]
+        meta=_create_collection_metadata_create_4(schema_version=6), fleets=[_create_alliance_create_6()], users=[_create_user_create_6()]
     )
 
 
 def _create_collection_create_7() -> CollectionCreate7:
     return CollectionCreate7(
-        metadata=_create_collection_metadata_create_4(schema_version=7), fleets=[_create_alliance_create_7()], users=[_create_user_create_6()]
+        meta=_create_collection_metadata_create_4(schema_version=7), fleets=[_create_alliance_create_7()], users=[_create_user_create_6()]
     )
 
 
 def _create_collection_create_8() -> CollectionCreate8:
     return CollectionCreate8(
-        metadata=_create_collection_metadata_create_4(schema_version=8), fleets=[_create_alliance_create_7()], users=[_create_user_create_8()]
+        meta=_create_collection_metadata_create_4(schema_version=8), fleets=[_create_alliance_create_7()], users=[_create_user_create_8()]
     )
 
 
 def _create_collection_create_9() -> CollectionCreate9:
-    return CollectionCreate9(metadata=_create_collection_metadata_create_9(), fleets=[_create_alliance_create_7()], users=[_create_user_create_9()])
+    return CollectionCreate9(meta=_create_collection_metadata_create_9(), fleets=[_create_alliance_create_7()], users=[_create_user_create_9()])
 
 
 def _create_collection_db() -> CollectionDB:

@@ -42,7 +42,8 @@ class Settings:
 
     # Database
     database_engine_echo: bool = getenv("DATABASE_ENGINE_ECHO", "false") == "true"
-    database_connection_str: str = f"postgresql+asyncpg://{getenv("DATABASE_URL")}/{getenv("DATABASE_NAME", "pss-fleet-data")}"
+    async_database_connection_str: str = f"postgresql+asyncpg://{getenv("DATABASE_URL")}/{getenv("DATABASE_NAME", "pss-fleet-data")}"
+    sync_database_connection_str: str = f"postgresql://{getenv("DATABASE_URL")}/{getenv("DATABASE_NAME", "pss-fleet-data")}"
 
     # Flags
     create_dummy_data_on_startup: bool = getenv("CREATE_DUMMY_DATA", "false") == "true"

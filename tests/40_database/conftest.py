@@ -14,14 +14,14 @@ from src.api.database.models import CollectionDB
 
 @pytest.fixture(scope="session", autouse=True)
 async def initialize_database():
-    db.set_up_db_engine(SETTINGS.database_connection_str, echo=SETTINGS.database_engine_echo)
+    db.set_up_db_engine(SETTINGS.async_database_connection_str, echo=SETTINGS.database_engine_echo)
     await db.initialize_db(True, ["tests/test_data/test_data.json"])
     await db.ENGINE.dispose()
 
 
 @pytest.fixture(scope="function")
 async def async_engine() -> AsyncGenerator[AsyncEngine, None]:
-    async_engine = create_async_engine(SETTINGS.database_connection_str, echo=SETTINGS.database_engine_echo)
+    async_engine = create_async_engine(SETTINGS.async_database_connection_str, echo=SETTINGS.database_engine_echo)
     yield async_engine
     await async_engine.dispose()
 

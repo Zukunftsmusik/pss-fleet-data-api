@@ -37,7 +37,7 @@ async def lifespan(app: FastAPI):
 
     await initialize_app(
         app,
-        SETTINGS.database_connection_str,
+        SETTINGS.async_database_connection_str,
         SETTINGS.debug,
         SETTINGS.reinitialize_database_on_startup,
         SETTINGS.create_dummy_data_on_startup,

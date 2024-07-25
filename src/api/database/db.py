@@ -126,7 +126,7 @@ async def get_session() -> AsyncGenerator[AsyncSession, None]:
         await connection.close()
 
 
-async def initialize_db(drop_tables: bool = False, paths_to_dummy_data: list[str] = None):
+def initialize_db(drop_tables: bool = False, paths_to_dummy_data: list[str] = None):
     """Initializes the database. Optionally drops all tables before creating them. Optionally dummy data will be read from disk and inserted.
 
     Args:
@@ -136,9 +136,6 @@ async def initialize_db(drop_tables: bool = False, paths_to_dummy_data: list[str
     Raises:
         RuntimeError: Raised, if `ENGINE` in this module hasn't been initialized, yet.
     """
-    if not ENGINE:
-        raise RuntimeError(f"ENGINE is `None`. The function {set_up_db_engine.__name__}() needs to get called first!")
-
     sync_connection_string = SETTINGS.sync_database_connection_str
 
     if drop_tables and sqlalchemy_utils.database_exists(sync_connection_string):
@@ -151,9 +148,6 @@ async def initialize_db(drop_tables: bool = False, paths_to_dummy_data: list[str
         alembic_config = AlembicConfig("alembic.ini")
         alembic_config.attributes["sqlalchemy.url"] = sync_connection_string
         alembic.command.upgrade(alembic_config, "head", tag="from_app")
-
-    if paths_to_dummy_data:
-        await create_dummy_data(paths_to_dummy_data)
 
 
 def alembic_current_is_head(sync_connection_string: str):

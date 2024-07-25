@@ -14,16 +14,17 @@ from src.api.database.models import CollectionDB
 
 @pytest.fixture(scope="session", autouse=True)
 async def initialize_database():
-    db.set_up_db_engine(SETTINGS.async_database_connection_str, echo=SETTINGS.database_engine_echo)
-    await db.initialize_db(True, ["tests/test_data/test_data.json"])
+    db.set_up_db_engine(SETTINGS.async_database_connection_str, echo=True)
+    db.initialize_db(True)
+    await db.create_dummy_data(["tests/test_data/test_data.json"])
     await db.ENGINE.dispose()
 
 
 @pytest.fixture(scope="function")
-async def async_engine() -> AsyncGenerator[AsyncEngine, None]:
+def async_engine() -> AsyncGenerator[AsyncEngine, None]:
     async_engine = create_async_engine(SETTINGS.async_database_connection_str, echo=SETTINGS.database_engine_echo)
-    yield async_engine
-    await async_engine.dispose()
+    return async_engine
+    # await async_engine.dispose()
 
 
 @pytest_asyncio.fixture(
@@ -52,6 +53,7 @@ async def session(async_engine: AsyncEngine) -> AsyncGenerator[AsyncSession, Non
         await transaction.rollback()
 
     await connection.close()
+    await async_engine.dispose()
 
 
 @pytest.fixture(scope="session")

@@ -88,8 +88,7 @@ async def initialize_app(app: FastAPI, database_connection_string: str, echo: bo
     """
     db.set_up_db_engine(database_connection_string, echo=echo)
 
-    paths_to_dummy_data = None
-    if create_dummy_data:
-        paths_to_dummy_data = ["examples/generated_dummy_data.json"]
+    db.initialize_db(drop_tables=reinitialize_database)
 
-    await db.initialize_db(reinitialize_database, paths_to_dummy_data)
+    if create_dummy_data:
+        await db.create_dummy_data(["examples/generated_dummy_data.json"])

@@ -1,12 +1,13 @@
+import io
 import json
-from typing import AsyncGenerator, Union
+from typing import AsyncGenerator, Optional, Union
 
+import alembic.command
+import sqlalchemy_utils
+from alembic.config import Config as AlembicConfig
 from sqlalchemy.exc import DBAPIError
 from sqlalchemy.ext.asyncio import AsyncConnection, AsyncEngine, create_async_engine
 from sqlmodel.ext.asyncio.session import AsyncSession
-
-from alembic import command
-from alembic.config import Config as AlembicConfig
 
 from .. import utils
 from ..config import SETTINGS
@@ -138,15 +139,33 @@ async def initialize_db(drop_tables: bool = False, paths_to_dummy_data: list[str
     if not ENGINE:
         raise RuntimeError(f"ENGINE is `None`. The function {set_up_db_engine.__name__}() needs to get called first!")
 
-    if drop_tables:
-        await crud.drop_tables(ENGINE)
+    sync_connection_string = SETTINGS.sync_database_connection_str
 
-    await run_migrations()
+    if drop_tables and sqlalchemy_utils.database_exists(sync_connection_string):
+        sqlalchemy_utils.drop_database(sync_connection_string)
 
-    await crud.create_tables(ENGINE)
+    if not sqlalchemy_utils.database_exists(sync_connection_string):
+        sqlalchemy_utils.create_database(sync_connection_string)
+
+    if not alembic_current_is_head(sync_connection_string):
+        alembic_config = AlembicConfig("alembic.ini")
+        alembic_config.attributes["sqlalchemy.url"] = sync_connection_string
+        alembic.command.upgrade(alembic_config, "head", tag="from_app")
 
     if paths_to_dummy_data:
         await create_dummy_data(paths_to_dummy_data)
+
+
+def alembic_current_is_head(sync_connection_string: str):
+    output_buffer = io.StringIO()
+
+    alembic_config = AlembicConfig("alembic.ini", stdout=output_buffer)
+    alembic_config.attributes["sqlalchemy.url"] = sync_connection_string
+
+    alembic.command.current(alembic_config)
+    current = output_buffer.getvalue()
+
+    return "(head)" in current
 
 
 async def run_migrations():
@@ -154,7 +173,7 @@ async def run_migrations():
         raise RuntimeError(f"ENGINE is `None`. The function {set_up_db_engine.__name__}() needs to get called first!")
 
     async with ENGINE.begin() as connection:
-        await connection.run_sync(run_upgrade, AlembicConfig("src/alembic.ini"))
+        await connection.run_sync(run_upgrade, AlembicConfig("alembic.ini"))
 
 
 def run_upgrade(connection: AsyncConnection, alembic_config: AlembicConfig):
@@ -164,9 +183,9 @@ def run_upgrade(connection: AsyncConnection, alembic_config: AlembicConfig):
         connection (AsyncConnection): A connection to the database to be migrated.
         alembic_config (AlembicConfig): The `alembic` configuration.
     """
-    alembic_config.attributes["sqlalchemy.url"] = SETTINGS.database_connection_str
+    alembic_config.attributes["sqlalchemy.url"] = SETTINGS.async_database_connection_str
     alembic_config.attributes["connection"] = connection
-    command.upgrade(alembic_config, "head")
+    alembic.command.upgrade(alembic_config, "head")
 
 
 def set_up_db_engine(database_url: str, echo: bool = None):

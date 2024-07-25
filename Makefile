@@ -24,6 +24,10 @@ check:
 	rye run flake8 ./src
 	rye run vulture
 
+.PHONY: update
+update:
+	rye sync --update-all
+
 .PHONY: run
 run:
 	fastapi dev src/main.py

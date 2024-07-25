@@ -28,7 +28,7 @@ class SkipTakeFilter:
     take: int = 100
 
 
-async def alliance_id(alliance_id: Annotated[int, Path(alias="allianceId", ge=1, description="The ID of a PSS Alliance.", example=21)]) -> int:
+async def alliance_id(alliance_id: Annotated[int, Path(alias="allianceId", ge=1, description="The ID of a PSS Alliance.", examples=[21])]) -> int:
     """
     Adds path parameter `allianceId` to a path.
 
@@ -39,7 +39,7 @@ async def alliance_id(alliance_id: Annotated[int, Path(alias="allianceId", ge=1,
 
 
 async def collection_id(
-    collection_id: Annotated[int, Path(alias="collectionId", ge=1, description="The ID of a PSS fleet data Collection.", example=1)]
+    collection_id: Annotated[int, Path(alias="collectionId", ge=1, description="The ID of a PSS fleet data Collection.", examples=[1])]
 ) -> int:
     """
     Adds path parameter `collectionId` to a path.
@@ -50,7 +50,7 @@ async def collection_id(
     return collection_id
 
 
-async def user_id(user_id: Annotated[int, Path(alias="userId", ge=1, description="The ID of a PSS User.", example=4510693)]) -> int:
+async def user_id(user_id: Annotated[int, Path(alias="userId", ge=1, description="The ID of a PSS User.", examples=[4510693])]) -> int:
     """
     Adds path parameter `userId` to a path.
 
@@ -62,7 +62,7 @@ async def user_id(user_id: Annotated[int, Path(alias="userId", ge=1, description
 
 async def division_design_id(
     division_design_id: Annotated[
-        int, Query(alias="divisionDesignId", ge=0, description="The ID of the PSS Monthly Fleet Tournament Division.", example=1)
+        int, Query(alias="divisionDesignId", ge=0, description="The ID of the PSS Monthly Fleet Tournament Division.", examples=[1])
     ]
 ) -> int:
     """
@@ -81,7 +81,7 @@ async def from_to_date_parameters(
             alias="fromDate",
             ge=CONSTANTS.pss_start_date,
             description="The earliest data for which data shall be returned. Must be Jan 6th, 2016 or later. Must be earlier than parameter `toDate`, if that's specified. If no timezone information is given, UTC is assumed.",
-            example=datetime(2019, 11, 30, 23, 59, 0),
+            examples=[datetime(2019, 11, 30, 23, 59, 0)],
         ),
     ] = None,
     to_date: Annotated[
@@ -90,7 +90,7 @@ async def from_to_date_parameters(
             alias="toDate",
             ge=CONSTANTS.pss_start_date,
             description="The latest data for which data shall be returned. Must be Jan 6th, 2016 or later. Must be later than parameter `fromDate`, if that's specified. If no timezone information is given, UTC is assumed.",
-            example=datetime.now().replace(microsecond=0),
+            examples=[datetime.now().replace(microsecond=0)],
         ),
     ] = None,
 ) -> DatetimeFilter:
@@ -113,10 +113,10 @@ async def list_filter_parameters(
         Optional[ParameterInterval],
         Query(
             description="Return the data from the specified time frame in hourly, daily (last Collection of a day) or monthly (last Collection of a month) interval.",
-            example=ParameterInterval.MONTHLY,
+            examples=[ParameterInterval.MONTHLY],
         ),
     ] = ParameterInterval.MONTHLY,
-    desc: Annotated[Optional[bool], Query(description="Return the results in descending order by timestamp.", example=False)] = False,
+    desc: Annotated[Optional[bool], Query(description="Return the results in descending order by timestamp.", examples=[False])] = False,
 ) -> ListFilter:
     """
     Adds query parameters `interval` and `desc` to a path.
@@ -128,8 +128,8 @@ async def list_filter_parameters(
 
 
 async def skip_take_parameters(
-    skip: Annotated[Optional[int], Query(ge=0, description="Skip this number of results from the result set.", example=0)] = 0,
-    take: Annotated[Optional[int], Query(ge=1, le=100, description="Limit the number of results returned.", example=100)] = 100,
+    skip: Annotated[Optional[int], Query(ge=0, description="Skip this number of results from the result set.", examples=[0])] = 0,
+    take: Annotated[Optional[int], Query(ge=1, le=100, description="Limit the number of results returned.", examples=[100])] = 100,
 ) -> SkipTakeFilter:
     """
     Adds query parameters `skip` and `take` to a path.

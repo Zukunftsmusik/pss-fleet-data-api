@@ -1,6 +1,6 @@
 import io
 import json
-from typing import AsyncGenerator, Optional, Union
+from typing import AsyncGenerator, Union
 
 import alembic.command
 import sqlalchemy_utils

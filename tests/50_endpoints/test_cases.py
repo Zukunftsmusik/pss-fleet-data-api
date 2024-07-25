@@ -1,9 +1,9 @@
 from datetime import datetime
 
 import pytest
+from tests import conftest
 
 from src.api.models.enums import ErrorCode
-from tests import conftest
 
 
 does_exist_collection_and_alliance = [

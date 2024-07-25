@@ -57,6 +57,7 @@ markupsafe==2.1.5
     # via mako
 mdurl==0.1.2
     # via markdown-it-py
+orjson==3.10.6
 psycopg2-binary==2.9.9
 pydantic==2.8.2
     # via fastapi

@@ -19,28 +19,28 @@ asyncpg==0.29.0
 attrs==23.2.0
     # via flake8-bugbear
 autoflake==2.3.1
-autopep8==2.2.0
+autopep8==2.3.1
 black==24.4.2
     # via flake8-black
-certifi==2024.6.2
+certifi==2024.7.4
     # via httpcore
     # via httpx
 click==8.1.7
     # via black
     # via typer
     # via uvicorn
-coverage==7.5.4
+coverage==7.6.0
     # via pytest-cov
 dnspython==2.6.1
     # via email-validator
-email-validator==2.1.1
+email-validator==2.2.0
     # via fastapi
-fastapi==0.111.0
+fastapi==0.111.1
     # via fastapi-limiter
 fastapi-cli==0.0.4
     # via fastapi
 fastapi-limiter==0.1.6
-flake8==7.0.0
+flake8==7.1.0
     # via flake8-black
     # via flake8-bugbear
 flake8-black==0.3.6
@@ -78,8 +78,6 @@ mdurl==0.1.2
     # via markdown-it-py
 mypy-extensions==1.0.0
     # via black
-orjson==3.10.5
-    # via fastapi
 packaging==24.1
     # via black
     # via pytest
@@ -89,24 +87,25 @@ platformdirs==4.2.2
     # via black
 pluggy==1.5.0
     # via pytest
-pycodestyle==2.11.1
+psycopg2-binary==2.9.9
+pycodestyle==2.12.0
     # via autopep8
     # via flake8
-pydantic==2.7.4
+pydantic==2.8.2
     # via fastapi
     # via sqlmodel
-pydantic-core==2.18.4
+pydantic-core==2.20.1
     # via pydantic
 pyflakes==3.2.0
     # via autoflake
     # via flake8
 pygments==2.18.0
     # via rich
-pytest==8.2.2
+pytest==8.3.1
     # via pytest-asyncio
     # via pytest-cov
     # via pytest-env
-pytest-asyncio==0.23.7
+pytest-asyncio==0.23.8
 pytest-cov==5.0.0
 pytest-env==1.1.3
 python-dateutil==2.9.0.post0
@@ -116,7 +115,7 @@ python-multipart==0.0.9
     # via fastapi
 pyyaml==6.0.1
     # via uvicorn
-redis==5.1.0b6
+redis==5.1.0b7
     # via fastapi-limiter
 rich==13.7.1
     # via typer
@@ -127,10 +126,12 @@ six==1.16.0
 sniffio==1.3.1
     # via anyio
     # via httpx
-sqlalchemy==2.0.30
+sqlalchemy==2.0.31
     # via alembic
+    # via sqlalchemy-utils
     # via sqlmodel
-sqlmodel==0.0.19
+sqlalchemy-utils==0.41.2
+sqlmodel==0.0.21
 starlette==0.37.2
     # via fastapi
 typer==0.12.3
@@ -142,9 +143,7 @@ typing-extensions==4.12.2
     # via pydantic-core
     # via sqlalchemy
     # via typer
-ujson==5.10.0
-    # via fastapi
-uvicorn==0.30.1
+uvicorn==0.30.3
     # via fastapi
     # via uvicorn
 uvloop==0.19.0

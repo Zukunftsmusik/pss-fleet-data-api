@@ -7,12 +7,14 @@ authors = [
     { name = "The worst.", email = "theworstpss@gmail.com" }
 ]
 dependencies = [
-    "fastapi>=0.111.0",
-    "sqlmodel>=0.0.19",
-    "fastapi-limiter>=0.1.6",
-    "python-dateutil>=2.9.0.post0",
-    "asyncpg>=0.29.0",
     "alembic>=1.13.2",
+    "asyncpg>=0.29.0",
+    "fastapi>=0.111.0",
+    "fastapi-limiter>=0.1.6",
+    "psycopg2-binary>=2.9.9",
+    "python-dateutil>=2.9.0.post0",
+    "sqlmodel>=0.0.19",
+    "sqlalchemy-utils>=0.41.2",
 ]
 readme = "README.md"
 requires-python = ">= 3.12.3"
@@ -27,17 +29,17 @@ virtual = true
 dev-dependencies = [
     "autoflake>=2.3.1",
     "autopep8>=2.2.0",
-    "flake8>=7.0.0",
-    "flake8-bugbear>=24.4.26",
-    "flake8-black>=0.3.6",
     "black>=24.4.2",
+    "coverage>=7.5.4",
+    "flake8>=7.0.0",
+    "flake8-black>=0.3.6",
+    "flake8-bugbear>=24.4.26",
     "isort>=5.13.2",
     "pytest>=7.2.1",
     "pytest-asyncio>=0.23.7",
     "pytest-cov>=4.1.0",
     "pytest-env>=1.1.3",
     "vulture>=2.11",
-    "coverage>=7.5.4",
 ]
 
 [tool.hatch.metadata]

@@ -53,6 +53,7 @@ app = FastAPI(
     license=SETTINGS.license,
     servers=SETTINGS.servers,
     lifespan=lifespan,
+    swagger_ui_parameters={"syntaxHighlight": False},  # Increases performance on large responses
 )
 
 

@@ -516,7 +516,16 @@ class CollectionMetadataOut(CollectionMetadataCreate9):
     """The maximum number of tournament battles any given player can do on a given monthly fleet tournament day."""
 
 
-AllianceOut = AllianceCreate7
+AllianceOut = tuple[
+    INT_GE_1,
+    STR_LENGTH_GE_1,
+    INT_GE_0,
+    INT_GE_0,
+    OPTIONAL_INT_GE_0,
+    OPTIONAL_INT_GE_0,
+    OPTIONAL_INT_GE_0,
+    OPTIONAL_INT_GE_0,
+]
 """(
     0: alliance_id,
     1: alliance_name,
@@ -531,7 +540,28 @@ See also: https://github.com/Zukunftsmusik/pss-fleet-data?tab=readme-ov-file#sch
 """
 
 
-UserOut = UserCreate9
+UserOut = tuple[
+    INT_GE_1,
+    STR_LENGTH_GE_1,
+    INT_GE_0,
+    INT_GE_0,
+    INT_GE_0,
+    UserAllianceMembershipEncoded,
+    OPTIONAL_INT_GE_0,
+    INT_GE_0,
+    OPTIONAL_INT_GE_0,
+    OPTIONAL_INT_GE_0,
+    OPTIONAL_INT_GE_0,
+    OPTIONAL_INT_GE_0,
+    OPTIONAL_INT_GE_0,
+    OPTIONAL_INT_GE_0,
+    OPTIONAL_INT_GE_0,
+    OPTIONAL_INT_GE_0,
+    OPTIONAL_INT_GE_0,
+    OPTIONAL_INT_GE_0,
+    OPTIONAL_INT_GE_0,
+    OPTIONAL_INT_GE_0,
+]
 """(
     0: user_id,
     1: user_name,

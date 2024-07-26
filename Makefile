@@ -30,7 +30,7 @@ update:
 
 .PHONY: run
 run:
-	fastapi dev src/main.py
+	fastapi dev src/api/main.py
 
 .PHONY: docker
 docker:

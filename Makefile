@@ -38,4 +38,4 @@ docker:
 	docker rm -f container-pss-fleet-data-api
 	docker image rm -f image-pss-fleet-data-api:latest
 	docker build -t image-pss-fleet-data-api .
-	docker run -d --name container-pss-fleet-data-api -p 80:80 image-pss-fleet-data-api:latest
+	docker run -d --name container-pss-fleet-data-api -p 80:80 --env-file ./.env image-pss-fleet-data-api:latest

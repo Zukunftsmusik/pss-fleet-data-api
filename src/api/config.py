@@ -36,7 +36,7 @@ class Settings:
     servers = [
         {
             "url": getenv("FLEET_DATA_API_URL_OVERRIDE", "https://fleetdata.dolores2.xyz"),
-            "description": "The original PSS Fleet Data API.",
+            "description": getenv("FLEET_DATA_API_URL_DESCRIPTION_OVERRIDE", "The original PSS Fleet Data API."),
             "variables": {},
         },
     ]

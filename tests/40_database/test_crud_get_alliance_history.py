@@ -53,28 +53,28 @@ test_cases_include_users = [
 
 @pytest.mark.parametrize(["alliance_id", "interval", "expected_length"], test_cases_interval)
 async def test_get_alliance_history_by_interval(alliance_id: int, interval: ParameterInterval, expected_length: int, session: AsyncSession):
-    alliance_history = await get_alliance_history(session, alliance_id, None, None, interval, False, 0, 100)
+    alliance_history = await get_alliance_history(session, alliance_id, interval=interval)
     __assert_correct_types(alliance_history)
     assert len(alliance_history) == expected_length
 
 
 @pytest.mark.parametrize(["alliance_id", "from_date", "to_date", "expected_length"], test_cases_by_date)
 async def test_get_alliance_history_by_date(alliance_id: int, from_date: datetime, to_date: datetime, expected_length: int, session: AsyncSession):
-    alliance_history = await get_alliance_history(session, alliance_id, from_date, to_date, ParameterInterval.HOURLY, False, 0, 100)
+    alliance_history = await get_alliance_history(session, alliance_id, from_date=from_date, to_date=to_date, interval=ParameterInterval.HOURLY)
     __assert_correct_types(alliance_history)
     assert len(alliance_history) == expected_length
 
 
 @pytest.mark.parametrize(["alliance_id", "skip", "take", "expected_length"], test_cases_skip_take)
 async def test_get_alliance_history_by_skip_take(alliance_id: int, skip: int, take: int, expected_length: int, session: AsyncSession):
-    alliance_history = await get_alliance_history(session, alliance_id, None, None, ParameterInterval.HOURLY, False, skip, take)
+    alliance_history = await get_alliance_history(session, alliance_id, interval=ParameterInterval.HOURLY, skip=skip, take=take)
     __assert_correct_types(alliance_history)
     assert len(alliance_history) == expected_length
 
 
 @pytest.mark.parametrize(["alliance_id", "desc"], test_cases_ordered_by)
 async def test_get_alliance_history_ordered_asc(alliance_id: int, desc: bool, session: AsyncSession):
-    alliance_history = await get_alliance_history(session, alliance_id, None, None, ParameterInterval.HOURLY, desc, 0, 100)
+    alliance_history = await get_alliance_history(session, alliance_id, interval=ParameterInterval.HOURLY, desc=desc)
     __assert_correct_types(alliance_history)
     for entry_1, entry_2 in zip(alliance_history[:-1], alliance_history[1:], strict=True):
         if desc:

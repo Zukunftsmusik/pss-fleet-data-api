@@ -46,28 +46,28 @@ test_cases_ordered_by = [
 
 @pytest.mark.parametrize(["interval", "expected_length"], test_cases_interval)
 async def test_get_collections_by_interval(interval: ParameterInterval, expected_length: int, session: AsyncSession):
-    collections = await get_collections(session, None, None, interval, False, 0, 100)
+    collections = await get_collections(session, interval=interval)
     assert all(isinstance(collection, CollectionDB) for collection in collections)
     assert len(collections) == expected_length
 
 
 @pytest.mark.parametrize(["from_date", "to_date", "expected_length"], test_cases_by_date)
 async def test_get_collections_by_date(from_date: datetime, to_date: datetime, expected_length: int, session: AsyncSession):
-    collections = await get_collections(session, from_date, to_date, ParameterInterval.HOURLY, False, 0, 100)
+    collections = await get_collections(session, from_date=from_date, to_date=to_date, interval=ParameterInterval.HOURLY)
     assert all(isinstance(collection, CollectionDB) for collection in collections)
     assert len(collections) == expected_length
 
 
 @pytest.mark.parametrize(["skip", "take", "expected_length"], test_cases_skip_take)
 async def test_get_collections_by_skip_take(skip: int, take: int, expected_length: int, session: AsyncSession):
-    collections = await get_collections(session, None, None, ParameterInterval.HOURLY, False, skip, take)
+    collections = await get_collections(session, interval=ParameterInterval.HOURLY, skip=skip, take=take)
     assert all(isinstance(collection, CollectionDB) for collection in collections)
     assert len(collections) == expected_length
 
 
 @pytest.mark.parametrize(["desc"], test_cases_ordered_by)
 async def test_get_collections_ordered_asc(desc: bool, session: AsyncSession):
-    collections = await get_collections(session, None, None, ParameterInterval.HOURLY, desc, 0, 100)
+    collections = await get_collections(session, interval=ParameterInterval.HOURLY, desc=desc)
     assert all(isinstance(collection, CollectionDB) for collection in collections)
     for collection_1, collection_2 in zip(collections[:-1], collections[1:], strict=True):
         if desc:

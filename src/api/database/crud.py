@@ -90,12 +90,13 @@ async def get_alliance_from_collection(session: AsyncSession, collection_id: int
 async def get_alliance_history(
     session: AsyncSession,
     alliance_id: int,
-    from_date: datetime,
-    to_date: datetime,
-    interval: ParameterInterval,
-    desc: bool,
-    skip: int,
-    take: int,
+    include_users: bool = True,
+    from_date: Optional[datetime] = None,
+    to_date: Optional[datetime] = None,
+    interval: ParameterInterval = ParameterInterval.MONTHLY,
+    desc: bool = False,
+    skip: int = 0,
+    take: int = 100,
 ) -> list[AllianceHistoryDB]:
     """Retrieve an Alliance's history over time.
 
@@ -121,7 +122,8 @@ async def get_alliance_history(
         )
         query = _apply_select_parameters_to_query(query, from_date, to_date, interval, desc)
         query = query.offset(skip).limit(take)
-        query = query.options(selectinload(AllianceDB.users))
+        if include_users:
+            query = query.options(selectinload(AllianceDB.users))
 
         results = (await session.exec(query)).all()
         return [(collection, alliance) for alliance, collection in results]
@@ -133,8 +135,8 @@ async def get_collection(session: AsyncSession, collection_id: int, include_alli
     Args:
         session (Session): The database session to use.
         collection_id (int): The `collection_id` of the Collection to retrieve.
-        include_alliances (bool, optional): Determines, whether to also retrieve the Alliances related to the Collection. Defaults to True.
-        include_users (bool, optional): Determines, whether to also retrieve the Users related to the Collection. Defaults to True.
+        include_alliances (bool): Determines, whether to also retrieve the Alliances related to the Collection.
+        include_users (bool): Determines, whether to also retrieve the Users related to the Collection.
 
     Returns:
         Optional[CollectionDB]: The requested Collection, if it exists. Else, None. If a Collection is returned and `include_alliances` is `True`, then the property `alliances` will be populated. Else, it will be empty. If a Collection is returned and `include_users` is `True`, then the property `users` will be populated. Else, it will be empty.
@@ -180,7 +182,13 @@ async def get_collection_by_timestamp(session: AsyncSession, collected_at: datet
 
 
 async def get_collections(
-    session: AsyncSession, from_date: datetime, to_date: datetime, interval: ParameterInterval, desc: bool, skip: int, take: int
+    session: AsyncSession,
+    from_date: Optional[datetime] = None,
+    to_date: Optional[datetime] = None,
+    interval: ParameterInterval = ParameterInterval.MONTHLY,
+    desc: bool = False,
+    skip: int = 0,
+    take: int = 100,
 ) -> list[CollectionDB]:
     """Retrieves metadata of Collections meeting the specified criteria.
 
@@ -205,17 +213,17 @@ async def get_collections(
         return list(results.all())
 
 
-async def get_top_100_from_collection(session: AsyncSession, collection_id: int, skip: int, take: int) -> list[UserDB]:
+async def get_top_100_from_collection(session: AsyncSession, collection_id: int, skip: int = 0, take: int = 100) -> list[UserDB]:
     """_summary_
 
     Args:
         session (Session): The database session to use.
-        collection_id (int): _description_
+        collection_id (int): The `collection_id` of the Collection to retrieve the data from.
         skip (int, optional): Skip this number of results from the result set. Defaults to 0.
         take (int, optional): Limit the number of results returned. Defaults to 100.
 
     Returns:
-        list[UserDB]: _description_
+        list[UserDB]: A (filtered) list of top 100 Users in the requested Collection ordered descending by Trophies.
     """
     async with session:
         query = select(UserDB).where(UserDB.collection_id == collection_id).order_by(col(UserDB.trophy).desc())
@@ -256,23 +264,23 @@ async def get_user_from_collection(session: AsyncSession, collection_id: int, us
 async def get_user_history(
     session: AsyncSession,
     user_id: int,
-    include_alliance: bool,
-    from_date: datetime,
-    to_date: datetime,
-    interval: ParameterInterval,
-    desc: bool,
-    skip: int,
-    take: int,
+    include_alliance: bool = True,
+    from_date: Optional[datetime] = None,
+    to_date: Optional[datetime] = None,
+    interval: ParameterInterval = ParameterInterval.MONTHLY,
+    desc: bool = False,
+    skip: int = 0,
+    take: int = 100,
 ) -> list[UserHistoryDB]:
     """Retrieve an User's history over time.
 
     Args:
         session (Session): The database session to use.
         user_id (int): The `user_id` of the User to retrieve data for.
-        include_alliance (bool, optional): Determines, whether to also retrieve the Alliance of the User. Defaults to True.
+        include_alliance (bool): Determines, whether to also retrieve the Alliance of the User. Defaults to True.
         from_date (datetime, optional): Return only data collected after this date and time or exactly at this point. Defaults to None.
         to_date (datetime, optional): Return only data collected before this date and time or exactly at this point. Defaults to None.
-        interval (ParameterInterval, optional): Specify the interval of the data returned. Defaults to ParameterInterval.MONTHLY.
+        interval (ParameterInterval): Specify the interval of the data returned. Defaults to ParameterInterval.MONTHLY.
         desc (bool, optional): Determines, whether the data should be returned in descending order by the collection date and time. Defaults to False.
         skip (int, optional): Skip this number of results from the result set. Defaults to 0.
         take (int, optional): Limit the number of results returned. Defaults to 100.
@@ -361,8 +369,8 @@ async def save_collection(session: AsyncSession, collection: CollectionDB, inclu
     Args:
         session (Session): The database session to use.
         collection (CollectionDB): The Collection to be saved.
-        include_alliances (bool, optional): Determines, if the `alliances` related to the Collection should be saved to the database, too.
-        include_users (bool, optional): Determines, if the `alliances` related to the Collection should be saved to the database, too.
+        include_alliances (bool): Determines, if the `alliances` related to the Collection should be saved to the database, too.
+        include_users (bool): Determines, if the `alliances` related to the Collection should be saved to the database, too.
 
     Returns:
         CollectionDB: The inserted or updated Collection.

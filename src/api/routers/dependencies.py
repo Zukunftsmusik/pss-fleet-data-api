@@ -140,14 +140,14 @@ async def skip_take_parameters(
     return SkipTakeFilter(skip=skip, take=take)
 
 
-def root_api_key() -> str:
+def root_api_key() -> Optional[str]:
     return SETTINGS.root_api_key
 
 
 async def verify_api_key(
     request: Request,
     api_key: Annotated[str, Header(alias="Authorization", description="Your API key.")],
-    root_api_key: str = Depends(root_api_key),
+    root_api_key: Optional[str] = Depends(root_api_key),
 ):
     """Verifies, if an api key has been provided in the 'Authorization' header and if it's authorized to access the endpoint.
 

@@ -101,7 +101,7 @@ async def get_session() -> AsyncGenerator[AsyncSession, None]:
         DBAPIError: Raised, if an error occurs during a transaction.
 
     Returns:
-        AsyncGenerator[AsyncSession, None]: _description_
+        AsyncGenerator[AsyncSession, None]: Returns a single `AsyncSession` when iterating.
 
     Yields:
         AsyncSession: The created `AsyncSession` object.

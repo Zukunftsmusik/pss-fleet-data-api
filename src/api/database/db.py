@@ -162,26 +162,6 @@ def alembic_current_is_head(sync_connection_string: str):
     return "(head)" in current
 
 
-async def run_migrations():
-    if not ENGINE:
-        raise RuntimeError(f"ENGINE is `None`. The function {set_up_db_engine.__name__}() needs to get called first!")
-
-    async with ENGINE.begin() as connection:
-        await connection.run_sync(run_upgrade, AlembicConfig("alembic.ini"))
-
-
-def run_upgrade(connection: AsyncConnection, alembic_config: AlembicConfig):
-    """Applies all database migrations until the database schema is fully upgraded.
-
-    Args:
-        connection (AsyncConnection): A connection to the database to be migrated.
-        alembic_config (AlembicConfig): The `alembic` configuration.
-    """
-    alembic_config.attributes["sqlalchemy.url"] = SETTINGS.async_database_connection_str
-    alembic_config.attributes["connection"] = connection
-    alembic.command.upgrade(alembic_config, "head")
-
-
 def set_up_db_engine(database_url: str, echo: bool = None):
     """Initializes the database engine `ENGINE`.
 

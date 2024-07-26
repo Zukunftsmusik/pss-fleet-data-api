@@ -1,5 +1,5 @@
 # The builder image, used to build the virtual environment
-FROM python:3.12.3-slim as runtime
+FROM python:3.12.3-slim AS runtime
 
 WORKDIR /app
 

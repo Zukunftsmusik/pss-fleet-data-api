@@ -28,7 +28,15 @@ async def get_user_history(
         )
 
     history = await crud.get_user_history(
-        session, user_id, datetime_filter.from_date, datetime_filter.to_date, list_filter.interval, list_filter.desc, skip_take.skip, skip_take.take
+        session,
+        user_id,
+        True,
+        datetime_filter.from_date,
+        datetime_filter.to_date,
+        list_filter.interval,
+        list_filter.desc,
+        skip_take.skip,
+        skip_take.take,
     )
     result = [FromDB.to_user_history(entry) for entry in history]
     return result

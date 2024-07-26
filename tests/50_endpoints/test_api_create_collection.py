@@ -1,8 +1,9 @@
-from typing import Any
+from typing import Any, Callable
 
 import pytest
 import test_cases
 from fastapi.testclient import TestClient
+from httpx import Response as HttpXResponse
 
 from src.api import main
 from src.api.models import CollectionCreate9
@@ -13,7 +14,9 @@ from src.api.routers import dependencies
 @pytest.mark.usefixtures("assert_error_code")
 @pytest.mark.usefixtures("patch_check_is_authenticated_true", "patch_check_is_authorized_true")
 @pytest.mark.parametrize(["invalid_payload"], test_cases.invalid_save_collection_payloads())
-def test_create_collection_invalid_payload(invalid_payload: CollectionCreate9, assert_error_code, client: TestClient):
+def test_create_collection_invalid_payload(
+    invalid_payload: CollectionCreate9, assert_error_code: Callable[[HttpXResponse, ErrorCode], None], client: TestClient
+):
     content = invalid_payload.model_dump_json()
 
     with client:
@@ -25,7 +28,9 @@ def test_create_collection_invalid_payload(invalid_payload: CollectionCreate9, a
 @pytest.mark.usefixtures("assert_error_code")
 @pytest.mark.usefixtures("collection_create_9")
 @pytest.mark.usefixtures("patch_get_collection_by_timestamp", "patch_check_is_authenticated_true", "patch_check_is_authorized_true")
-async def test_create_collection_non_unique_timestamp(collection_create_9: CollectionCreate9, assert_error_code, client: TestClient):
+async def test_create_collection_non_unique_timestamp(
+    collection_create_9: CollectionCreate9, assert_error_code: Callable[[HttpXResponse, ErrorCode], None], client: TestClient
+):
     with client:
         response = client.post("/collections", content=collection_create_9.model_dump_json())
         assert response.status_code == 409
@@ -50,7 +55,9 @@ def test_create_collection_valid_payload(collection_create_9: CollectionCreate9,
 @pytest.mark.usefixtures("collection_create_9")
 @pytest.mark.usefixtures("patch_check_is_authenticated_true", "patch_check_is_authorized_true")
 @pytest.mark.parametrize(["method"], test_cases.invalid_save_collection_methods)
-def test_create_collection_wrong_method(collection_create_9: CollectionCreate9, method: str, assert_error_code, client: TestClient):
+def test_create_collection_wrong_method(
+    collection_create_9: CollectionCreate9, method: str, assert_error_code: Callable[[HttpXResponse, ErrorCode], None], client: TestClient
+):
     with client:
         response = client.request(method, "/collections", content=collection_create_9.model_dump_json())
         assert response.status_code == 405
@@ -58,16 +65,24 @@ def test_create_collection_wrong_method(collection_create_9: CollectionCreate9, 
 
 
 @pytest.mark.usefixtures("collection_create_9")
-def test_create_collection_not_authenticated(collection_create_9: CollectionCreate9, assert_error_code, client: TestClient):
-    with client:
-        response = client.post("/collections", content=collection_create_9.model_dump_json())
+@pytest.mark.parametrize(["headers"], test_cases.not_authenticated_headers)
+def test_create_collection_not_authenticated(
+    collection_create_9: CollectionCreate9,
+    headers: dict[str, str],
+    assert_error_code: Callable[[HttpXResponse, ErrorCode], None],
+    client_without_headers: TestClient,
+):
+    with client_without_headers:
+        response = client_without_headers.post("/collections", content=collection_create_9.model_dump_json(), headers=headers)
         assert response.status_code == 401
         assert_error_code(response, ErrorCode.NOT_AUTHENTICATED)
 
 
 @pytest.mark.usefixtures("collection_create_9")
 @pytest.mark.usefixtures("patch_check_is_authenticated_true")
-def test_create_collection_not_authorized(collection_create_9: CollectionCreate9, assert_error_code, client: TestClient):
+def test_create_collection_not_authorized(
+    collection_create_9: CollectionCreate9, assert_error_code: Callable[[HttpXResponse, ErrorCode], None], client: TestClient
+):
     with client:
         response = client.post("/collections", content=collection_create_9.model_dump_json())
 

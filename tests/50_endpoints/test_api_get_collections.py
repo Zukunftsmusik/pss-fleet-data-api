@@ -1,9 +1,10 @@
 from datetime import datetime
-from typing import Any, Union
+from typing import Any, Callable, Union
 
 import pytest
 import test_cases
 from fastapi.testclient import TestClient
+from httpx import Response as HttpXResponse
 
 from src.api.models.enums import ErrorCode, ParameterInterval
 
@@ -11,7 +12,10 @@ from src.api.models.enums import ErrorCode, ParameterInterval
 @pytest.mark.usefixtures("assert_error_code")
 @pytest.mark.parametrize(["parameters", "expected_error_code"], test_cases.invalid_filter_parameters)
 def test_get_collections_invalid_parameters(
-    parameters: dict[str, Union[bool, datetime, int, ParameterInterval]], expected_error_code: ErrorCode, assert_error_code, client: TestClient
+    parameters: dict[str, Union[bool, datetime, int, ParameterInterval]],
+    expected_error_code: ErrorCode,
+    assert_error_code: Callable[[HttpXResponse, ErrorCode], None],
+    client: TestClient,
 ):
     with client:
         response = client.get("/collections", params=parameters)

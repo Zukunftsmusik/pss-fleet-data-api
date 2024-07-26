@@ -30,10 +30,24 @@ def test_to_alliance_history(alliance_history_db: AllianceHistoryDB):
 
     assert isinstance(alliance_history, AllianceHistoryOut)
 
-    _check_collection_metatadata_out(alliance_history.collection)
+    _check_collection_metadata_out(alliance_history.collection)
     _check_alliance_out(alliance_history.fleet)
 
     assert isinstance(alliance_history.users, list)
+    assert not alliance_history.users
+
+
+@pytest.mark.usefixtures("alliance_history_db_with_member")
+def test_to_alliance_history_with_members(alliance_history_db_with_member: AllianceHistoryDB):
+    alliance_history = FromDB.to_alliance_history(alliance_history_db_with_member)
+
+    assert isinstance(alliance_history, AllianceHistoryOut)
+
+    _check_collection_metadata_out(alliance_history.collection)
+    _check_alliance_out(alliance_history.fleet)
+
+    assert isinstance(alliance_history.users, list)
+    assert alliance_history.users
     for user in alliance_history.users:
         _check_user_out(user)
 
@@ -43,6 +57,13 @@ def test_to_collection(collection_db: CollectionDB):
     collection = FromDB.to_collection(collection_db, True, True)
 
     _check_collection_out(collection)
+
+
+@pytest.mark.usefixtures("collection_db")
+def test_to_collection_metadata(collection_db: CollectionDB):
+    collection_metadata = FromDB.to_collection_metadata(collection_db)
+
+    _check_collection_metadata_out(collection_metadata)
 
 
 @pytest.mark.usefixtures("collection_db")
@@ -72,10 +93,20 @@ def test_to_user_history(user_history_db: UserHistoryDB):
 
     assert isinstance(user_history, UserHistoryOut)
 
-    _check_collection_metatadata_out(user_history.collection)
+    _check_collection_metadata_out(user_history.collection)
     _check_user_out(user_history.user)
-    if user_history.fleet:
-        _check_alliance_out(user_history.fleet)
+    assert not user_history.fleet
+
+
+@pytest.mark.usefixtures("user_history_db_with_alliance")
+def test_to_user_history_with_alliance(user_history_db_with_alliance: UserHistoryDB):
+    user_history = FromDB.to_user_history(user_history_db_with_alliance)
+
+    assert isinstance(user_history, UserHistoryOut)
+
+    _check_collection_metadata_out(user_history.collection)
+    _check_user_out(user_history.user)
+    _check_alliance_out(user_history.fleet)
 
 
 # Helpers
@@ -90,7 +121,7 @@ def _check_alliance_out(alliance: AllianceOut):
 def _check_collection_out(collection: Union[CollectionOut, CollectionWithFleetsOut, CollectionWithUsersOut]):
     assert collection
     assert isinstance(collection, CollectionOut)
-    _check_collection_metatadata_out(collection.metadata)
+    _check_collection_metadata_out(collection.meta)
 
     assert isinstance(collection.fleets, list)
     for fleet in collection.fleets:
@@ -104,7 +135,7 @@ def _check_collection_out(collection: Union[CollectionOut, CollectionWithFleetsO
 def _check_collection_with_fleets_out(collection: CollectionWithFleetsOut):
     assert collection
     assert isinstance(collection, CollectionWithFleetsOut)
-    _check_collection_metatadata_out(collection.metadata)
+    _check_collection_metadata_out(collection.meta)
 
     assert isinstance(collection.fleets, list)
     for fleet in collection.fleets:
@@ -116,7 +147,7 @@ def _check_collection_with_fleets_out(collection: CollectionWithFleetsOut):
 def _check_collection_with_users_out(collection: CollectionWithUsersOut):
     assert collection
     assert isinstance(collection, CollectionWithUsersOut)
-    _check_collection_metatadata_out(collection.metadata)
+    _check_collection_metadata_out(collection.meta)
 
     assert not hasattr(collection, "fleets")
 
@@ -125,10 +156,20 @@ def _check_collection_with_users_out(collection: CollectionWithUsersOut):
         _check_user_out(user)
 
 
-def _check_collection_metatadata_out(collection_metadata: CollectionMetadataOut):
+def _check_collection_metadata_out(collection_metadata: CollectionMetadataOut):
     assert collection_metadata
     assert isinstance(collection_metadata, CollectionMetadataOut)
     assert collection_metadata.timestamp.tzinfo == timezone.utc
+    assert collection_metadata.timestamp is not None
+    assert collection_metadata.duration is not None
+    assert collection_metadata.fleet_count is not None
+    assert collection_metadata.user_count is not None
+    assert collection_metadata.tourney_running is not None
+    assert collection_metadata.schema_version is not None
+    assert collection_metadata.data_version is not None
+
+    if collection_metadata.data_version >= 9:
+        assert collection_metadata.max_tournament_battle_attempts is not None
 
 
 def _check_user_out(user: UserOut):

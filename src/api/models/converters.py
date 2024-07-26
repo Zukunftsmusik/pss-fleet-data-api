@@ -69,9 +69,9 @@ class FromDB:
         Returns:
             AllianceHistoryOut: The converted Alliance History.
         """
-        collection = FromDB.to_collection(source[0], False, False).metadata
+        collection = FromDB.to_collection_metadata(source[0])
         alliance = FromDB.to_alliance(source[1])
-        users = [FromDB.to_user(user)[0] for user in source[1].users if user] if source[1].users else []
+        users = [FromDB.to_user(user) for user in source[1].users if user] if source[1].users else []
         return AllianceHistoryOut(collection=collection, fleet=alliance, users=users)
 
     @staticmethod
@@ -85,18 +85,31 @@ class FromDB:
             CollectionOut: The converted Collection.
         """
         return CollectionOut(
-            metadata=CollectionMetadataOut(
-                collection_id=source.collection_id,
-                timestamp=utils.localize_to_utc(source.collected_at),
-                duration=source.duration,
-                fleet_count=source.fleet_count,
-                user_count=source.user_count,
-                tourney_running=source.tournament_running,
-                max_tournament_battle_attempts=source.max_tournament_battle_attempts,
-                schema_version=CONSTANTS.latest_schema_version,
-            ),
+            meta=FromDB.to_collection_metadata(source),
             fleets=[FromDB.to_alliance(alliance) for alliance in source.alliances if alliance] if include_alliances and source.alliances else [],
             users=[FromDB.to_user(user) for user in source.users if user] if include_users and source.users else [],
+        )
+
+    @staticmethod
+    def to_collection_metadata(source: CollectionDB) -> CollectionMetadataOut:
+        """Takes a Collection from the database and converts it to a CollectionMetadata to be returned by the API.
+
+        Args:
+            source (CollectionDB): The Collection to be converted.
+
+        Returns:
+            CollectionMetadataOut: The converted Collection.
+        """
+        return CollectionMetadataOut(
+            collection_id=source.collection_id,
+            data_version=source.data_version,
+            timestamp=utils.localize_to_utc(source.collected_at),
+            duration=source.duration,
+            fleet_count=source.fleet_count,
+            user_count=source.user_count,
+            tourney_running=source.tournament_running,
+            max_tournament_battle_attempts=source.max_tournament_battle_attempts,
+            schema_version=CONSTANTS.latest_schema_version,
         )
 
     @staticmethod
@@ -110,16 +123,7 @@ class FromDB:
             CollectionWithFleetsOut: The converted Collection.
         """
         return CollectionWithFleetsOut(
-            metadata=CollectionMetadataOut(
-                collection_id=source.collection_id,
-                timestamp=utils.localize_to_utc(source.collected_at),
-                duration=source.duration,
-                fleet_count=source.fleet_count,
-                user_count=source.user_count,
-                tourney_running=source.tournament_running,
-                max_tournament_battle_attempts=source.max_tournament_battle_attempts,
-                schema_version=CONSTANTS.latest_schema_version,
-            ),
+            meta=FromDB.to_collection_metadata(source),
             fleets=[FromDB.to_alliance(alliance) for alliance in source.alliances if alliance] if source.alliances else [],
         )
 
@@ -134,16 +138,7 @@ class FromDB:
             CollectionWithUsersOut: The converted Collection.
         """
         return CollectionWithUsersOut(
-            metadata=CollectionMetadataOut(
-                collection_id=source.collection_id,
-                timestamp=utils.localize_to_utc(source.collected_at),
-                duration=source.duration,
-                fleet_count=source.fleet_count,
-                user_count=source.user_count,
-                tourney_running=source.tournament_running,
-                max_tournament_battle_attempts=source.max_tournament_battle_attempts,
-                schema_version=CONSTANTS.latest_schema_version,
-            ),
+            meta=FromDB.to_collection_metadata(source),
             users=[FromDB.to_user(user) for user in source.users if user] if source.users else [],
         )
 
@@ -190,7 +185,7 @@ class FromDB:
         Returns:
             UserHistoryOut: The converted User History.
         """
-        collection = FromDB.to_collection(source[0], False, False).metadata
+        collection = FromDB.to_collection_metadata(source[0])
         user = FromDB.to_user(source[1])
         alliance = FromDB.to_alliance(source[1].alliance) if source[1].alliance else None
         return UserHistoryOut(collection=collection, user=user, fleet=alliance)
@@ -288,7 +283,7 @@ class ToDB:
         """
         for rank, fleet in enumerate(source.fleets):
             if len(fleet) == 3:
-                if source.metadata.tourney_running:
+                if source.meta.tourney_running:
                     if rank < 8:
                         division_design_id = "1"
                     elif rank < 20:
@@ -308,11 +303,11 @@ class ToDB:
 
         return CollectionDB(
             data_version=3,
-            collected_at=utils.remove_timezone(source.metadata.timestamp),
-            duration=source.metadata.duration,
-            fleet_count=source.metadata.fleet_count,
-            user_count=source.metadata.user_count,
-            tournament_running=source.metadata.tourney_running,
+            collected_at=utils.remove_timezone(source.meta.timestamp),
+            duration=source.meta.duration,
+            fleet_count=source.meta.fleet_count,
+            user_count=source.meta.user_count,
+            tournament_running=source.meta.tourney_running,
             alliances=fleets,
             users=users,
         )
@@ -332,12 +327,12 @@ class ToDB:
         users = [ToDB.from_user_4(user) for user in source.users]
 
         return CollectionDB(
-            data_version=source.metadata.schema_version,
-            collected_at=utils.remove_timezone(source.metadata.timestamp),
-            duration=source.metadata.duration,
-            fleet_count=source.metadata.fleet_count,
-            user_count=source.metadata.user_count,
-            tournament_running=source.metadata.tourney_running,
+            data_version=source.meta.schema_version,
+            collected_at=utils.remove_timezone(source.meta.timestamp),
+            duration=source.meta.duration,
+            fleet_count=source.meta.fleet_count,
+            user_count=source.meta.user_count,
+            tournament_running=source.meta.tourney_running,
             alliances=fleets,
             users=users,
         )
@@ -357,12 +352,12 @@ class ToDB:
         users = [ToDB.from_user_5(user) for user in source.users]
 
         return CollectionDB(
-            data_version=source.metadata.schema_version,
-            collected_at=utils.remove_timezone(source.metadata.timestamp),
-            duration=source.metadata.duration,
-            fleet_count=source.metadata.fleet_count,
-            user_count=source.metadata.user_count,
-            tournament_running=source.metadata.tourney_running,
+            data_version=source.meta.schema_version,
+            collected_at=utils.remove_timezone(source.meta.timestamp),
+            duration=source.meta.duration,
+            fleet_count=source.meta.fleet_count,
+            user_count=source.meta.user_count,
+            tournament_running=source.meta.tourney_running,
             alliances=fleets,
             users=users,
         )
@@ -382,12 +377,12 @@ class ToDB:
         users = [ToDB.from_user_6(user) for user in source.users]
 
         return CollectionDB(
-            data_version=source.metadata.schema_version,
-            collected_at=utils.remove_timezone(source.metadata.timestamp),
-            duration=source.metadata.duration,
-            fleet_count=source.metadata.fleet_count,
-            user_count=source.metadata.user_count,
-            tournament_running=source.metadata.tourney_running,
+            data_version=source.meta.schema_version,
+            collected_at=utils.remove_timezone(source.meta.timestamp),
+            duration=source.meta.duration,
+            fleet_count=source.meta.fleet_count,
+            user_count=source.meta.user_count,
+            tournament_running=source.meta.tourney_running,
             alliances=fleets,
             users=users,
         )
@@ -407,12 +402,12 @@ class ToDB:
         users = [ToDB.from_user_6(user) for user in source.users]
 
         return CollectionDB(
-            data_version=source.metadata.schema_version,
-            collected_at=utils.remove_timezone(source.metadata.timestamp),
-            duration=source.metadata.duration,
-            fleet_count=source.metadata.fleet_count,
-            user_count=source.metadata.user_count,
-            tournament_running=source.metadata.tourney_running,
+            data_version=source.meta.schema_version,
+            collected_at=utils.remove_timezone(source.meta.timestamp),
+            duration=source.meta.duration,
+            fleet_count=source.meta.fleet_count,
+            user_count=source.meta.user_count,
+            tournament_running=source.meta.tourney_running,
             alliances=fleets,
             users=users,
         )
@@ -432,12 +427,12 @@ class ToDB:
         users = [ToDB.from_user_8(user) for user in source.users]
 
         return CollectionDB(
-            data_version=source.metadata.schema_version,
-            collected_at=utils.remove_timezone(source.metadata.timestamp),
-            duration=source.metadata.duration,
-            fleet_count=source.metadata.fleet_count,
-            user_count=source.metadata.user_count,
-            tournament_running=source.metadata.tourney_running,
+            data_version=source.meta.schema_version,
+            collected_at=utils.remove_timezone(source.meta.timestamp),
+            duration=source.meta.duration,
+            fleet_count=source.meta.fleet_count,
+            user_count=source.meta.user_count,
+            tournament_running=source.meta.tourney_running,
             alliances=fleets,
             users=users,
         )
@@ -457,13 +452,13 @@ class ToDB:
         users = [ToDB.from_user_9(user) for user in source.users]
 
         return CollectionDB(
-            data_version=source.metadata.schema_version,
-            collected_at=utils.remove_timezone(source.metadata.timestamp),
-            duration=source.metadata.duration,
-            fleet_count=source.metadata.fleet_count,
-            user_count=source.metadata.user_count,
-            tournament_running=source.metadata.tourney_running,
-            max_tournament_battle_attempts=source.metadata.max_tournament_battle_attempts,
+            data_version=source.meta.schema_version,
+            collected_at=utils.remove_timezone(source.meta.timestamp),
+            duration=source.meta.duration,
+            fleet_count=source.meta.fleet_count,
+            user_count=source.meta.user_count,
+            tournament_running=source.meta.tourney_running,
+            max_tournament_battle_attempts=source.meta.max_tournament_battle_attempts,
             alliances=fleets,
             users=users,
         )

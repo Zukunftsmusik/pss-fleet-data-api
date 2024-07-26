@@ -24,9 +24,13 @@ check:
 	rye run flake8 ./src
 	rye run vulture
 
+.PHONY: update
+update:
+	rye sync --update-all
+
 .PHONY: run
 run:
-	fastapi dev src/main.py
+	fastapi dev src/api/main.py
 
 .PHONY: docker
 docker:
@@ -34,4 +38,4 @@ docker:
 	docker rm -f container-pss-fleet-data-api
 	docker image rm -f image-pss-fleet-data-api:latest
 	docker build -t image-pss-fleet-data-api .
-	docker run -d --name container-pss-fleet-data-api -p 80:80 image-pss-fleet-data-api:latest
+	docker run -d --name container-pss-fleet-data-api -p 80:80 --env-file ./.env image-pss-fleet-data-api:latest

@@ -47,28 +47,30 @@ test_cases_ordered_by = [
 
 @pytest.mark.parametrize(["user_id", "interval", "expected_length"], test_cases_interval)
 async def test_get_user_history_by_interval(user_id: int, interval: ParameterInterval, expected_length: int, session: AsyncSession):
-    user_history = await get_user_history(session, user_id, False, None, None, interval, False, 0, 100)
+    user_history = await get_user_history(session, user_id, include_alliance=False, interval=interval)
     __assert_correct_types(user_history)
     assert len(user_history) == expected_length
 
 
 @pytest.mark.parametrize(["user_id", "from_date", "to_date", "expected_length"], test_cases_by_date)
 async def test_get_user_history_by_date(user_id: int, from_date: datetime, to_date: datetime, expected_length: int, session: AsyncSession):
-    user_history = await get_user_history(session, user_id, False, from_date, to_date, ParameterInterval.HOURLY, False, 0, 100)
+    user_history = await get_user_history(
+        session, user_id, include_alliance=False, from_date=from_date, to_date=to_date, interval=ParameterInterval.HOURLY
+    )
     __assert_correct_types(user_history)
     assert len(user_history) == expected_length
 
 
 @pytest.mark.parametrize(["user_id", "skip", "take", "expected_length"], test_cases_skip_take)
 async def test_get_user_history_by_skip_take(user_id: int, skip: int, take: int, expected_length: int, session: AsyncSession):
-    user_history = await get_user_history(session, user_id, False, None, None, ParameterInterval.HOURLY, False, skip, take)
+    user_history = await get_user_history(session, user_id, include_alliance=False, interval=ParameterInterval.HOURLY, skip=skip, take=take)
     __assert_correct_types(user_history)
     assert len(user_history) == expected_length
 
 
 @pytest.mark.parametrize(["user_id", "desc"], test_cases_ordered_by)
 async def test_get_user_history_ordered_asc(user_id: int, desc: bool, session: AsyncSession):
-    user_history = await get_user_history(session, user_id, False, None, None, ParameterInterval.HOURLY, desc, 0, 100)
+    user_history = await get_user_history(session, user_id, include_alliance=False, interval=ParameterInterval.HOURLY, desc=desc)
     __assert_correct_types(user_history)
     for entry_1, entry_2 in zip(user_history[:-1], user_history[1:], strict=True):
         if desc:

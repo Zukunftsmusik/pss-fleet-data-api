@@ -1,12 +1,13 @@
+import io
 import json
 from typing import AsyncGenerator, Union
 
+import alembic.command
+import sqlalchemy_utils
+from alembic.config import Config as AlembicConfig
 from sqlalchemy.exc import DBAPIError
 from sqlalchemy.ext.asyncio import AsyncConnection, AsyncEngine, create_async_engine
 from sqlmodel.ext.asyncio.session import AsyncSession
-
-from alembic import command
-from alembic.config import Config as AlembicConfig
 
 from .. import utils
 from ..config import SETTINGS
@@ -39,8 +40,8 @@ def create_collections_from_dummy_data(data: Union[dict, list[dict]]) -> list[Co
             user.last_login_date = utils.parse_datetime(user.last_login_date).replace(tzinfo=None) if user.last_login_date else None
             user.last_heartbeat_date = utils.parse_datetime(user.last_heartbeat_date).replace(tzinfo=None) if user.last_heartbeat_date else None
 
-        collected_data["metadata"]["data_version"] = collected_data["metadata"].pop("schema_version", 3)
-        collection = CollectionDB(**(collected_data["metadata"]), alliances=alliances, users=users)
+        collected_data["meta"]["data_version"] = collected_data["meta"].pop("schema_version", 3)
+        collection = CollectionDB(**(collected_data["meta"]), alliances=alliances, users=users)
         collection.collected_at = utils.parse_datetime(collection.collected_at).replace(tzinfo=None) if collection.collected_at else None
 
         for i, alliance in enumerate(alliances):
@@ -75,17 +76,17 @@ async def create_dummy_data(paths_to_dummy_data: list[str]):
 
         collections.extend(create_collections_from_dummy_data(data))
 
-    await insert_dummy_collection(collections)
+    await insert_dummy_collections(collections)
 
 
-async def insert_dummy_collection(collections: list[CollectionDB]):
+async def insert_dummy_collections(collections: list[CollectionDB]):
     """Attempts to insert the provided `collections` into the database. If inserting a Collection fails, the transaction will be rolled back and the error will be printed to stdout.
 
     Args:
         collections (list[CollectionDB]): The Collections to be inserted.
     """
-    for collection in collections:
-        async for session in get_session():
+    async for session in get_session():
+        for collection in collections:
             try:
                 collection = await crud.save_collection(session, collection, True, True)
             except DBAPIError as exc:
@@ -100,7 +101,7 @@ async def get_session() -> AsyncGenerator[AsyncSession, None]:
         DBAPIError: Raised, if an error occurs during a transaction.
 
     Returns:
-        AsyncGenerator[AsyncSession, None]: _description_
+        AsyncGenerator[AsyncSession, None]: Returns a single `AsyncSession` when iterating.
 
     Yields:
         AsyncSession: The created `AsyncSession` object.
@@ -125,7 +126,7 @@ async def get_session() -> AsyncGenerator[AsyncSession, None]:
         await connection.close()
 
 
-async def initialize_db(drop_tables: bool = False, paths_to_dummy_data: list[str] = None):
+def initialize_db(drop_tables: bool = False, paths_to_dummy_data: list[str] = None):
     """Initializes the database. Optionally drops all tables before creating them. Optionally dummy data will be read from disk and inserted.
 
     Args:
@@ -135,38 +136,30 @@ async def initialize_db(drop_tables: bool = False, paths_to_dummy_data: list[str
     Raises:
         RuntimeError: Raised, if `ENGINE` in this module hasn't been initialized, yet.
     """
-    if not ENGINE:
-        raise RuntimeError(f"ENGINE is `None`. The function {set_up_db_engine.__name__}() needs to get called first!")
+    sync_connection_string = SETTINGS.sync_database_connection_str
 
-    if drop_tables:
-        await crud.drop_tables(ENGINE)
+    if drop_tables and sqlalchemy_utils.database_exists(sync_connection_string):
+        sqlalchemy_utils.drop_database(sync_connection_string)
 
-    await run_migrations()
+    if not sqlalchemy_utils.database_exists(sync_connection_string):
+        sqlalchemy_utils.create_database(sync_connection_string)
 
-    await crud.create_tables(ENGINE)
-
-    if paths_to_dummy_data:
-        await create_dummy_data(paths_to_dummy_data)
-
-
-async def run_migrations():
-    if not ENGINE:
-        raise RuntimeError(f"ENGINE is `None`. The function {set_up_db_engine.__name__}() needs to get called first!")
-
-    async with ENGINE.begin() as connection:
-        await connection.run_sync(run_upgrade, AlembicConfig("src/alembic.ini"))
+    if not alembic_current_is_head(sync_connection_string):
+        alembic_config = AlembicConfig("alembic.ini")
+        alembic_config.attributes["sqlalchemy.url"] = sync_connection_string
+        alembic.command.upgrade(alembic_config, "head", tag="from_app")
 
 
-def run_upgrade(connection: AsyncConnection, alembic_config: AlembicConfig):
-    """Applies all database migrations until the database schema is fully upgraded.
+def alembic_current_is_head(sync_connection_string: str):
+    output_buffer = io.StringIO()
 
-    Args:
-        connection (AsyncConnection): A connection to the database to be migrated.
-        alembic_config (AlembicConfig): The `alembic` configuration.
-    """
-    alembic_config.attributes["sqlalchemy.url"] = SETTINGS.database_connection_str
-    alembic_config.attributes["connection"] = connection
-    command.upgrade(alembic_config, "head")
+    alembic_config = AlembicConfig("alembic.ini", stdout=output_buffer)
+    alembic_config.attributes["sqlalchemy.url"] = sync_connection_string
+
+    alembic.command.current(alembic_config)
+    current = output_buffer.getvalue()
+
+    return "(head)" in current
 
 
 def set_up_db_engine(database_url: str, echo: bool = None):

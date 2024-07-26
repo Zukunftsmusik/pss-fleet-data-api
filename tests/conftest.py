@@ -71,6 +71,11 @@ def alliance_history_db() -> AllianceHistoryDB:
 
 
 @pytest.fixture(scope="function")
+def alliance_history_db_with_member() -> AllianceHistoryDB:
+    return (_create_collection_db(), _create_alliance_db_with_member())
+
+
+@pytest.fixture(scope="function")
 def collection_create_3() -> CollectionCreate3:
     return _create_collection_create_3()
 
@@ -155,6 +160,11 @@ def user_history_db() -> UserHistoryDB:
     return (_create_collection_db(), _create_user_db())
 
 
+@pytest.fixture(scope="function")
+def user_history_db_with_alliance() -> UserHistoryDB:
+    return (_create_collection_db(), _create_user_db_with_alliance())
+
+
 # Helpers
 
 
@@ -196,9 +206,24 @@ def _create_alliance_db() -> AllianceDB:
     )
 
 
+def _create_alliance_db_with_member() -> AllianceDB:
+    return AllianceDB(
+        collection_id=1,
+        alliance_id=1,
+        alliance_name="A1",
+        score=0,
+        division_design_id=0,
+        trophy=5000,
+        championship_score=0,
+        number_of_members=1,
+        number_of_approved_members=0,
+        users=[_create_user_db()],
+    )
+
+
 def _create_collection_create_3() -> CollectionCreate3:
     return CollectionCreate3(
-        metadata=_create_collection_metadata_create_3(),
+        meta=_create_collection_metadata_create_3(),
         fleets=[_create_alliance_create_3()],
         users=[_create_user_create_3()],
         data=[_create_user_data_create_3()],
@@ -206,40 +231,41 @@ def _create_collection_create_3() -> CollectionCreate3:
 
 
 def _create_collection_create_4() -> CollectionCreate4:
-    return CollectionCreate4(metadata=_create_collection_metadata_create_4(), fleets=[_create_alliance_create_4()], users=[_create_user_create_4()])
+    return CollectionCreate4(meta=_create_collection_metadata_create_4(), fleets=[_create_alliance_create_4()], users=[_create_user_create_4()])
 
 
 def _create_collection_create_5() -> CollectionCreate5:
     return CollectionCreate5(
-        metadata=_create_collection_metadata_create_4(schema_version=5), fleets=[_create_alliance_create_5()], users=[_create_user_create_5()]
+        meta=_create_collection_metadata_create_4(schema_version=5), fleets=[_create_alliance_create_5()], users=[_create_user_create_5()]
     )
 
 
 def _create_collection_create_6() -> CollectionCreate6:
     return CollectionCreate6(
-        metadata=_create_collection_metadata_create_4(schema_version=6), fleets=[_create_alliance_create_6()], users=[_create_user_create_6()]
+        meta=_create_collection_metadata_create_4(schema_version=6), fleets=[_create_alliance_create_6()], users=[_create_user_create_6()]
     )
 
 
 def _create_collection_create_7() -> CollectionCreate7:
     return CollectionCreate7(
-        metadata=_create_collection_metadata_create_4(schema_version=7), fleets=[_create_alliance_create_7()], users=[_create_user_create_6()]
+        meta=_create_collection_metadata_create_4(schema_version=7), fleets=[_create_alliance_create_7()], users=[_create_user_create_6()]
     )
 
 
 def _create_collection_create_8() -> CollectionCreate8:
     return CollectionCreate8(
-        metadata=_create_collection_metadata_create_4(schema_version=8), fleets=[_create_alliance_create_7()], users=[_create_user_create_8()]
+        meta=_create_collection_metadata_create_4(schema_version=8), fleets=[_create_alliance_create_7()], users=[_create_user_create_8()]
     )
 
 
 def _create_collection_create_9() -> CollectionCreate9:
-    return CollectionCreate9(metadata=_create_collection_metadata_create_9(), fleets=[_create_alliance_create_7()], users=[_create_user_create_9()])
+    return CollectionCreate9(meta=_create_collection_metadata_create_9(), fleets=[_create_alliance_create_7()], users=[_create_user_create_9()])
 
 
 def _create_collection_db() -> CollectionDB:
     return CollectionDB(
         collection_id=1,
+        data_version=9,
         collected_at=datetime(2016, 1, 6, 23, 59),
         duration=11.2,
         fleet_count=1,
@@ -260,14 +286,22 @@ def _create_collection_metadata_create_3() -> CollectionMetadataCreate3:
 
 
 def _create_collection_metadata_create_4(schema_version: int = None) -> CollectionMetadataCreate4:
+    schema_version = schema_version or 4
     return CollectionMetadataCreate4(
-        timestamp=datetime(2016, 1, 6, 23, 59), duration=11.2, fleet_count=1, user_count=1, tourney_running=False, schema_version=schema_version or 4
+        timestamp=datetime(2016, 1, 6, 23, 59),
+        data_version=schema_version,
+        duration=11.2,
+        fleet_count=1,
+        user_count=1,
+        tourney_running=False,
+        schema_version=schema_version,
     )
 
 
 def _create_collection_metadata_create_9() -> CollectionMetadataCreate9:
     return CollectionMetadataCreate9(
         timestamp=datetime(2016, 1, 6, 23, 59),
+        data_version=9,
         duration=11.2,
         fleet_count=1,
         user_count=1,
@@ -332,6 +366,33 @@ def _create_user_data_create_3() -> UserDataCreate3:
 
 
 def _create_user_db() -> UserDB:
+    return UserDB(
+        collection_id=1,
+        user_id=1,
+        alliance_id=1,
+        user_name="U1",
+        trophy=1000,
+        alliance_score=0,
+        alliance_membership="FleetAdmiral",
+        alliance_join_date=datetime(2016, 1, 6, 8, 12, 34),
+        last_login_date=datetime(2016, 1, 6, 23, 58),
+        last_heartbeat_date=datetime(2016, 1, 6, 23, 58),
+        crew_donated=0,
+        crew_received=0,
+        pvp_attack_wins=5,
+        pvp_attack_losses=2,
+        pvp_attack_draws=1,
+        pvp_defence_wins=1,
+        pvp_defence_losses=8,
+        pvp_defence_draws=0,
+        championship_score=0,
+        highest_trophy=1000,
+        tournament_bonus_score=0,
+        alliance=None,
+    )
+
+
+def _create_user_db_with_alliance() -> UserDB:
     return UserDB(
         collection_id=1,
         user_id=1,

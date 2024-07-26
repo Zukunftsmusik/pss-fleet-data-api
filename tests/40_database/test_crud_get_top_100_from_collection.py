@@ -25,7 +25,7 @@ test_cases_valid = [
 
 @pytest.mark.parametrize(["collection_id", "skip", "take", "expected_length"], test_cases_invalid)
 async def test_get_top_100_from_collection_invalid(collection_id: int, skip: int, take: int, expected_length: int, session: AsyncSession):
-    top_100 = await get_top_100_from_collection(session, collection_id, skip, take)
+    top_100 = await get_top_100_from_collection(session, collection_id, skip=skip, take=take)
     assert isinstance(top_100, list)
     assert len(top_100) == expected_length
     if expected_length:
@@ -37,7 +37,7 @@ async def test_get_top_100_from_collection_invalid(collection_id: int, skip: int
 
 @pytest.mark.parametrize(["collection_id", "skip", "take", "expected_length"], test_cases_valid)
 async def test_get_top_100_from_collection_valid(collection_id: int, skip: int, take: int, expected_length: int, session: AsyncSession):
-    top_100 = await get_top_100_from_collection(session, collection_id, skip, take)
+    top_100 = await get_top_100_from_collection(session, collection_id, skip=skip, take=take)
     assert isinstance(top_100, list)
     assert len(top_100) == expected_length
     assert all(isinstance(user, UserDB) for user in top_100)

@@ -140,16 +140,20 @@ async def handle_request_validation(request: Request, exc: RequestValidationErro
         exc (RequestValidationError): The exception that was thrown.
 
     Raises:
-        See functions `_raise_path_parameter_error`, `_raise_query_parameter_error` and `_raise_body_parameter_error`.
+        See functions `_raise_body_parameter_error`, `_raise_header_parameter_error`, `_raise_path_parameter_error` & `_raise_query_parameter_error`.
+        ServerError: Raised, if the functions mentioned above don't raise an exception.
     """
     error = RequestValidationErrorOut(**exc._errors[0])
     match error.param_location:
+        case "body":
+            _raise_body_parameter_error(error, exc)
+        case "header":
+            _raise_header_parameter_error(error, exc)
         case "path":
             _raise_path_parameter_error(error, exc)
         case "query":
             _raise_query_parameter_error(error, exc)
-        case "body":
-            _raise_body_parameter_error(error, exc)
+    raise ServerError("An error occured while raising an error for an invalid parameter.") from exc
 
 
 async def handle_server(request: Request, exception: ServerError) -> ORJSONResponse:
@@ -187,7 +191,7 @@ def _raise_body_parameter_error(error: RequestValidationErrorOut, exc: RequestVa
     """Handles a `RequestValidationError` (422) raised upon a failed validation of a body parameter and raises an appropriate detailed exception to be handled.
 
     Args:
-        error (RequestValidationErrorOut): _description_
+        error (RequestValidationErrorOut): Details of the `RequestValidationError` that was thrown.
 
     Raises:
         See functions `_raise_nested_body_parameter_error` and `_raise_non_nested_body_parameter_error`.
@@ -198,6 +202,23 @@ def _raise_body_parameter_error(error: RequestValidationErrorOut, exc: RequestVa
     else:
         _raise_non_nested_body_parameter_error(error, exc)
     raise ServerError("An error occured while raising an error for an invalid body parameter.") from exc
+
+
+def _raise_header_parameter_error(error: RequestValidationErrorOut, exc: RequestValidationError):
+    """Handles a `RequestValidationError` (422) raised upon a failed validation of a header parameter and raises an appropriate detailed exception to be handled.
+
+    Args:
+        error (RequestValidationErrorOut): Details of the `RequestValidationError` that was thrown.
+
+    Raises:
+        ServerError: Raised, if the functions mentioned above don't raise an exception.
+    """
+    match error.param_name:
+        case "Authorization":
+            raise NotAuthenticatedError(
+                "'Authorization' header not found in request.", suggestion="Add an 'Authorization' header to the request with an authorized api key."
+            )
+    raise ServerError("An error occured while raising an error for an invalid header parameter.") from exc
 
 
 def _raise_nested_body_parameter_error(error: RequestValidationErrorOut, exc: RequestValidationError):
@@ -226,7 +247,7 @@ def _raise_nested_body_parameter_error(error: RequestValidationErrorOut, exc: Re
             if error.type == "missing":
                 fleet_index = error.loc[-2]
                 raise UnsupportedSchemaError(f"The fleet at index {fleet_index} is missing one or more values.")
-        case "metadata":
+        case "meta":
             if error.type == "missing":
                 raise UnsupportedSchemaError(f"The field {error.param_name} is missing from the metadata.")
             match error.param_name:
@@ -284,7 +305,7 @@ def _raise_non_nested_body_parameter_error(error: RequestValidationErrorOut, exc
                 raise UnsupportedSchemaError(
                     "The provided schema does not include the list of fleets.", suggestion="If no fleets were collected, add an empty list."
                 )
-        case "metadata":
+        case "meta":
             if error.type == "missing" or error.input is None:
                 raise UnsupportedSchemaError("The provided schema does not include any metadata.", suggestion="Add metadata to the Collection.")
         case "users":

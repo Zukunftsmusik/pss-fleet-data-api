@@ -2,6 +2,7 @@
   {
     "metadata": {
       "schema_version": 9,
+      "data_version": 9,
       "duration": 13.303961,
       "fleet_count": 100,
       "user_count": 8961,
@@ -707,6 +708,7 @@
   {
     "metadata": {
       "schema_version": 9,
+      "data_version": 9,
       "duration": 8.521109,
       "fleet_count": 100,
       "user_count": 8967,
@@ -1412,6 +1414,7 @@
   {
     "metadata": {
       "schema_version": 9,
+      "data_version": 9,
       "duration": 10.836346,
       "fleet_count": 100,
       "user_count": 8738,
@@ -2117,6 +2120,7 @@
   {
     "metadata": {
       "schema_version": 9,
+      "data_version": 9,
       "duration": 7.671899,
       "fleet_count": 100,
       "user_count": 8658,
@@ -2822,6 +2826,7 @@
   {
     "metadata": {
       "schema_version": 9,
+      "data_version": 9,
       "duration": 8.181284,
       "fleet_count": 100,
       "user_count": 8631,
@@ -3505,6 +3510,7 @@
   {
     "metadata": {
       "schema_version": 9,
+      "data_version": 9,
       "duration": 7.324953,
       "fleet_count": 100,
       "user_count": 8633,
@@ -4188,6 +4194,7 @@
   {
     "metadata": {
       "schema_version": 9,
+      "data_version": 9,
       "duration": 8.445241,
       "fleet_count": 100,
       "user_count": 8807,
@@ -4893,6 +4900,7 @@
   {
     "metadata": {
       "schema_version": 9,
+      "data_version": 9,
       "duration": 7.504716,
       "fleet_count": 100,
       "user_count": 8814,
@@ -5598,6 +5606,7 @@
   {
     "metadata": {
       "schema_version": 9,
+      "data_version": 9,
       "duration": 7.245607,
       "fleet_count": 100,
       "user_count": 8649,
@@ -6303,6 +6312,7 @@
   {
     "metadata": {
       "schema_version": 9,
+      "data_version": 9,
       "duration": 6.772857,
       "fleet_count": 100,
       "user_count": 8616,
@@ -7008,6 +7018,7 @@
   {
     "metadata": {
       "schema_version": 9,
+      "data_version": 9,
       "duration": 9.219744,
       "fleet_count": 100,
       "user_count": 8623,
@@ -7625,6 +7636,7 @@
   {
     "metadata": {
       "schema_version": 9,
+      "data_version": 9,
       "duration": 8.142357,
       "fleet_count": 100,
       "user_count": 8627,
@@ -8242,6 +8254,7 @@
   {
     "metadata": {
       "schema_version": 9,
+      "data_version": 9,
       "duration": 7.7428740000000005,
       "fleet_count": 100,
       "user_count": 8834,
@@ -8859,6 +8872,7 @@
   {
     "metadata": {
       "schema_version": 9,
+      "data_version": 9,
       "duration": 8.760755,
       "fleet_count": 100,
       "user_count": 8838,
@@ -9476,6 +9490,7 @@
   {
     "metadata": {
       "schema_version": 9,
+      "data_version": 9,
       "duration": 7.959536,
       "fleet_count": 100,
       "user_count": 8563,
@@ -10093,6 +10108,7 @@
   {
     "metadata": {
       "schema_version": 9,
+      "data_version": 9,
       "duration": 9.517856,
       "fleet_count": 100,
       "user_count": 8478,
@@ -10710,6 +10726,7 @@
   {
     "metadata": {
       "schema_version": 9,
+      "data_version": 9,
       "duration": 9.321496,
       "fleet_count": 100,
       "user_count": 8562,
@@ -11327,6 +11344,7 @@
   {
     "metadata": {
       "schema_version": 9,
+      "data_version": 9,
       "duration": 11.244335,
       "fleet_count": 100,
       "user_count": 8559,

@@ -30,6 +30,7 @@ async def get_alliance_history(
     history = await crud.get_alliance_history(
         session,
         alliance_id,
+        True,
         datetime_filter.from_date,
         datetime_filter.to_date,
         list_filter.interval,

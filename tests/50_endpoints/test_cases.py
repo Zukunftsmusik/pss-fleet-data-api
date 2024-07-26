@@ -1,9 +1,9 @@
 from datetime import datetime
 
 import pytest
+from tests import conftest
 
 from src.api.models.enums import ErrorCode
-from tests import conftest
 
 
 does_exist_collection_and_alliance = [
@@ -89,7 +89,7 @@ invalid_save_collection_methods = [
 def invalid_save_collection_payloads() -> list:
     """payload"""
     payload_1 = conftest._create_collection_create_9()
-    payload_1.metadata = None
+    payload_1.meta = None
 
     payload_2 = conftest._create_collection_create_9()
     payload_2.fleets = None
@@ -98,10 +98,10 @@ def invalid_save_collection_payloads() -> list:
     payload_3.users = None
 
     payload_4 = conftest._create_collection_create_9()
-    payload_4.metadata.timestamp = None
+    payload_4.meta.timestamp = None
 
     payload_5 = conftest._create_collection_create_9()
-    payload_5.metadata.timestamp = datetime(2000, 1, 1)
+    payload_5.meta.timestamp = datetime(2000, 1, 1)
 
     payload_6 = conftest._create_collection_create_9()
     payload_6.fleets[0] = tuple(payload_6.fleets[0][:-1])
@@ -133,7 +133,7 @@ def invalid_save_collection_payloads() -> list:
     payload_13.users[0] = tuple(user_13)
 
     payload_14 = conftest._create_collection_create_9()
-    del payload_14.metadata
+    del payload_14.meta
 
     payload_15 = conftest._create_collection_create_9()
     del payload_15.fleets
@@ -173,6 +173,14 @@ invalid_upload_files = [
     ),
 ]
 """folder_path, file_name, expected_error_code"""
+
+
+not_authenticated_headers = [
+    # headers
+    pytest.param(None, id="autorization_header_missing"),
+    pytest.param({"Authorization": ""}, id="autorization_header_empty"),
+]
+"""headers"""
 
 
 root_api_keys = [

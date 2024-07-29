@@ -84,20 +84,6 @@ async def create_dummy_data(paths_to_dummy_data: list[str]):
     await insert_dummy_collections(collections)
 
 
-async def insert_dummy_collections(collections: list[CollectionDB]):
-    """Attempts to insert the provided `collections` into the database. If inserting a Collection fails, the transaction will be rolled back and the error will be printed to stdout.
-
-    Args:
-        collections (list[CollectionDB]): The Collections to be inserted.
-    """
-    async for session in get_session():
-        for collection in collections:
-            try:
-                collection = await crud.save_collection(session, collection, True, True)
-            except DBAPIError as exc:
-                print(f"Could not insert dummy Collection:\n{exc}")
-
-
 async def get_session() -> AsyncGenerator[AsyncSession, None]:
     """Creates and returns an `AsyncSession` from the `ENGINE` in this module. If an error occurs during a session, the changes will be rolled back and the exception will be raised again.
 
@@ -131,6 +117,20 @@ async def get_session() -> AsyncGenerator[AsyncSession, None]:
         await connection.close()
 
 
+async def insert_dummy_collections(collections: list[CollectionDB]):
+    """Attempts to insert the provided `collections` into the database. If inserting a Collection fails, the transaction will be rolled back and the error will be printed to stdout.
+
+    Args:
+        collections (list[CollectionDB]): The Collections to be inserted.
+    """
+    async for session in get_session():
+        for collection in collections:
+            try:
+                collection = await crud.save_collection(session, collection, True, True)
+            except DBAPIError as exc:
+                print(f"Could not insert dummy Collection:\n{exc}")
+
+
 def initialize_db(reinitialize: bool = False):
     """Initializes the database. Optionally drops all tables before creating them. Optionally dummy data will be read from disk and inserted.
 
@@ -147,32 +147,12 @@ def initialize_db(reinitialize: bool = False):
         sqlalchemy_utils.create_database(sync_connection_string)
 
     if reinitialize:
-        drop_tables(sync_connection_string)
+        __drop_tables(sync_connection_string)
 
-    if not alembic_current_is_head(sync_connection_string):
+    if not __alembic_current_is_head(sync_connection_string):
         alembic_config = AlembicConfig("alembic.ini")
         alembic_config.attributes["sqlalchemy.url"] = sync_connection_string
         alembic.command.upgrade(alembic_config, "head", tag="from_app")
-
-
-def drop_tables(connection_str: str):
-    engine = create_engine(connection_str, poolclass=NullPool)
-    SQLModel.metadata.drop_all(engine)
-    with engine.begin() as connection:
-        connection.execute(text("DROP TABLE IF EXISTS alembic_version;"))
-    engine.dispose()
-
-
-def alembic_current_is_head(sync_connection_string: str):
-    output_buffer = io.StringIO()
-
-    alembic_config = AlembicConfig("alembic.ini", stdout=output_buffer)
-    alembic_config.attributes["sqlalchemy.url"] = sync_connection_string
-
-    alembic.command.current(alembic_config)
-    current = output_buffer.getvalue()
-
-    return "(head)" in current
 
 
 def set_up_db_engine(database_url: str, echo: bool = None):
@@ -191,9 +171,32 @@ def set_up_db_engine(database_url: str, echo: bool = None):
     ENGINE = create_async_engine(database_url, echo=echo, future=True, connect_args=connect_args)
 
 
+def __alembic_current_is_head(sync_connection_string: str):
+    output_buffer = io.StringIO()
+
+    alembic_config = AlembicConfig("alembic.ini", stdout=output_buffer)
+    alembic_config.attributes["sqlalchemy.url"] = sync_connection_string
+
+    alembic.command.current(alembic_config)
+    current = output_buffer.getvalue()
+
+    return "(head)" in current
+
+
+def __drop_tables(connection_str: str):
+    engine = create_engine(connection_str, poolclass=NullPool)
+    SQLModel.metadata.drop_all(engine)
+    with engine.begin() as connection:
+        connection.execute(text("DROP TABLE IF EXISTS alembic_version;"))
+    engine.dispose()
+
+
 __all__ = [
     "ENGINE",
+    create_collections_from_dummy_data.__name__,
+    create_dummy_data.__name__,
     get_session.__name__,
     initialize_db.__name__,
+    insert_dummy_collections.__name__,
     set_up_db_engine.__name__,
 ]

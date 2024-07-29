@@ -7,6 +7,9 @@ import sqlalchemy_utils
 from alembic.config import Config as AlembicConfig
 from sqlalchemy.exc import DBAPIError
 from sqlalchemy.ext.asyncio import AsyncConnection, AsyncEngine, create_async_engine
+from sqlalchemy.pool import NullPool
+from sqlalchemy.sql import text
+from sqlmodel import SQLModel, create_engine
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from .. import utils
@@ -126,7 +129,7 @@ async def get_session() -> AsyncGenerator[AsyncSession, None]:
         await connection.close()
 
 
-def initialize_db(drop_tables: bool = False, paths_to_dummy_data: list[str] = None):
+def initialize_db(reinitialize: bool = False, paths_to_dummy_data: list[str] = None):
     """Initializes the database. Optionally drops all tables before creating them. Optionally dummy data will be read from disk and inserted.
 
     Args:
@@ -138,16 +141,24 @@ def initialize_db(drop_tables: bool = False, paths_to_dummy_data: list[str] = No
     """
     sync_connection_string = SETTINGS.sync_database_connection_str
 
-    if drop_tables and sqlalchemy_utils.database_exists(sync_connection_string):
-        sqlalchemy_utils.drop_database(sync_connection_string)
-
     if not sqlalchemy_utils.database_exists(sync_connection_string):
         sqlalchemy_utils.create_database(sync_connection_string)
+
+    if reinitialize:
+        drop_tables(sync_connection_string)
 
     if not alembic_current_is_head(sync_connection_string):
         alembic_config = AlembicConfig("alembic.ini")
         alembic_config.attributes["sqlalchemy.url"] = sync_connection_string
         alembic.command.upgrade(alembic_config, "head", tag="from_app")
+
+
+def drop_tables(connection_str: str):
+    engine = create_engine(connection_str, poolclass=NullPool)
+    SQLModel.metadata.drop_all(engine)
+    with engine.begin() as connection:
+        connection.execute(text("DROP TABLE IF EXISTS alembic_version;"))
+    engine.dispose()
 
 
 def alembic_current_is_head(sync_connection_string: str):

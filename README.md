@@ -20,7 +20,7 @@ The API requires a postgres database.
   - `POST /collections/upload`
 
 ## Running Docker container locally with Make
-Create a file called `.env` in the root folder of the repository and add values for the following environment variables:
+Create a file called `.docker-env` in the root folder of the repository and add values for the following environment variables:
 - `DATABASE_URL`
 - `DATABASE_NAME`
 - `ROOT_API_KEY` (optional)

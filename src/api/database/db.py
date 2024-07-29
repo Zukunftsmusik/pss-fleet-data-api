@@ -15,7 +15,9 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 from .. import utils
 from ..config import SETTINGS
 from . import crud
-from .models import AllianceDB, CollectionDB, UserDB
+
+# v Required for SQLModel.metadata.drop_all()
+from .models import AllianceBaseDB, AllianceDB, CollectionBaseDB, CollectionDB, UserBaseDB, UserDB  # noqa: F401
 
 
 ENGINE: AsyncEngine = None

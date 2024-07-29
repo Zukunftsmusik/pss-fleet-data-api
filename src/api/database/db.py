@@ -131,7 +131,7 @@ async def get_session() -> AsyncGenerator[AsyncSession, None]:
         await connection.close()
 
 
-def initialize_db(reinitialize: bool = False, paths_to_dummy_data: list[str] = None):
+def initialize_db(reinitialize: bool = False):
     """Initializes the database. Optionally drops all tables before creating them. Optionally dummy data will be read from disk and inserted.
 
     Args:

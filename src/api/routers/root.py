@@ -13,6 +13,11 @@ async def get_home() -> HTMLResponse:
         return HTMLResponse(content=fp.read())
 
 
+@router.get("/ping", **endpoints.ping_get)
+async def get_ping() -> dict[str, str]:
+    return {"ping": "Pong!"}
+
+
 __all__ = [
     "router",
 ]

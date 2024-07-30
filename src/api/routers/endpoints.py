@@ -293,13 +293,36 @@ homepage_get = EndpointDefinition(
     response_description="The home page.",
     responses={
         status.HTTP_200_OK: {
-            "description": "A list of objects denoting the requested User at a specific point in time.",
+            "description": "The home page.",
             "links": {
                 OperationId.GET_COLLECTIONS: links.homepage_getCollections,
             },
         },
     },
     include_in_schema=False,
+)
+
+
+ping_get = EndpointDefinition(
+    summary="Ping the API.",
+    description="Ping the API.",
+    operation_id=OperationId.GET_PING,
+    status_code=status.HTTP_200_OK,
+    response_description="Pong!",
+    responses={
+        status.HTTP_200_OK: {
+            "description": "Pong!",
+            "links": {},
+            "content": {
+                "application/json": {
+                    "schema": {
+                        "type": "ErrorOut",
+                        "example": {"ping": "Pong!"},
+                    }
+                }
+            },
+        },
+    },
 )
 
 

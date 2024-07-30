@@ -11,6 +11,12 @@ def test_from_user_create_3(user_create_3: UserCreate3, user_data_create_3: User
     _check_user_db_from_3(user_db)
 
 
+@pytest.mark.usefixtures("user_create_3", "user_data_create_3_without_timestamps")
+def test_from_user_create_3_without_timestamps(user_create_3: UserCreate3, user_data_create_3_without_timestamps: UserDataCreate3):
+    user_db = ToDB.from_user_3(user_create_3, user_data_create_3_without_timestamps)
+    _check_user_db_from_3_without_timestamps(user_db)
+
+
 @pytest.mark.usefixtures("user_create_4")
 def test_from_user_create_4(user_create_4: UserCreate4):
     user_db = ToDB.from_user_4(user_create_4)
@@ -56,6 +62,20 @@ def _check_user_db_from_3(user_db: UserDB):
     assert user_db.alliance_membership is not None
     assert user_db.alliance_join_date is not None
     assert user_db.last_login_date is not None
+
+
+def _check_user_db_from_3_without_timestamps(user_db: UserDB):
+    assert user_db
+    assert isinstance(user_db, UserDB)
+
+    assert user_db.user_id is not None
+    assert user_db.user_name is not None
+    assert user_db.alliance_id is not None
+    assert user_db.trophy is not None
+    assert user_db.alliance_score is not None
+    assert user_db.alliance_membership is not None
+    assert user_db.alliance_join_date is None
+    assert user_db.last_login_date is None
 
 
 def _check_user_db_from_4(user_db: UserDB):

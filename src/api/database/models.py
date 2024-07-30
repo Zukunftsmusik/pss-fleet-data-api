@@ -106,7 +106,7 @@ class AllianceDB(AllianceBaseDB, table=True):
 class UserBaseDB(SQLModel):
     alliance_join_date: Optional[datetime] = Field(default=None, nullable=True)
     """The PSS property `AllianceJoinDate` of the User as returned by the PSS API."""
-    last_login_date: datetime
+    last_login_date: Optional[datetime] = Field(default=None, nullable=True)
     """The PSS property `LastLoginDate` of the User as returned by the PSS API."""
     last_heartbeat_date: Optional[datetime] = Field(default=None, nullable=True)
     """The PSS property `LastHeartBeatDate` of the User as returned by the PSS API."""
@@ -200,7 +200,7 @@ class UserDB(UserBaseDB, table=True):
     """The PSS property `AllianceMembership` (fleet rank) of the User as returned by the PSS API."""
     alliance_join_date: Optional[datetime] = Field(default=None, nullable=True)
     """The PSS property `AllianceJoinDate` of the User as returned by the PSS API."""
-    last_login_date: datetime
+    last_login_date: Optional[datetime] = Field(default=None, nullable=True)
     """The PSS property `LastLoginDate` of the User as returned by the PSS API."""
     last_heartbeat_date: Optional[datetime] = Field(default=None, nullable=True)
     """The PSS property `LastHeartBeatDate` of the User as returned by the PSS API."""

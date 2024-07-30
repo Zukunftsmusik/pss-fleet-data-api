@@ -21,6 +21,7 @@ test_cases_invalid = [
 test_cases_valid = [
     # value, expected_result
     pytest.param(None, None, id="none"),
+    pytest.param("", None, id="from_str_empty"),
     pytest.param("2016-01-06 01:23:40", datetime(2016, 1, 6, 1, 23, 40, tzinfo=None), id="from_str_1"),
     pytest.param("2016-01-06T01:23:40", datetime(2016, 1, 6, 1, 23, 40, tzinfo=None), id="from_str_2"),
     pytest.param("2016-01-06T01:23:40Z", datetime(2016, 1, 6, 1, 23, 40, tzinfo=timezone.utc), id="from_str_3"),

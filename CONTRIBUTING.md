@@ -2,11 +2,11 @@
 If you want to fix a bug or add a new feature, [fork the repository](https://github.com/Zukunftsmusik/pss-fleet-data-importer/fork) to your own github account, make the changes and [open a pull request](https://github.com/Zukunftsmusik/pss-fleet-data-importer/compare). Make sure to add tests for your changes and run all tests before opening the pull request.
 
 # Setup your development environment
-This project makes use of [rye](https://rye.astral.sh/) for package dependency management and [Make](https://www.gnu.org/software/make/) for some CLI command shortcuts. Also an installation of [PostgreSQL](https://www.postgresql.org/download/) 14 is required. To this point, other PostgreSQL version have not been tested.
+This project makes use of [rye](https://rye.astral.sh/) for package dependency management and [Make](https://www.gnu.org/software/make/) for some CLI command shortcuts. Also an installation of [PostgreSQL](https://www.postgresql.org/download/) 14 is required. To this point, other PostgreSQL versions have not been tested.
 
 If you're developing on Windows, it's recommended to install [Windows Subsystem for Linux (WSL 2)](https://learn.microsoft.com/en-us/windows/wsl/install).
 
-The following steps assume that a recent version of Python is already installed on your system. If not, [download and install Python](https://www.python.org/downloads/).
+An installation of Python is not required, **rye** will handle this.
 
 ## Windows
 - Install [chocolatey](https://chocolatey.org/install) (a package manager).

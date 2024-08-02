@@ -69,7 +69,7 @@ jobs:
           
       - name: Test with pytest
         run: |
-          pytest -x --cov=./src/pss_fleet_data
+          pytest -x --cov=./src/pss_fleet_data --cov-report=xml
         env:
           DATABASE_NAME: pss-fleet-data-test
           DATABASE_URL: pguser:pgpassword@postgres:5432

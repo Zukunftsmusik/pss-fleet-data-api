@@ -1,11 +1,7 @@
 # PSS Fleet Data API
 
-<a href="https://discord.gg/kKguSec" target="_blank">
-    <img src="https://discord.com/api/guilds/565819215731228672/embed.png" alt="Support Discord server invite">
-</a>
-<a href="https://codecov.io/gh/Zukunftsmusik/pss-fleet-data-api" > 
- <img src="https://codecov.io/gh/Zukunftsmusik/pss-fleet-data-api/graph/badge.svg?token=M7GZSCGK36"/> 
-</a>
+<a href="https://discord.gg/kKguSec" target="_blank"><img src="https://discord.com/api/guilds/565819215731228672/embed.png" alt="Support Discord server invite"></a>
+<a href="https://codecov.io/gh/Zukunftsmusik/pss-fleet-data-api"><img src="https://codecov.io/gh/Zukunftsmusik/pss-fleet-data-api/graph/badge.svg?token=M7GZSCGK36"/></a>
 
 > A REST API server for Pixelstarships Fleet Data to be deployed on [CapRover](https://caprover.com/).
 

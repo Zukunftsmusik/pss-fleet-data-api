@@ -16,8 +16,8 @@
 # 🚀 Deploy
 In order to deploy the API, the following prerequisites must be met:
 
-- Either a current [Docker](https://www.docker.com/) installation or [Python 3.12](https://www.python.org/downloads/) or higher installed.
-- A [PostgreSQL 14](https://www.postgresql.org/) or higher server running.
+- A [PostgreSQL 14](https://www.postgresql.org/) server running.
+- Optional: a current [Docker](https://www.docker.com/) installation when deploying locally with Docker.
 - Certain environment variables set:
 
 ## Required Environment variables
@@ -61,12 +61,12 @@ The API can then be accessed at `http://localhost:8000`.
 ## Run locally without Docker
 - Follow the steps outlined in the [Contribution Guide](CONTRIBUTING.md) to set up your local development environment.
 - Set up the environment variables outlined above.
-- Open a terminal, navigate to the workspace folder and run `make run` to start the API server. Alternatively run `make rundev` to start the API server in development mode, in which any changes to code files will make the API restart to reflect those changes.
+- Open a terminal, navigate to the workspace folder and run `make run` to start the API server. Alternatively run `make dev` to start the API server in development mode, in which any changes to code files will make the API restart to reflect those changes.
 
 The API can then be accessed at `http://localhost:8000`.
 
 # 🖊️ Contribute
-If you ran across a bug or have a feature request, please check, if there's [already an issue](https://github.com/Zukunftsmusik/pss-fleet-data-api/issues) for that and if not, [open a new one](https://github.com/Zukunftsmusik/pss-fleet-data-api/issues/new).
+If you ran across a bug or have a feature request, please check if there's [already an issue](https://github.com/Zukunftsmusik/pss-fleet-data-api/issues) for that and if not, please [open a new one](https://github.com/Zukunftsmusik/pss-fleet-data-api/issues/new).
 
 If you want to fix a bug or add a feature, please check out the [Contribution Guide](CONTRIBUTING.md).
 

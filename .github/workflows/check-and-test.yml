@@ -70,6 +70,7 @@ jobs:
 
       - name: Install dependencies for Codecov
         run: >
+          apt-get update &&
           apt-get install --no-install-recommends --yes gpg gpg-agent
 
       - name: Upload coverage reports to Codecov

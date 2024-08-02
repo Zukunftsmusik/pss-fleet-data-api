@@ -46,11 +46,7 @@ async def handle_http_exception(request: Request, exc: StarletteHTTPException) -
     """
     match exc.status_code:
         case status.HTTP_405_METHOD_NOT_ALLOWED:
-            return await _handle_api_error(
-                request,
-                MethodNotAllowedError(f"The method '{request.method}' is not allowed for this endpoint."),
-                exc.status_code,
-            )
+            return await handle_method_not_allowed(request, MethodNotAllowedError(f"The method '{request.method}' is not allowed for this endpoint."))
     raise exc
 
 

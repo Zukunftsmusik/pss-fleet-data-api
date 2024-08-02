@@ -27,11 +27,11 @@ format:
 # testing
 .PHONY: coverage
 coverage:
-	pytest --cov=./src/api ./tests --cov-report xml:cov.xml
+	pytest --cov=./src/api --cov-report xml:cov.xml
 
 .PHONY: test
 test:
-	pytest ./tests
+	pytest
 
 # run
 .PHONY: docker

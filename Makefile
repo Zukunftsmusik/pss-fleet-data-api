@@ -4,6 +4,7 @@ all: format check test
 # setup
 .PHONY: init-dev
 init-dev:
+	rye self update
 	rye sync --update-all
 	pre-commit install
 	pre-commit run --all-files
@@ -40,7 +41,7 @@ docker:
 	docker rm -f container-pss-fleet-data-api
 	docker image rm -f image-pss-fleet-data-api:latest
 	docker build -t image-pss-fleet-data-api .
-	docker run -d --name container-pss-fleet-data-api -p 80:80 --env-file ./.docker-env image-pss-fleet-data-api:latest
+	docker run -d --name container-pss-fleet-data-api -p 8000:80 --env-file ./.docker-env image-pss-fleet-data-api:latest
 
 .PHONY: run
 run:

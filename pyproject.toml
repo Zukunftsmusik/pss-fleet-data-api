@@ -2,7 +2,7 @@
 name = "pss-fleet-data-api"
 version = "1.4.0"
 license = {file = "LICENSE"}
-description = "An API server for Pixelstarships Fleet Data"
+description = "A REST API server for Pixelstarships Fleet Data"
 authors = [
     { name = "The worst.", email = "theworstpss@gmail.com" }
 ]

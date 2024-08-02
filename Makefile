@@ -35,6 +35,10 @@ test:
 	pytest
 
 # run
+.PHONY: dev
+rundev:
+	fastapi dev src/api/main.py
+
 .PHONY: docker
 docker:
 	-docker stop container-pss-fleet-data-api
@@ -46,7 +50,3 @@ docker:
 .PHONY: run
 run:
 	fastapi run src/api/main.py
-
-.PHONY: rundev
-rundev:
-	fastapi dev src/api/main.py

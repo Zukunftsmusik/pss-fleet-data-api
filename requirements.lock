@@ -7,6 +7,7 @@
 #   all-features: false
 #   with-sources: false
 #   generate-hashes: false
+#   universal: false
 
 alembic==1.13.2
 annotated-types==0.7.0
@@ -26,10 +27,12 @@ dnspython==2.6.1
     # via email-validator
 email-validator==2.2.0
     # via fastapi
-fastapi==0.111.1
-    # via fastapi-limiter
-fastapi-cli==0.0.4
+fastapi==0.112.0
     # via fastapi
+    # via fastapi-limiter
+fastapi-cli==0.0.5
+    # via fastapi
+    # via fastapi-cli
 fastapi-limiter==0.1.6
 greenlet==3.0.3
     # via sqlalchemy
@@ -101,8 +104,9 @@ typing-extensions==4.12.2
     # via pydantic-core
     # via sqlalchemy
     # via typer
-uvicorn==0.30.3
+uvicorn==0.30.5
     # via fastapi
+    # via fastapi-cli
     # via uvicorn
 uvloop==0.19.0
     # via uvicorn

@@ -186,6 +186,8 @@ def parse_datetime(dt: Optional[Union[datetime, int, str]]) -> datetime:
         # If it's an integer value, then it's likely encoded as seconds from Jan 6th, 2016 00:00 UTC
         return CONSTANTS.pss_start_date + timedelta(seconds=dt)
     elif isinstance(dt, str):
+        if not dt:
+            return None
         return dateutil.parser.parse(dt)
     return dt
 

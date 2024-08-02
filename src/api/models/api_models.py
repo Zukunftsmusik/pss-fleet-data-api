@@ -15,6 +15,7 @@ INT_GE_1 = Annotated[int, Field(ge=1)]
 STR_LENGTH_GE_1 = Annotated[str, Field(min_length=1)]
 
 OPTIONAL_INT_GE_0 = Annotated[Optional[int], Field(ge=0, default=None)]
+OPTIONAL_STR_LENGTH_GE_0 = Annotated[Optional[str], Field(default=None)]
 OPTIONAL_STR_LENGTH_GE_1 = Annotated[Optional[str], Field(min_length=1, default=None)]
 
 
@@ -451,7 +452,13 @@ See also: https://github.com/Zukunftsmusik/pss-fleet-data?tab=readme-ov-file#sch
 
 
 UserDataCreate3 = tuple[
-    STR_LENGTH_GE_1, STR_LENGTH_GE_1, STR_LENGTH_GE_1, OPTIONAL_STR_LENGTH_GE_1, OPTIONAL_STR_LENGTH_GE_1, OPTIONAL_STR_LENGTH_GE_1, STR_LENGTH_GE_1
+    STR_LENGTH_GE_1,
+    STR_LENGTH_GE_1,
+    STR_LENGTH_GE_1,
+    OPTIONAL_STR_LENGTH_GE_1,
+    OPTIONAL_STR_LENGTH_GE_1,
+    OPTIONAL_STR_LENGTH_GE_0,
+    OPTIONAL_STR_LENGTH_GE_0,
 ]
 """(
     0: user_id (int),
@@ -548,7 +555,7 @@ UserOut = tuple[
     INT_GE_0,
     UserAllianceMembershipEncoded,
     OPTIONAL_INT_GE_0,
-    INT_GE_0,
+    OPTIONAL_INT_GE_0,
     OPTIONAL_INT_GE_0,
     OPTIONAL_INT_GE_0,
     OPTIONAL_INT_GE_0,

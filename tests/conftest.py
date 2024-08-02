@@ -151,6 +151,19 @@ def user_data_create_3() -> UserDataCreate3:
 
 
 @pytest.fixture(scope="function")
+def user_data_create_3_without_timestamps() -> UserDataCreate3:
+    return (
+        "1",
+        "1",
+        "1000",
+        "0",
+        "Ensign",
+        "",
+        "",
+    )
+
+
+@pytest.fixture(scope="function")
 def user_db() -> UserDB:
     return _create_user_db()
 

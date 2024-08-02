@@ -56,6 +56,7 @@ class OperationId(StrEnum):
     GET_ALLIANCE_FROM_COLLECTION = "GetAllianceFromCollection"
     GET_ALLIANCES_FROM_COLLECTION = "GetAlliancesFromCollection"
     GET_HOME_PAGE = "GetHomePage"
+    GET_PING = "GetPing"
     GET_TOP_100_USERS_FROM_COLLECTION = "GetTop100UsersFromCollection"
     GET_USER_FROM_COLLECTION = "GetUserFromCollection"
     GET_USERS_FROM_COLLECTION = "GetUsersFromCollection"

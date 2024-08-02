@@ -7,12 +7,17 @@ import sqlalchemy_utils
 from alembic.config import Config as AlembicConfig
 from sqlalchemy.exc import DBAPIError
 from sqlalchemy.ext.asyncio import AsyncConnection, AsyncEngine, create_async_engine
+from sqlalchemy.pool import NullPool
+from sqlalchemy.sql import text
+from sqlmodel import SQLModel, create_engine
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from .. import utils
 from ..config import SETTINGS
 from . import crud
-from .models import AllianceDB, CollectionDB, UserDB
+
+# v Required for SQLModel.metadata.drop_all()
+from .models import AllianceBaseDB, AllianceDB, CollectionBaseDB, CollectionDB, UserBaseDB, UserDB  # noqa: F401
 
 
 ENGINE: AsyncEngine = None
@@ -79,20 +84,6 @@ async def create_dummy_data(paths_to_dummy_data: list[str]):
     await insert_dummy_collections(collections)
 
 
-async def insert_dummy_collections(collections: list[CollectionDB]):
-    """Attempts to insert the provided `collections` into the database. If inserting a Collection fails, the transaction will be rolled back and the error will be printed to stdout.
-
-    Args:
-        collections (list[CollectionDB]): The Collections to be inserted.
-    """
-    async for session in get_session():
-        for collection in collections:
-            try:
-                collection = await crud.save_collection(session, collection, True, True)
-            except DBAPIError as exc:
-                print(f"Could not insert dummy Collection:\n{exc}")
-
-
 async def get_session() -> AsyncGenerator[AsyncSession, None]:
     """Creates and returns an `AsyncSession` from the `ENGINE` in this module. If an error occurs during a session, the changes will be rolled back and the exception will be raised again.
 
@@ -126,7 +117,21 @@ async def get_session() -> AsyncGenerator[AsyncSession, None]:
         await connection.close()
 
 
-def initialize_db(drop_tables: bool = False, paths_to_dummy_data: list[str] = None):
+async def insert_dummy_collections(collections: list[CollectionDB]):
+    """Attempts to insert the provided `collections` into the database. If inserting a Collection fails, the transaction will be rolled back and the error will be printed to stdout.
+
+    Args:
+        collections (list[CollectionDB]): The Collections to be inserted.
+    """
+    async for session in get_session():
+        for collection in collections:
+            try:
+                collection = await crud.save_collection(session, collection, True, True)
+            except DBAPIError as exc:
+                print(f"Could not insert dummy Collection:\n{exc}")
+
+
+def initialize_db(reinitialize: bool = False):
     """Initializes the database. Optionally drops all tables before creating them. Optionally dummy data will be read from disk and inserted.
 
     Args:
@@ -138,28 +143,16 @@ def initialize_db(drop_tables: bool = False, paths_to_dummy_data: list[str] = No
     """
     sync_connection_string = SETTINGS.sync_database_connection_str
 
-    if drop_tables and sqlalchemy_utils.database_exists(sync_connection_string):
-        sqlalchemy_utils.drop_database(sync_connection_string)
-
     if not sqlalchemy_utils.database_exists(sync_connection_string):
         sqlalchemy_utils.create_database(sync_connection_string)
 
-    if not alembic_current_is_head(sync_connection_string):
+    if reinitialize:
+        __drop_tables(sync_connection_string)
+
+    if not __alembic_current_is_head(sync_connection_string):
         alembic_config = AlembicConfig("alembic.ini")
         alembic_config.attributes["sqlalchemy.url"] = sync_connection_string
         alembic.command.upgrade(alembic_config, "head", tag="from_app")
-
-
-def alembic_current_is_head(sync_connection_string: str):
-    output_buffer = io.StringIO()
-
-    alembic_config = AlembicConfig("alembic.ini", stdout=output_buffer)
-    alembic_config.attributes["sqlalchemy.url"] = sync_connection_string
-
-    alembic.command.current(alembic_config)
-    current = output_buffer.getvalue()
-
-    return "(head)" in current
 
 
 def set_up_db_engine(database_url: str, echo: bool = None):
@@ -178,9 +171,32 @@ def set_up_db_engine(database_url: str, echo: bool = None):
     ENGINE = create_async_engine(database_url, echo=echo, future=True, connect_args=connect_args)
 
 
+def __alembic_current_is_head(sync_connection_string: str):
+    output_buffer = io.StringIO()
+
+    alembic_config = AlembicConfig("alembic.ini", stdout=output_buffer)
+    alembic_config.attributes["sqlalchemy.url"] = sync_connection_string
+
+    alembic.command.current(alembic_config)
+    current = output_buffer.getvalue()
+
+    return "(head)" in current
+
+
+def __drop_tables(connection_str: str):
+    engine = create_engine(connection_str, poolclass=NullPool)
+    SQLModel.metadata.drop_all(engine)
+    with engine.begin() as connection:
+        connection.execute(text("DROP TABLE IF EXISTS alembic_version;"))
+    engine.dispose()
+
+
 __all__ = [
     "ENGINE",
+    create_collections_from_dummy_data.__name__,
+    create_dummy_data.__name__,
     get_session.__name__,
     initialize_db.__name__,
+    insert_dummy_collections.__name__,
     set_up_db_engine.__name__,
 ]

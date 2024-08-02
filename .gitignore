@@ -3,6 +3,11 @@ examples/*
 convert_schemas.py
 create_dummy_data.py
 create_dummy_upload_data.py
+.docker-env
+
+
+# Generated files
+cov.xml
 
 
 # VSCode

@@ -13,6 +13,10 @@ sync:
 test:
 	rye run pytest
 
+.PHONY: coverage
+coverage:
+	rye run pytest --cov=./src/api ./tests --cov-report xml:cov.xml
+
 .PHONY: format
 format:
 	rye run autoflake .

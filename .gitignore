@@ -6,6 +6,10 @@ create_dummy_upload_data.py
 .docker-env
 
 
+# Generated files
+cov.xml
+
+
 # VSCode
 .vscode/*
 !.vscode/settings.json

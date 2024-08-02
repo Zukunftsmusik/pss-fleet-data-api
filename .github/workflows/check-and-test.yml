@@ -2,11 +2,7 @@
 
 name: Check and Test
 
-on:
-  push:
-    branches: ["main", "develop"]
-  pull_request:
-    branches: ["main", "develop"]
+on: [push, pull_request]
 
 permissions:
   contents: read
@@ -65,7 +61,12 @@ jobs:
           
       - name: Test with pytest
         run: |
-          pytest ./tests -x
+          pytest --cov=./src/api -x ./tests
         env:
           DATABASE_NAME: pss-fleet-data-test
           DATABASE_URL: pguser:pgpassword@postgres:5432
+      
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v4.0.1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}

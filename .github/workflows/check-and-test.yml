@@ -68,6 +68,10 @@ jobs:
           DATABASE_NAME: pss-fleet-data-test
           DATABASE_URL: pguser:pgpassword@postgres:5432
 
+      - name: Install dependencies for Codecov
+        run: >
+          apt-get install --no-install-recommends --yes gpg gpg-agent
+
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v4
         with:

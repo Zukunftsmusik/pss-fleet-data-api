@@ -12,6 +12,7 @@ DATETIME = Annotated[datetime, Field(ge=CONSTANTS.pss_start_date)]
 FLOAT_GE_0 = Annotated[float, Field(ge=0.0)]
 INT_GE_0 = Annotated[int, Field(ge=0)]
 INT_GE_1 = Annotated[int, Field(ge=1)]
+STR_LENGTH_GE_0 = Annotated[str, Field(min_length=0)]
 STR_LENGTH_GE_1 = Annotated[str, Field(min_length=1)]
 
 OPTIONAL_INT_GE_0 = Annotated[Optional[int], Field(ge=0, default=None)]
@@ -405,7 +406,7 @@ See also: https://github.com/Zukunftsmusik/pss-fleet-data?tab=readme-ov-file#sch
 
 UserCreate9 = tuple[
     INT_GE_1,
-    STR_LENGTH_GE_1,
+    STR_LENGTH_GE_0,
     INT_GE_0,
     INT_GE_0,
     INT_GE_0,
@@ -549,7 +550,7 @@ See also: https://github.com/Zukunftsmusik/pss-fleet-data?tab=readme-ov-file#sch
 
 UserOut = tuple[
     INT_GE_1,
-    STR_LENGTH_GE_1,
+    STR_LENGTH_GE_0,
     INT_GE_0,
     INT_GE_0,
     INT_GE_0,

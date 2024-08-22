@@ -22,7 +22,7 @@ class Settings:
 
     # Base
     project_name: str = "PSS Fleet Data API"
-    version: str = "1.4.0"
+    version: str = "1.4.1"
     description: str = "An API server for Pixel Starships Fleet Data."
     contact = {
         "email": "theworstpss@gmail.com",

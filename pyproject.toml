@@ -1,6 +1,6 @@
 [project]
 name = "pss-fleet-data-api"
-version = "1.4.0"
+version = "1.4.1"
 license = {file = "LICENSE"}
 description = "A REST API server for Pixelstarships Fleet Data"
 authors = [

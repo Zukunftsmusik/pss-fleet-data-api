@@ -504,8 +504,8 @@ class ToDB:
         user_id = source[0]
         user_name = source[1]
         alliance_membership = utils.decode_alliance_membership(source[5])
-        alliance_join_date = utils.localize_to_utc(utils.parse_datetime(source[5]))
-        last_login_date = utils.localize_to_utc(utils.parse_datetime(source[6]))
+        alliance_join_date = utils.localize_to_utc(utils.parse_datetime(source[6]))
+        last_login_date = utils.localize_to_utc(utils.parse_datetime(source[7]))
         last_heartbeat_date = utils.localize_to_utc(utils.parse_datetime(source[8]))
 
         if last_login_date < CONSTANTS.pss_start_date:

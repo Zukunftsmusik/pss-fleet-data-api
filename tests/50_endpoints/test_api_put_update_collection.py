@@ -45,6 +45,22 @@ async def test_upload_collection_id_not_found(
             assert_error_code(response, ErrorCode.COLLECTION_NOT_FOUND)
 
 
+@pytest.mark.usefixtures("assert_error_code")
+@pytest.mark.usefixtures("patch_check_is_authenticated_true", "patch_check_is_authorized_true")
+@pytest.mark.usefixtures("patch_get_collection", "patch_has_collection_true", "patch_update_collection")
+async def test_upload_collection_timestamp_does_not_match(assert_error_code: Callable[[HttpXResponse, ErrorCode], None], client: TestClient):
+    path = "tests/test_data"
+    file_name = "upload_test_data_schema_9.json"
+    file_path = os.path.join(path, file_name)
+
+    with open(file_path, "rb") as fp:
+        files = {"collection_file": (file_name, fp, "application/json")}
+        with client:
+            response = client.put("/collections/upload/1", files=files)
+            assert response.status_code == 409
+            assert_error_code(response, ErrorCode.CONFLICT)
+
+
 @pytest.mark.usefixtures("collection_metadata_out_json")
 @pytest.mark.usefixtures("patch_check_is_authenticated_true", "patch_check_is_authorized_true")
 @pytest.mark.usefixtures("patch_get_collection", "patch_has_collection_true", "patch_update_collection")

@@ -212,7 +212,7 @@ async def update_collection(
     collection_db = await crud.get_collection(session, collection_id, True, True)
 
     if collection_db.collected_at != collection_in.collected_at:
-        raise ValueError()
+        raise exceptions.collected_at_not_match(collection_in.collected_at, collection_db.collected_at, collection_id)
 
     collection_in = await crud.update_collection(session, collection_id, collection_in)
 

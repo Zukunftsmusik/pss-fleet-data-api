@@ -75,7 +75,7 @@ class MethodNotAllowedError(ApiError):
 
 class ConflictError(ApiError):
     code = ErrorCode.CONFLICT
-    message = "The resource could not be created."
+    message = "The resource could not be created or updated."
 
 
 class NonUniqueTimestampError(ConflictError):
@@ -85,7 +85,7 @@ class NonUniqueTimestampError(ConflictError):
 
 class NonUniqueCollectionIdError(ConflictError):
     code = ErrorCode.NON_UNIQUE_COLLECTION_ID
-    message: str = f"{ConflictError.message}: A Collection with this collection_id already exists."
+    message: str = f"{ConflictError.message}: A Collection with this collectionId already exists."
 
 
 # HTTP 415

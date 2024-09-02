@@ -62,7 +62,31 @@ def test_data() -> dict:
         return json.load(fp)
 
 
+@pytest.fixture(scope="session")
+def test_data_old() -> dict:
+    with open("tests/test_data/insert_test_data.json", "r") as fp:
+        return json.load(fp)
+
+
+@pytest.fixture(scope="session")
+def test_data_updated() -> dict:
+    with open("tests/test_data/insert_test_data.json", "r") as fp:
+        return json.load(fp)
+
+
 @pytest.fixture(scope="function")
 def new_collection(test_data) -> CollectionDB:
     collections = db.create_collections_from_dummy_data(test_data)
+    return collections[0]
+
+
+@pytest.fixture(scope="function")
+def old_collection(test_data_old) -> CollectionDB:
+    collections = db.create_collections_from_dummy_data(test_data_old)
+    return collections[0]
+
+
+@pytest.fixture(scope="function")
+def updated_collection(test_data_updated) -> CollectionDB:
+    collections = db.create_collections_from_dummy_data(test_data_updated)
     return collections[0]

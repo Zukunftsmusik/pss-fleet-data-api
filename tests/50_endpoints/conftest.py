@@ -430,6 +430,19 @@ def patch_save_collection(collection_db: CollectionDB, monkeypatch):
     monkeypatch.setattr(crud, crud.save_collection.__name__, mock_save_collection)
 
 
+@pytest.fixture(scope="function")
+def patch_update_collection(monkeypatch):
+    async def mock_update_collection(session: AsyncSession, collection_id: int, collection: CollectionDB):
+        assert isinstance(session, AsyncSession)
+        assert isinstance(collection_id, int)
+        assert isinstance(collection, CollectionDB)
+
+        collection.collection_id = 1
+        return collection
+
+    monkeypatch.setattr(crud, crud.update_collection.__name__, mock_update_collection)
+
+
 # Dependencies
 
 

@@ -5,8 +5,8 @@ from fastapi import APIRouter, Body, Depends, File, UploadFile
 from pydantic import ValidationError
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from .. import utils
 from ..database import crud, db
+from ..database.models import CollectionDB
 from ..models import (
     AllianceHistoryOut,
     CollectionCreate3,
@@ -187,7 +187,41 @@ schema_version_to_converter = {
 async def upload_collection(
     collection_file: Annotated[UploadFile, File(media_type="application/json")], session: AsyncSession = Depends(db.get_session)
 ) -> CollectionMetadataOut:
-    file_contents = await collection_file.read()
+    collection_db = await convert_uploaded_file(collection_file)
+
+    collection_with_same_timestamp = await crud.get_collection_by_timestamp(session, collection_db.collected_at)
+    if collection_with_same_timestamp is not None:
+        raise exceptions.non_unique_timestamp(collection_db.collected_at, collection_with_same_timestamp.collection_id)
+
+    collection_db = await crud.save_collection(session, collection_db, True, True)
+
+    result = FromDB.to_collection(collection_db, False, False).meta
+    return result
+
+
+@router.put("/upload/{collectionId}", **endpoints.collections_update_put, dependencies=dependencies.authorization_dependencies)
+async def update_collection(
+    collection_id: Annotated[int, Depends(dependencies.collection_id)],
+    collection_file: Annotated[UploadFile, File(media_type="application/json")],
+    session: AsyncSession = Depends(db.get_session),
+) -> CollectionMetadataOut:
+    if not (await crud.has_collection(session, collection_id)):
+        raise exceptions.collection_not_found(collection_id)
+
+    collection_in = await convert_uploaded_file(collection_file)
+    collection_db = await crud.get_collection(session, collection_id, True, True)
+
+    if collection_db.collected_at != collection_in.collected_at:
+        raise exceptions.collected_at_not_match(collection_in.collected_at, collection_db.collected_at, collection_id)
+
+    collection_in = await crud.update_collection(session, collection_id, collection_in)
+
+    result = FromDB.to_collection(collection_in, False, False).meta
+    return result
+
+
+async def convert_uploaded_file(uploaded_file: UploadFile) -> CollectionDB:
+    file_contents = await uploaded_file.read()
     try:
         decoded_json: dict[str, Union[dict[str, Union[bool, float, int, str]], list[list]]] = json.loads(file_contents)
     except json.decoder.JSONDecodeError as json_decoder_error:
@@ -196,13 +230,8 @@ async def upload_collection(
     metadata = decoded_json.get("meta")
     if metadata:
         expected_schema_version = int(metadata.get("schema_version", 3))
-        collected_at = utils.parse_datetime(metadata.get("timestamp"))
     else:
         raise exceptions.unsupported_schema()
-
-    collection_with_same_timestamp = await crud.get_collection_by_timestamp(session, collected_at)
-    if collection_with_same_timestamp is not None:
-        raise exceptions.non_unique_timestamp(collected_at, collection_with_same_timestamp.collection_id)
 
     collection_create_class = schema_version_to_create_class[expected_schema_version]
     try:
@@ -212,10 +241,7 @@ async def upload_collection(
 
     to_db_converter_func = schema_version_to_converter[expected_schema_version]
     collection_db = to_db_converter_func(collection)
-    collection_db = await crud.save_collection(session, collection_db, True, True)
-
-    result = FromDB.to_collection(collection_db, False, False).meta
-    return result
+    return collection_db
 
 
 __all__ = [

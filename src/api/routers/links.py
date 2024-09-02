@@ -136,6 +136,15 @@ collections_getUsersFromCollectionAfterInsert = LinkDefinition(
 )
 
 
+collections_putUpdateCollection = LinkDefinition(
+    description="The `collection_id` value in the response can be used as the `collectionId` parameter in `GET /collections/upload/{collectionId}`.",
+    operationId=OperationId.UPDATE_COLLECTION,
+    parameters={
+        "collectionId": "$request.path.collectionId",
+    },
+)
+
+
 # /collections/{collectionId}
 
 
@@ -218,6 +227,15 @@ collection_getUserHistory = LinkDefinition(
     operationId=OperationId.GET_USER_HISTORY,
     parameters={
         "allianceId": "$response.body#/users/0/0",
+    },
+)
+
+
+collection_putUpdateCollection = LinkDefinition(
+    description="The `collectionId` parameter in the path can be used as the `collectionId` parameter in `GET /collections/upload/{collectionId}`.",
+    operationId=OperationId.UPDATE_COLLECTION,
+    parameters={
+        "collectionId": "$request.path.collectionId",
     },
 )
 
@@ -376,6 +394,15 @@ history_getUsersFromCollection = LinkDefinition(
 )
 
 
+history_putUpdateCollection = LinkDefinition(
+    description="A `collection_id` value in the response can be used as the `collectionId` parameter in `GET /collections/upload/{collectionId}`.",
+    operationId=OperationId.UPDATE_COLLECTION,
+    parameters={
+        "collectionId": "$response.body#/0/collection/collection_id",
+    },
+)
+
+
 # /
 
 
@@ -423,6 +450,7 @@ default_entity_history_links = {
     OperationId.GET_COLLECTION: history_getCollection,
     OperationId.GET_TOP_100_USERS_FROM_COLLECTION: history_getTop100UsersFromCollection,
     OperationId.GET_USERS_FROM_COLLECTION: history_getUsersFromCollection,
+    OperationId.UPDATE_COLLECTION: history_putUpdateCollection,
 }
 
 
@@ -445,6 +473,7 @@ __all__ = [
     "collection_getUserFromCollection",
     "collection_getUserHistory",
     "collection_getUsersFromCollection",
+    "collection_putUpdateCollection",
     "collection_user_getAllianceFromCollection",
     "collection_user_getAllianceHistory",
     "collection_user_getUserHistory",
@@ -460,12 +489,14 @@ __all__ = [
     "collections_getUsersFromCollection",
     "collections_getUsersFromCollectionAfterInsert",
     "collections_getUsersFromCollectionAfterInsert",
+    "collections_putUpdateCollection",
     "default_entity_history_links",
     "history_deleteCollection",
     "history_getAlliancesFromCollection",
     "history_getCollection",
     "history_getTop100UsersFromCollection",
     "history_getUsersFromCollection",
+    "history_putUpdateCollection",
     "homepage_getCollections",
     "userHistory_getAllianceFromCollection",
     "userHistory_getAllianceHistory",

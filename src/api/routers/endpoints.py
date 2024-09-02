@@ -13,6 +13,7 @@ _collections_post_response_201 = {
         OperationId.GET_COLLECTION: links.collections_getCollectionAfterInsert,
         OperationId.GET_TOP_100_USERS_FROM_COLLECTION: links.collections_getUsersFromCollectionAfterInsert,
         OperationId.GET_USERS_FROM_COLLECTION: links.collections_getUsersFromCollectionAfterInsert,
+        OperationId.UPDATE_COLLECTION: links.collections_putUpdateCollection,
     },
 }
 
@@ -60,6 +61,7 @@ collections_get = EndpointDefinition(
                 OperationId.GET_COLLECTION: links.collections_getCollection,
                 OperationId.GET_TOP_100_USERS_FROM_COLLECTION: links.collections_getTop100UsersFromCollection,
                 OperationId.GET_USERS_FROM_COLLECTION: links.collections_getUsersFromCollection,
+                OperationId.UPDATE_COLLECTION: links.collections_putUpdateCollection,
             },
         },
     },
@@ -122,6 +124,7 @@ collections_collectionId_get = EndpointDefinition(
                 OperationId.GET_USER_FROM_COLLECTION: links.collection_getUserFromCollection,
                 OperationId.GET_USERS_FROM_COLLECTION: links.collection_getUsersFromCollection,
                 OperationId.GET_USER_HISTORY: links.collection_getUserHistory,
+                OperationId.UPDATE_COLLECTION: links.collection_putUpdateCollection,
             },
         },
     },
@@ -150,6 +153,7 @@ collections_collectionId_alliances_get = EndpointDefinition(
                 OperationId.GET_COLLECTION: links.collection_getCollection,
                 OperationId.GET_TOP_100_USERS_FROM_COLLECTION: links.collection_getTop100UsersFromCollection,
                 OperationId.GET_USERS_FROM_COLLECTION: links.collection_getUsersFromCollection,
+                OperationId.UPDATE_COLLECTION: links.collection_putUpdateCollection,
             },
         },
     },
@@ -178,6 +182,7 @@ collections_collectionId_alliances_allianceId_get = EndpointDefinition(
                 OperationId.GET_USERS_FROM_COLLECTION: links.collection_getUsersFromCollection,
                 OperationId.GET_USER_FROM_COLLECTION: links.collection_alliance_getUserFromCollection,
                 OperationId.GET_USER_HISTORY: links.collection_alliance_getUserHistory,
+                OperationId.UPDATE_COLLECTION: links.collection_putUpdateCollection,
             },
         },
     },
@@ -205,6 +210,7 @@ collections_collectionId_top100Users_get = EndpointDefinition(
                 OperationId.GET_USER_FROM_COLLECTION: links.collection_getUserFromCollection,
                 OperationId.GET_USERS_FROM_COLLECTION: links.collection_getUsersFromCollection,
                 OperationId.GET_USER_HISTORY: links.collection_getUserHistory,
+                OperationId.UPDATE_COLLECTION: links.collection_putUpdateCollection,
             },
         },
     },
@@ -234,6 +240,7 @@ collections_collectionId_users_get = EndpointDefinition(
                 OperationId.GET_TOP_100_USERS_FROM_COLLECTION: links.collection_getTop100UsersFromCollection,
                 OperationId.GET_USER_FROM_COLLECTION: links.collection_users_getUserFromCollection,
                 OperationId.GET_USER_HISTORY: links.collection_users_getUserHistory,
+                OperationId.UPDATE_COLLECTION: links.collection_putUpdateCollection,
             },
         },
     },
@@ -262,6 +269,7 @@ collections_collectionId_users_userId_get = EndpointDefinition(
                 OperationId.GET_TOP_100_USERS_FROM_COLLECTION: links.collection_getTop100UsersFromCollection,
                 OperationId.GET_USERS_FROM_COLLECTION: links.collection_getUsersFromCollection,
                 OperationId.GET_USER_HISTORY: links.collection_user_getUserHistory,
+                OperationId.UPDATE_COLLECTION: links.collection_putUpdateCollection,
             },
         },
     },
@@ -284,6 +292,33 @@ collections_upload_post = EndpointDefinition(
     },
 )
 
+collections_update_put = EndpointDefinition(
+    summary="Update a collection by uploading a collection file.",
+    description="Upload a JSON file containing a complete data Collection that was created with the schema version 3 or higher.",
+    operation_id=OperationId.UPLOAD_COLLECTION,
+    status_code=status.HTTP_200_OK,
+    response_description="The Collection has been updated. Returns inserted Collection metadata.",
+    responses={
+        **responses.get_default_responses_for_get(include_404=True, description_404="The requested Collection could not be found."),
+        **responses.get_default_responses(
+            status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
+        ),
+        status.HTTP_200_OK: {
+            "description": "Returns the requested User, its Alliance and the corresponding Collection metadata.",
+            "links": {
+                OperationId.DELETE_COLLECTION: links.collection_deleteCollection,
+                OperationId.GET_ALLIANCE_HISTORY: links.collection_user_getAllianceHistory,
+                OperationId.GET_ALLIANCE_FROM_COLLECTION: links.collection_user_getAllianceFromCollection,
+                OperationId.GET_ALLIANCES_FROM_COLLECTION: links.collection_getAlliancesFromCollection,
+                OperationId.GET_COLLECTION: links.collection_getCollection,
+                OperationId.GET_TOP_100_USERS_FROM_COLLECTION: links.collection_getTop100UsersFromCollection,
+                OperationId.GET_USER_FROM_COLLECTION: links.collection_users_getUserFromCollection,
+                OperationId.GET_USER_HISTORY: links.collection_user_getUserHistory,
+                OperationId.GET_USERS_FROM_COLLECTION: links.collection_getUsersFromCollection,
+            },
+        },
+    },
+)
 
 homepage_get = EndpointDefinition(
     summary="Get the home page.",

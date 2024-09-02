@@ -223,6 +223,20 @@ valid_id_and_filter_parameters = [
 """id, parameters"""
 
 
+valid_update_files = [
+    # schema_version, folder_path, file_name, collection_create_cls, to_db_convert_func
+    pytest.param("tests/test_data", "update_test_data_schema_2.json", id="schema_version_3_without_division_design_id"),
+    pytest.param("tests/test_data", "update_test_data_schema_3.json", id="schema_version_3"),
+    pytest.param("tests/test_data", "update_test_data_schema_4.json", id="schema_version_4"),
+    pytest.param("tests/test_data", "update_test_data_schema_5.json", id="schema_version_5"),
+    pytest.param("tests/test_data", "update_test_data_schema_6.json", id="schema_version_6"),
+    pytest.param("tests/test_data", "update_test_data_schema_7.json", id="schema_version_7"),
+    pytest.param("tests/test_data", "update_test_data_schema_8.json", id="schema_version_8"),
+    pytest.param("tests/test_data", "update_test_data_schema_9.json", id="schema_version_9"),
+]
+"""schema_version, folder_path, file_name, collection_create_cls, to_db_convert_func"""
+
+
 valid_upload_files = [
     # schema_version, folder_path, file_name, collection_create_cls, to_db_convert_func
     pytest.param("tests/test_data", "upload_test_data_schema_2.json", id="schema_version_3_without_division_design_id"),

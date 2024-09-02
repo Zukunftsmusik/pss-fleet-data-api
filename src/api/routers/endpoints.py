@@ -276,26 +276,10 @@ collections_collectionId_users_userId_get = EndpointDefinition(
 )
 
 
-collections_upload_post = EndpointDefinition(
-    summary="Upload a collection file.",
-    description="Upload a JSON file containing a complete data Collection that was created with the schema version 3 or higher.",
-    operation_id=OperationId.UPLOAD_COLLECTION,
-    status_code=status.HTTP_201_CREATED,
-    response_description="A Collection has been created. Returns inserted Collection metadata including new Collection ID. Does not include inserted Alliances or Users.",
-    responses={
-        **responses.get_default_responses_for_get(),
-        **responses.get_default_responses(
-            status.HTTP_409_CONFLICT,
-            status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
-        ),
-        status.HTTP_201_CREATED: _collections_post_response_201,
-    },
-)
-
 collections_update_put = EndpointDefinition(
     summary="Update a collection by uploading a collection file.",
     description="Upload a JSON file containing a complete data Collection that was created with the schema version 3 or higher.",
-    operation_id=OperationId.UPLOAD_COLLECTION,
+    operation_id=OperationId.UPDATE_COLLECTION,
     status_code=status.HTTP_200_OK,
     response_description="The Collection has been updated. Returns inserted Collection metadata.",
     responses={
@@ -319,6 +303,24 @@ collections_update_put = EndpointDefinition(
         },
     },
 )
+
+
+collections_upload_post = EndpointDefinition(
+    summary="Upload a collection file.",
+    description="Upload a JSON file containing a complete data Collection that was created with the schema version 3 or higher.",
+    operation_id=OperationId.UPLOAD_COLLECTION,
+    status_code=status.HTTP_201_CREATED,
+    response_description="A Collection has been created. Returns inserted Collection metadata including new Collection ID. Does not include inserted Alliances or Users.",
+    responses={
+        **responses.get_default_responses_for_get(),
+        **responses.get_default_responses(
+            status.HTTP_409_CONFLICT,
+            status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
+        ),
+        status.HTTP_201_CREATED: _collections_post_response_201,
+    },
+)
+
 
 homepage_get = EndpointDefinition(
     summary="Get the home page.",

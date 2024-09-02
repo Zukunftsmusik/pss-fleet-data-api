@@ -61,6 +61,7 @@ class OperationId(StrEnum):
     GET_USER_FROM_COLLECTION = "GetUserFromCollection"
     GET_USERS_FROM_COLLECTION = "GetUsersFromCollection"
     GET_USER_HISTORY = "GetUserHistory"
+    UPDATE_COLLECTION = "UpdateCollection"
     UPLOAD_COLLECTION = "UploadCollection"
 
 

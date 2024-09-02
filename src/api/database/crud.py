@@ -388,6 +388,73 @@ async def save_collection(session: AsyncSession, collection: CollectionDB, inclu
         return collection
 
 
+async def update_collection(session: AsyncSession, collection_id: int, new_collection: CollectionDB) -> CollectionDB:
+    """Inserts a Collection into the database or updates an existing one.
+
+    Args:
+        session (Session): The database session to use.
+        collection (CollectionDB): The Collection to be saved.
+        include_alliances (bool): Determines, if the `alliances` related to the Collection should be saved to the database, too.
+        include_users (bool): Determines, if the `alliances` related to the Collection should be saved to the database, too.
+
+    Returns:
+        CollectionDB: The inserted or updated Collection.
+    """
+    async with session:
+        collection = await get_collection(session, collection_id, True, True)
+
+        collection.duration = new_collection.duration
+        collection.fleet_count = new_collection.fleet_count
+        collection.max_tournament_battle_attempts = new_collection.max_tournament_battle_attempts
+        collection.tournament_running = new_collection.tournament_running
+        collection.user_count = new_collection.user_count
+
+        new_alliances = {alliance.alliance_id: alliance for alliance in new_collection.alliances}
+        new_users = {user.user_id: user for user in new_collection.users}
+
+        for alliance in collection.alliances:
+            alliance_in = new_alliances[alliance.alliance_id]
+
+            alliance.alliance_name = alliance_in.alliance_name
+            alliance.score = alliance_in.score
+            alliance.division_design_id = alliance_in.division_design_id
+            alliance.trophy = alliance_in.trophy
+            alliance.championship_score = alliance_in.championship_score
+            alliance.number_of_members = alliance_in.number_of_members
+            alliance.number_of_approved_members = alliance_in.number_of_approved_members
+
+        for user in collection.users:
+            user_in = new_users[user.user_id]
+
+            user.user_name = user_in.user_name
+            user.trophy = user_in.trophy
+            user.alliance_score = user_in.alliance_score
+            user.alliance_membership = user_in.alliance_membership
+            user.alliance_join_date = user_in.alliance_join_date
+            user.last_login_date = user_in.last_login_date
+            user.last_heartbeat_date = user_in.last_heartbeat_date
+            user.crew_donated = user_in.crew_donated
+            user.crew_received = user_in.crew_received
+            user.pvp_attack_wins = user_in.pvp_attack_wins
+            user.pvp_attack_losses = user_in.pvp_attack_losses
+            user.pvp_attack_draws = user_in.pvp_attack_draws
+            user.pvp_defence_wins = user_in.pvp_defence_wins
+            user.pvp_defence_losses = user_in.pvp_defence_losses
+            user.pvp_defence_draws = user_in.pvp_defence_draws
+            user.championship_score = user_in.championship_score
+            user.highest_trophy = user_in.highest_trophy
+            user.tournament_bonus_score = user_in.tournament_bonus_score
+
+        session.add(collection)
+        for alliance in collection.alliances:
+            session.add(alliance)
+        for user in collection.users:
+            session.add(user)
+        await session.commit()
+        await session.refresh(collection)
+        return collection
+
+
 def _apply_select_parameters_to_query(query: Select, from_date: datetime, to_date: datetime, interval: ParameterInterval, desc: bool) -> Select:
     """Applies the specified query parameters to the given Select `query`.
 

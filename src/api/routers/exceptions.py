@@ -7,6 +7,7 @@ from ..models.exceptions import (
     AllianceNotFoundError,
     CollectionNotDeletedError,
     CollectionNotFoundError,
+    ConflictError,
     InvalidJsonUpload,
     NonUniqueTimestampError,
     SchemaVersionMismatch,
@@ -116,6 +117,21 @@ def unsupported_schema() -> UnsupportedSchemaError:
     return UnsupportedSchemaError(
         details="The uploaded file is not a valid Fleet Data Collection file.",
         suggestion="For the supported schemas, see: https://github.com/Zukunftsmusik/pss-fleet-data?tab=readme-ov-file#schema-descriptions",
+    )
+
+
+def collected_at_not_match(collected_at: datetime, expected: datetime, collection_id: int) -> ConflictError:
+    """Creates an `ConflictError` based on the given parameters.
+
+    Args:
+        collection_id (int): The ID of the Collection that wasn't found.
+
+    Returns:
+        ConflictError: An exception to be raised.
+    """
+    return ConflictError(
+        details=f"The timestamp of the uploaded file ({collected_at.isoformat()}) does not match the timestamp of the Collection with the ID {collection_id} ({expected.isoformat()}).",
+        suggestion="Update the requested Collection with a Collection file having the same timestamp.",
     )
 
 

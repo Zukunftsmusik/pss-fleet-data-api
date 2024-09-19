@@ -168,7 +168,8 @@ def set_up_db_engine(database_url: str, echo: bool = None):
     connect_args = {}
 
     global ENGINE
-    ENGINE = create_async_engine(database_url, echo=echo, future=True, connect_args=connect_args)
+    ENGINE = create_async_engine(database_url, echo=echo, future=True, connect_args=connect_args, pool_pre_ping=True)
+    # pool_pre_ping fixes Issue #20 according to https://github.com/MagicStack/asyncpg/issues/309#issuecomment-1987144710
 
 
 def __alembic_current_is_head(sync_connection_string: str):

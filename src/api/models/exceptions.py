@@ -195,6 +195,11 @@ class InvalidIntervalError(ParameterValueError):
     message = "The provided value for the parameter `interval` is invalid."
 
 
+class InvalidOnMissingError(ParameterValueError):
+    code = ErrorCode.PARAMETER_ONMISSING_INVALID
+    message = "The provided value for the parameter `onMissing` is invalid."
+
+
 class InvalidSkipError(ParameterValueError):
     code = ErrorCode.PARAMETER_SKIP_INVALID
     message = "The provided value for the parameter `skip` is invalid."
@@ -248,6 +253,7 @@ __all__ = [
     InvalidIntervalError.__name__,
     InvalidJsonUpload.__name__,
     InvalidNumberError.__name__,
+    InvalidOnMissingError.__name__,
     InvalidSkipError.__name__,
     InvalidTakeError.__name__,
     InvalidToDateError.__name__,

@@ -13,6 +13,7 @@ from .models.exceptions import (
     InvalidDescError,
     InvalidFromDateError,
     InvalidIntervalError,
+    InvalidOnMissingError,
     InvalidSkipError,
     InvalidTakeError,
     InvalidToDateError,
@@ -371,4 +372,6 @@ def _raise_query_parameter_error(error: RequestValidationErrorOut, exc: RequestV
             raise InvalidSkipError(error.msg)
         case "take":
             raise InvalidTakeError(error.msg)
+        case "onMissing":
+            raise InvalidOnMissingError(error.msg)
     raise ServerError("An error occured while raising an error for an invalid query parameter.") from exc

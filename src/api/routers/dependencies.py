@@ -6,7 +6,7 @@ from fastapi import Depends, Header, Path, Query, Request
 
 from .. import utils
 from ..config import CONSTANTS, SETTINGS
-from ..models.enums import ParameterInterval
+from ..models.enums import ParameterInterval, ParameterOnMissing
 from ..models.exceptions import FromDateAfterToDateError, MissingAccessError, NotAuthenticatedError
 
 
@@ -18,8 +18,8 @@ class ListFilter:
 
 @dataclass(frozen=True)
 class DatetimeFilter:
-    from_date: datetime = None
-    to_date: datetime = None
+    from_date: datetime | None = None
+    to_date: datetime | None = None
 
 
 @dataclass(frozen=True)
@@ -39,7 +39,7 @@ async def alliance_id(alliance_id: Annotated[int, Path(alias="allianceId", ge=1,
 
 
 async def collection_id(
-    collection_id: Annotated[int, Path(alias="collectionId", ge=1, description="The ID of a PSS fleet data Collection.", examples=[1])]
+    collection_id: Annotated[int, Path(alias="collectionId", ge=1, description="The ID of a PSS fleet data Collection.", examples=[1])],
 ) -> int:
     """
     Adds path parameter `collectionId` to a path.
@@ -50,20 +50,10 @@ async def collection_id(
     return collection_id
 
 
-async def user_id(user_id: Annotated[int, Path(alias="userId", ge=1, description="The ID of a PSS User.", examples=[4510693])]) -> int:
-    """
-    Adds path parameter `userId` to a path.
-
-    Returns:
-        int: The UserId.
-    """
-    return user_id
-
-
 async def division_design_id(
     division_design_id: Annotated[
         int, Query(alias="divisionDesignId", ge=0, description="The ID of the PSS Monthly Fleet Tournament Division.", examples=[1])
-    ]
+    ],
 ) -> int:
     """
     Adds query parameter `divisionDesignId` to a path.
@@ -72,6 +62,35 @@ async def division_design_id(
         int: The DivisionDesignId.
     """
     return division_design_id
+
+
+async def on_missing(
+    on_missing: Annotated[
+        ParameterOnMissing,
+        Query(
+            alias="onMissing",
+            description="Specify how missing collections should be handled.",
+            examples=[ParameterOnMissing.SKIP],
+        ),
+    ] = ParameterOnMissing.SKIP,
+) -> ParameterOnMissing:
+    """
+    Adds path parameter `onMissing` to a path.
+
+    Returns:
+        ParameterOnMissing: The specified onMissing parameter or "skip".
+    """
+    return on_missing
+
+
+async def user_id(user_id: Annotated[int, Path(alias="userId", ge=1, description="The ID of a PSS User.", examples=[4510693])]) -> int:
+    """
+    Adds path parameter `userId` to a path.
+
+    Returns:
+        int: The UserId.
+    """
+    return user_id
 
 
 async def from_to_date_parameters(
@@ -199,18 +218,19 @@ authorization_dependencies: list[Any] = [Depends(verify_api_key)] if root_api_ke
 
 __all__ = [
     # classes
-    DatetimeFilter.__name__,
-    ListFilter.__name__,
-    SkipTakeFilter.__name__,
+    "DatetimeFilter",
+    "ListFilter",
+    "SkipTakeFilter",
     # functions
-    alliance_id.__name__,
-    collection_id.__name__,
-    division_design_id.__name__,
-    from_to_date_parameters.__name__,
-    list_filter_parameters.__name__,
-    skip_take_parameters.__name__,
-    user_id.__name__,
-    verify_api_key.__name__,
+    "alliance_id",
+    "collection_id",
+    "division_design_id",
+    "from_to_date_parameters",
+    "list_filter_parameters",
+    "on_missing",
+    "skip_take_parameters",
+    "user_id",
+    "verify_api_key",
     # conditional dependencies
     "authorization_dependencies",
 ]

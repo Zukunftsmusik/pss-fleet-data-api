@@ -2,7 +2,7 @@ import datetime as dt
 from typing import Sequence
 
 import pytest
-import test_cases
+import test_cases_db
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from src.api.database.crud import get_alliance_history
@@ -89,7 +89,7 @@ async def test_get_alliance_history_ordered_asc(alliance_id: int, desc: bool, se
             assert entry_1[0].collected_at < entry_2[0].collected_at
 
 
-@pytest.mark.parametrize(["interval", "to_date", "expected_timestamps", "expected_count"], test_cases.test_cases_parameter_onMissing_not_specified)
+@pytest.mark.parametrize(["interval", "to_date", "expected_timestamps", "expected_count"], test_cases_db.test_cases_parameter_onMissing_not_specified)
 async def test_get_alliance_history_onMissing_not_specified(
     interval: ParameterInterval, to_date: dt.datetime, expected_timestamps: list[dt.datetime | None], expected_count: int, session: AsyncSession
 ):
@@ -108,7 +108,7 @@ async def test_get_alliance_history_onMissing_not_specified(
         assert alliance_history[i][0].collected_at == expected_timestamps[i]
 
 
-@pytest.mark.parametrize(["interval", "to_date", "expected_timestamps", "expected_count"], test_cases.test_cases_parameter_onMissing_not_specified)
+@pytest.mark.parametrize(["interval", "to_date", "expected_timestamps", "expected_count"], test_cases_db.test_cases_parameter_onMissing_not_specified)
 async def test_get_alliance_history_onMissing_skip(
     interval: ParameterInterval, to_date: dt.datetime, expected_timestamps: list[dt.datetime | None], expected_count: int, session: AsyncSession
 ):
@@ -128,7 +128,7 @@ async def test_get_alliance_history_onMissing_skip(
         assert alliance_history[i][0].collected_at == expected_timestamps[i]
 
 
-@pytest.mark.parametrize(["interval", "to_date", "expected_timestamps", "expected_count"], test_cases.test_cases_parameter_onMissing_last)
+@pytest.mark.parametrize(["interval", "to_date", "expected_timestamps", "expected_count"], test_cases_db.test_cases_parameter_onMissing_last)
 async def test_get_alliance_history_onMissing_last(
     interval: ParameterInterval, to_date: dt.datetime, expected_timestamps: list[dt.datetime | None], expected_count: int, session: AsyncSession
 ):
@@ -148,7 +148,7 @@ async def test_get_alliance_history_onMissing_last(
         assert alliance_history[i][0].collected_at == expected_timestamps[i]
 
 
-@pytest.mark.parametrize(["interval", "to_date", "expected_timestamps", "expected_count"], test_cases.test_cases_parameter_onMissing_null)
+@pytest.mark.parametrize(["interval", "to_date", "expected_timestamps", "expected_count"], test_cases_db.test_cases_parameter_onMissing_null)
 async def test_get_alliance_history_onMissing_null(
     interval: ParameterInterval, to_date: dt.datetime, expected_timestamps: list[dt.datetime | None], expected_count: int, session: AsyncSession
 ):
@@ -172,7 +172,7 @@ async def test_get_alliance_history_onMissing_null(
 
 
 @pytest.mark.parametrize(
-    ["interval", "to_date", "expected_timestamps", "expected_count", "empty_collection_index"], test_cases.test_cases_parameter_onMissing_empty
+    ["interval", "to_date", "expected_timestamps", "expected_count", "empty_collection_index"], test_cases_db.test_cases_parameter_onMissing_empty
 )
 async def test_get_alliance_history_onMissing_empty(
     interval: ParameterInterval,

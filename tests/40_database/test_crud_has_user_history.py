@@ -7,7 +7,7 @@ from src.api.database.crud import has_user_history
 test_cases = [
     # user_id, expected_result
     pytest.param(20013541, True, id="true"),
-    pytest.param(1, False, id="false"),
+    pytest.param(1337, False, id="false"),
 ]
 
 

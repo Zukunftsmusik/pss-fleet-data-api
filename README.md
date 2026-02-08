@@ -38,7 +38,7 @@ In order to deploy the API, the following prerequisites must be met:
 To deploy the API on [CapRover](https://caprover.com/) you need to:
 - Create a new app on your CapRover instance
 - Set up the environment variables described above
-- [Fork the repository](https://github.com/Zukunftsmusik/pss-fleet-data-importer/fork) to your own github account
+- [Fork the repository](https://github.com/Zukunftsmusik/pss-fleet-data-api/fork) to your own github account
 - Follow the steps explained in the [CapRover Docs](https://caprover.com/docs/ci-cd-integration/deploy-from-github.html).
 
 ## Deploy locally with Docker

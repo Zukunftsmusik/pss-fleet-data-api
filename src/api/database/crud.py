@@ -8,7 +8,7 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 from sqlmodel.sql.expression import Select
 
 from .. import utils
-from ..models.enums import ParameterInterval
+from ..models.enums import ParameterInterval, ParameterOnMissing
 from .models import AllianceDB, AllianceHistoryDB, CollectionDB, UserDB, UserHistoryDB
 
 
@@ -97,6 +97,7 @@ async def get_alliance_history(
     desc: bool = False,
     skip: int = 0,
     take: int = 100,
+    on_missing: ParameterOnMissing = ParameterOnMissing.SKIP,
 ) -> list[AllianceHistoryDB]:
     """Retrieve an Alliance's history over time.
 
@@ -110,6 +111,7 @@ async def get_alliance_history(
         desc (bool, optional): Determines, whether the data should be returned in descending order by the collection date and time. Defaults to False.
         skip (int, optional): Skip this number of results from the result set. Defaults to 0.
         take (int, optional): Limit the number of results returned. Defaults to 100.
+        on_missing (ParameterInterval, optional): Specify, how to handle missing collections.
 
     Returns:
         list[tuple[CollectionDB, AllianceDB]]: A list of tuples representing entries in the Alliance history. A tuple contains the metadata of the respective Collection and the Alliance's data from that Collection.
@@ -189,6 +191,7 @@ async def get_collections(
     desc: bool = False,
     skip: int = 0,
     take: int = 100,
+    on_missing: ParameterOnMissing = ParameterOnMissing.SKIP,
 ) -> list[CollectionDB]:
     """Retrieves metadata of Collections meeting the specified criteria.
 
@@ -200,6 +203,7 @@ async def get_collections(
         desc (bool, optional): Determines, whether the data should be returned in descending order by the collection date and time. Defaults to False.
         skip (int, optional): Skip this number of results from the result set. Defaults to 0.
         take (int, optional): Limit the number of results returned. Defaults to 100.
+        on_missing (ParameterInterval, optional): Specify, how to handle missing collections.
 
     Returns:
         list[CollectionDB]: A list of Collections without any Alliances or Users.
@@ -271,6 +275,7 @@ async def get_user_history(
     desc: bool = False,
     skip: int = 0,
     take: int = 100,
+    on_missing: ParameterOnMissing = ParameterOnMissing.SKIP,
 ) -> list[UserHistoryDB]:
     """Retrieve an User's history over time.
 
@@ -284,6 +289,7 @@ async def get_user_history(
         desc (bool, optional): Determines, whether the data should be returned in descending order by the collection date and time. Defaults to False.
         skip (int, optional): Skip this number of results from the result set. Defaults to 0.
         take (int, optional): Limit the number of results returned. Defaults to 100.
+        on_missing (ParameterInterval, optional): Specify, how to handle missing collections.
 
     Returns:
         list[tuple[CollectionDB, UserDB]]: A list of tuples representing entries in the User history. A tuple contains the metadata of the respective Collection and the User's data from that Collection.

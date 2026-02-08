@@ -35,7 +35,7 @@ test:
 	pytest
 
 # run
-.PHONY: dev
+.PHONY: rundev
 rundev:
 	fastapi dev src/api/main.py
 

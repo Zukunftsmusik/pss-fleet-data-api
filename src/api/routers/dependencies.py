@@ -39,7 +39,7 @@ async def alliance_id(alliance_id: Annotated[int, Path(alias="allianceId", ge=1,
 
 
 async def collection_id(
-    collection_id: Annotated[int, Path(alias="collectionId", ge=1, description="The ID of a PSS fleet data Collection.", examples=[1])]
+    collection_id: Annotated[int, Path(alias="collectionId", ge=1, description="The ID of a PSS fleet data Collection.", examples=[1])],
 ) -> int:
     """
     Adds path parameter `collectionId` to a path.
@@ -63,7 +63,7 @@ async def user_id(user_id: Annotated[int, Path(alias="userId", ge=1, description
 async def division_design_id(
     division_design_id: Annotated[
         int, Query(alias="divisionDesignId", ge=0, description="The ID of the PSS Monthly Fleet Tournament Division.", examples=[1])
-    ]
+    ],
 ) -> int:
     """
     Adds query parameter `divisionDesignId` to a path.

@@ -88,7 +88,7 @@ def non_unique_timestamp(timestamp: datetime, collection_id: int) -> NonUniqueTi
         NonUniqueTimestampError: An exception to be raised.
     """
     return NonUniqueTimestampError(
-        details=f"Can't insert collection: A collection with this timestamp ({timestamp.strftime("%Y-%m-%d %H:%M:%S")}) already exists in the database with the ID '{collection_id}'.",
+        details=f"Can't insert collection: A collection with this timestamp ({timestamp.strftime('%Y-%m-%d %H:%M:%S')}) already exists in the database with the ID '{collection_id}'.",
         suggestion="If you want to update the Collection in question, delete and re-insert it.",
     )
 

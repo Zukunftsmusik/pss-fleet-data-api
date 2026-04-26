@@ -1,6 +1,6 @@
 from . import config, database, models, routers, utils
 from .main import app
-from .models import exceptions
+from .models import enums, exceptions
 
 
 __all__ = [

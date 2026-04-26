@@ -152,12 +152,12 @@ def user_not_found_in_collection(collection_id: int, user_id: int) -> UserNotFou
 
 
 __all__ = [
-    alliance_not_found_in_collection.__name__,
-    collection_not_deleted.__name__,
-    collection_not_found.__name__,
-    invalid_json_upload.__name__,
-    non_unique_timestamp.__name__,
-    schema_version_mismatch.__name__,
-    unsupported_schema.__name__,
-    user_not_found_in_collection.__name__,
+    "alliance_not_found_in_collection",
+    "collection_not_deleted",
+    "collection_not_found",
+    "invalid_json_upload",
+    "non_unique_timestamp",
+    "schema_version_mismatch",
+    "unsupported_schema",
+    "user_not_found_in_collection",
 ]

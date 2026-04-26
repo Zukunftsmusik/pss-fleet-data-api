@@ -199,18 +199,18 @@ authorization_dependencies: list[Any] = [Depends(verify_api_key)] if root_api_ke
 
 __all__ = [
     # classes
-    DatetimeFilter.__name__,
-    ListFilter.__name__,
-    SkipTakeFilter.__name__,
+    "DatetimeFilter",
+    "ListFilter",
+    "SkipTakeFilter",
     # functions
-    alliance_id.__name__,
-    collection_id.__name__,
-    division_design_id.__name__,
-    from_to_date_parameters.__name__,
-    list_filter_parameters.__name__,
-    skip_take_parameters.__name__,
-    user_id.__name__,
-    verify_api_key.__name__,
+    "alliance_id",
+    "collection_id",
+    "division_design_id",
+    "from_to_date_parameters",
+    "list_filter_parameters",
+    "skip_take_parameters",
+    "user_id",
+    "verify_api_key",
     # conditional dependencies
     "authorization_dependencies",
 ]

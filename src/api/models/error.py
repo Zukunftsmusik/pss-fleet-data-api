@@ -93,7 +93,7 @@ class ErrorConverter:
 
 
 __all__ = [
-    ErrorConverter.__name__,
-    ErrorOut.__name__,
-    RequestValidationErrorOut.__name__,
+    "ErrorConverter",
+    "ErrorOut",
+    "RequestValidationErrorOut",
 ]

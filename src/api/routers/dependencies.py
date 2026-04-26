@@ -39,7 +39,7 @@ async def alliance_id(alliance_id: Annotated[int, Path(alias="allianceId", ge=1,
 
 
 async def collection_id(
-    collection_id: Annotated[int, Path(alias="collectionId", ge=1, description="The ID of a PSS fleet data Collection.", examples=[1])]
+    collection_id: Annotated[int, Path(alias="collectionId", ge=1, description="The ID of a PSS fleet data Collection.", examples=[1])],
 ) -> int:
     """
     Adds path parameter `collectionId` to a path.
@@ -63,7 +63,7 @@ async def user_id(user_id: Annotated[int, Path(alias="userId", ge=1, description
 async def division_design_id(
     division_design_id: Annotated[
         int, Query(alias="divisionDesignId", ge=0, description="The ID of the PSS Monthly Fleet Tournament Division.", examples=[1])
-    ]
+    ],
 ) -> int:
     """
     Adds query parameter `divisionDesignId` to a path.
@@ -199,18 +199,18 @@ authorization_dependencies: list[Any] = [Depends(verify_api_key)] if root_api_ke
 
 __all__ = [
     # classes
-    DatetimeFilter.__name__,
-    ListFilter.__name__,
-    SkipTakeFilter.__name__,
+    "DatetimeFilter",
+    "ListFilter",
+    "SkipTakeFilter",
     # functions
-    alliance_id.__name__,
-    collection_id.__name__,
-    division_design_id.__name__,
-    from_to_date_parameters.__name__,
-    list_filter_parameters.__name__,
-    skip_take_parameters.__name__,
-    user_id.__name__,
-    verify_api_key.__name__,
+    "alliance_id",
+    "collection_id",
+    "division_design_id",
+    "from_to_date_parameters",
+    "list_filter_parameters",
+    "skip_take_parameters",
+    "user_id",
+    "verify_api_key",
     # conditional dependencies
     "authorization_dependencies",
 ]

@@ -88,7 +88,7 @@ def non_unique_timestamp(timestamp: datetime, collection_id: int) -> NonUniqueTi
         NonUniqueTimestampError: An exception to be raised.
     """
     return NonUniqueTimestampError(
-        details=f"Can't insert collection: A collection with this timestamp ({timestamp.strftime("%Y-%m-%d %H:%M:%S")}) already exists in the database with the ID '{collection_id}'.",
+        details=f"Can't insert collection: A collection with this timestamp ({timestamp.strftime('%Y-%m-%d %H:%M:%S')}) already exists in the database with the ID '{collection_id}'.",
         suggestion="If you want to update the Collection in question, delete and re-insert it.",
     )
 
@@ -152,12 +152,12 @@ def user_not_found_in_collection(collection_id: int, user_id: int) -> UserNotFou
 
 
 __all__ = [
-    alliance_not_found_in_collection.__name__,
-    collection_not_deleted.__name__,
-    collection_not_found.__name__,
-    invalid_json_upload.__name__,
-    non_unique_timestamp.__name__,
-    schema_version_mismatch.__name__,
-    unsupported_schema.__name__,
-    user_not_found_in_collection.__name__,
+    "alliance_not_found_in_collection",
+    "collection_not_deleted",
+    "collection_not_found",
+    "invalid_json_upload",
+    "non_unique_timestamp",
+    "schema_version_mismatch",
+    "unsupported_schema",
+    "user_not_found_in_collection",
 ]

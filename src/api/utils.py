@@ -7,6 +7,21 @@ from .config import CONSTANTS
 from .models.enums import UserAllianceMembership, UserAllianceMembershipEncoded
 
 
+ALLIANCE_MEMBERSHIP_ENCODE_LOOKUP = {
+    UserAllianceMembership.NONE: UserAllianceMembershipEncoded.NONE,
+    UserAllianceMembership.CANDIDATE: UserAllianceMembershipEncoded.CANDIDATE,
+    UserAllianceMembership.ENSIGN: UserAllianceMembershipEncoded.ENSIGN,
+    UserAllianceMembership.LIEUTENANT: UserAllianceMembershipEncoded.LIEUTENANT,
+    UserAllianceMembership.MAJOR: UserAllianceMembershipEncoded.MAJOR,
+    UserAllianceMembership.COMMANDER: UserAllianceMembershipEncoded.COMMANDER,
+    UserAllianceMembership.VICE_ADMIRAL: UserAllianceMembershipEncoded.VICE_ADMIRAL,
+    UserAllianceMembership.FLEET_ADMIRAL: UserAllianceMembershipEncoded.FLEET_ADMIRAL,
+}
+
+
+ALLIANCE_MEMBERSHIP_DECODE_LOOKUP = {value: key for key, value in ALLIANCE_MEMBERSHIP_ENCODE_LOOKUP.items()}
+
+
 def add_timezone_utc(dt: Optional[datetime]) -> datetime:
     """Takes a `datetime` and makes it a timezone-aware `datetime` with timezone UTC, if it's not timezone-aware, yet.
 
@@ -78,23 +93,7 @@ def decode_alliance_membership(membership: Union[int, UserAllianceMembershipEnco
     if isinstance(membership, int):
         membership = UserAllianceMembershipEncoded(membership)
 
-    match membership:
-        case UserAllianceMembershipEncoded.NONE:
-            return UserAllianceMembership.NONE
-        case UserAllianceMembershipEncoded.CANDIDATE:
-            return UserAllianceMembership.CANDIDATE
-        case UserAllianceMembershipEncoded.ENSIGN:
-            return UserAllianceMembership.ENSIGN
-        case UserAllianceMembershipEncoded.LIEUTENANT:
-            return UserAllianceMembership.LIEUTENANT
-        case UserAllianceMembershipEncoded.MAJOR:
-            return UserAllianceMembership.MAJOR
-        case UserAllianceMembershipEncoded.COMMANDER:
-            return UserAllianceMembership.COMMANDER
-        case UserAllianceMembershipEncoded.VICE_ADMIRAL:
-            return UserAllianceMembership.VICE_ADMIRAL
-        case UserAllianceMembershipEncoded.FLEET_ADMIRAL:
-            return UserAllianceMembership.FLEET_ADMIRAL
+    return ALLIANCE_MEMBERSHIP_DECODE_LOOKUP.get(membership, UserAllianceMembership.NONE)
 
 
 def encode_alliance_membership(membership: Union[str, UserAllianceMembership]) -> int:
@@ -119,23 +118,7 @@ def encode_alliance_membership(membership: Union[str, UserAllianceMembership]) -
     if isinstance(membership, str):
         membership = UserAllianceMembership(membership)
 
-    match membership:
-        case UserAllianceMembership.NONE:
-            return int(UserAllianceMembershipEncoded.NONE)
-        case UserAllianceMembership.CANDIDATE:
-            return int(UserAllianceMembershipEncoded.CANDIDATE)
-        case UserAllianceMembership.ENSIGN:
-            return int(UserAllianceMembershipEncoded.ENSIGN)
-        case UserAllianceMembership.LIEUTENANT:
-            return int(UserAllianceMembershipEncoded.LIEUTENANT)
-        case UserAllianceMembership.MAJOR:
-            return int(UserAllianceMembershipEncoded.MAJOR)
-        case UserAllianceMembership.COMMANDER:
-            return int(UserAllianceMembershipEncoded.COMMANDER)
-        case UserAllianceMembership.VICE_ADMIRAL:
-            return int(UserAllianceMembershipEncoded.VICE_ADMIRAL)
-        case UserAllianceMembership.FLEET_ADMIRAL:
-            return int(UserAllianceMembershipEncoded.FLEET_ADMIRAL)
+    return int(ALLIANCE_MEMBERSHIP_ENCODE_LOOKUP.get(membership, UserAllianceMembershipEncoded.NONE))
 
 
 def localize_to_utc(dt: Optional[datetime]) -> datetime:
@@ -210,4 +193,5 @@ def remove_timezone(dt: Optional[datetime]) -> datetime:
     if not isinstance(dt, datetime):
         raise TypeError("The parameter `dt` must be of type `datetime`!")
 
+    return dt.replace(tzinfo=None)
     return dt.replace(tzinfo=None)

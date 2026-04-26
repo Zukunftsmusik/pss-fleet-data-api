@@ -1,7 +1,7 @@
 """Initialize database
 
 Revision ID: 8b04fbfef3f7
-Revises: 
+Revises:
 Create Date: 2024-07-10 16:13:41.131567+00:00
 
 """

@@ -194,10 +194,10 @@ def __drop_tables(connection_str: str):
 
 __all__ = [
     "ENGINE",
-    create_collections_from_dummy_data.__name__,
-    create_dummy_data.__name__,
-    get_session.__name__,
-    initialize_db.__name__,
-    insert_dummy_collections.__name__,
-    set_up_db_engine.__name__,
+    "create_collections_from_dummy_data",
+    "create_dummy_data",
+    "get_session",
+    "initialize_db",
+    "insert_dummy_collections",
+    "set_up_db_engine",
 ]

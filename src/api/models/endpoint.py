@@ -31,5 +31,5 @@ class EndpointDefinition(BaseModel, Mapping):
 
 
 __all__ = [
-    EndpointDefinition.__name__,
+    "EndpointDefinition",
 ]

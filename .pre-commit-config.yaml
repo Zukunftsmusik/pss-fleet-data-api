@@ -1,13 +1,8 @@
 repos:
-  - repo: https://github.com/PyCQA/autoflake
-    rev: v2.3.1
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.15.12
     hooks:
-      - id: autoflake
-  - repo: https://github.com/pycqa/isort
-    rev: 5.13.2
-    hooks:
-      - id: isort
-  - repo: https://github.com/psf/black
-    rev: 24.4.2
-    hooks:
-      - id: black
+      - id: ruff-check  # Lint code
+        args: [--config=pyproject.toml, --fix]
+      - id: ruff-format  # Format code
+        args: [--config=pyproject.toml]

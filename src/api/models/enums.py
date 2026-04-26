@@ -125,9 +125,9 @@ class UserAllianceMembershipEncoded(IntEnum):
 
 
 __all__ = [
-    ErrorCode.__name__,
-    OperationId.__name__,
-    ParameterInterval.__name__,
-    UserAllianceMembership.__name__,
-    UserAllianceMembershipEncoded.__name__,
+    "ErrorCode",
+    "OperationId",
+    "ParameterInterval",
+    "UserAllianceMembership",
+    "UserAllianceMembershipEncoded",
 ]

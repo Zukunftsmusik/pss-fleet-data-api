@@ -4,39 +4,48 @@ all: format check test
 # setup
 .PHONY: init-dev
 init-dev:
-	rye self update
-	rye sync --no-lock
+	uv self update
+	uv sync
 	pre-commit install
 	pre-commit run --all-files
 
 .PHONY: update
 update:
-	rye sync --update-all
+	uv sync --upgrade
+
+
+# dev tools
+.PHONY: lock
+lock:
+	uv export --no-hashes --no-header --no-annotate --no-dev --format requirements.txt > requirements.txt
+	uv export --no-hashes --no-header --no-annotate --format requirements.txt > requirements-dev.txt
+
 
 # formatting and linting
 .PHONY: check
 check:
-	flake8 ./src
-	vulture
+	uv run --no-project flake8 ./src
+	uv run --no-project vulture ./src
 
 .PHONY: format
 format:
-	uv run ruff check --fix ./src ./tests
-	uv run ruff format ./src ./tests
+	uv run --no-project ruff check --fix ./src ./tests
+	uv run --no-project ruff format ./src ./tests
+
 
 # testing
 .PHONY: coverage
 coverage:
-	pytest --cov=./src/api --cov-report=xml:cov.xml --cov-report=term
+	uv run --no-project pytest --cov=./src/api --cov-report=xml:cov.xml --cov-report=term
 
 .PHONY: test
 test:
-	pytest
+	uv run --no-project pytest tests
 
 # run
-.PHONY: dev
+.PHONY: rundev
 rundev:
-	fastapi dev src/api/main.py
+	uv run fastapi dev src/api/main.py
 
 .PHONY: docker
 docker:
@@ -48,4 +57,4 @@ docker:
 
 .PHONY: run
 run:
-	fastapi run src/api/main.py
+	uv run fastapi run src/api/main.py

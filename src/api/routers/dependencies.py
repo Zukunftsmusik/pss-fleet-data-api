@@ -7,7 +7,11 @@ from fastapi import Depends, Header, Path, Query, Request
 from .. import utils
 from ..config import CONSTANTS, SETTINGS
 from ..models.enums import ParameterInterval, ParameterOnMissing
-from ..models.exceptions import FromDateAfterToDateError, MissingAccessError, NotAuthenticatedError
+from ..models.exceptions import (
+    FromDateAfterToDateError,
+    MissingAccessError,
+    NotAuthenticatedError,
+)
 
 
 @dataclass(frozen=True)
@@ -227,7 +231,6 @@ __all__ = [
     "division_design_id",
     "from_to_date_parameters",
     "list_filter_parameters",
-    "on_missing",
     "skip_take_parameters",
     "user_id",
     "verify_api_key",

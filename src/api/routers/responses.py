@@ -200,6 +200,6 @@ all_default_responses = {
 
 
 __all__ = [
-    get_default_responses.__name__,
-    get_default_responses_for_get.__name__,
+    "get_default_responses",
+    "get_default_responses_for_get",
 ]

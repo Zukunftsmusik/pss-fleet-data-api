@@ -599,6 +599,6 @@ class ToDB:
 
 
 __all__ = [
-    FromDB.__name__,
-    ToDB.__name__,
+    "FromDB",
+    "ToDB",
 ]

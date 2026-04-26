@@ -262,9 +262,9 @@ UserHistoryDB = tuple[CollectionDB, UserDB]
 
 
 __all__ = [
-    AllianceDB.__name__,
-    AllianceHistoryDB.__name__,
-    CollectionDB.__name__,
-    UserDB.__name__,
-    UserHistoryDB.__name__,
+    "AllianceDB",
+    "AllianceHistoryDB",
+    "CollectionDB",
+    "UserDB",
+    "UserHistoryDB",
 ]

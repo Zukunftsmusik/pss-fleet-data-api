@@ -774,16 +774,16 @@ def _get_date_defaults(from_date: Optional[datetime], to_date: Optional[datetime
 
 
 __all__ = [
-    create_tables.__name__,
-    delete_collection.__name__,
-    drop_tables.__name__,
-    get_alliance_from_collection.__name__,
-    get_alliance_history.__name__,
-    get_collection.__name__,
-    get_collections.__name__,
-    get_top_100_from_collection.__name__,
-    get_user_from_collection.__name__,
-    get_user_history.__name__,
-    has_collection.__name__,
-    save_collection.__name__,
+    "create_tables",
+    "delete_collection",
+    "drop_tables",
+    "get_alliance_from_collection",
+    "get_alliance_history",
+    "get_collection",
+    "get_collections",
+    "get_top_100_from_collection",
+    "get_user_from_collection",
+    "get_user_history",
+    "has_collection",
+    "save_collection",
 ]

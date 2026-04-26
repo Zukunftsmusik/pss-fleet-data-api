@@ -245,6 +245,15 @@ def _raise_nested_body_parameter_error(error: RequestValidationErrorOut, exc: Re
 
 
 def _raise_nested_body_parameter_error_fleets(error: RequestValidationErrorOut, exc: RequestValidationError):
+    """Handles a `RequestValidationError` (422) raised upon a failed validation of a fleet (Alliance) in the request body.
+
+    Args:
+        error (RequestValidationErrorOut): Details of the `RequestValidationError` that was thrown.
+        exc (RequestValidationError): The original `RequestValidationError` exception.
+
+    Raises:
+        UnsupportedSchemaError: Raised, if a fleet tuple is invalid or missing required values.
+    """
     if error.type == "too_long":
         fleet_index = error.loc[-1]
         raise UnsupportedSchemaError(f"The fleet at index {fleet_index} is not a valid representation.", suggestion=error.msg)
@@ -254,6 +263,15 @@ def _raise_nested_body_parameter_error_fleets(error: RequestValidationErrorOut, 
 
 
 def _raise_nested_body_parameter_error_meta(error: RequestValidationErrorOut, exc: RequestValidationError):
+    """Handles a `RequestValidationError` (422) raised upon a failed validation of the metadata in the request body.
+
+    Args:
+        error (RequestValidationErrorOut): Details of the `RequestValidationError` that was thrown.
+        exc (RequestValidationError): The original `RequestValidationError` exception.
+
+    Raises:
+        UnsupportedSchemaError: Raised, if a metadata field is missing, invalid, or cannot be parsed to the expected type.
+    """
     if error.type == "missing":
         raise UnsupportedSchemaError(f"The field {error.param_name} is missing from the metadata.")
     match error.param_name:
@@ -272,6 +290,15 @@ BODY_PARAMETER_ERROR_USERS_ERROR_INDEX_LOOKUP = {
 
 
 def _raise_nested_body_parameter_error_users(error: RequestValidationErrorOut, exc: RequestValidationError):
+    """Handles a `RequestValidationError` (422) raised upon a failed validation of a user in the request body.
+
+    Args:
+        error (RequestValidationErrorOut): Details of the `RequestValidationError` that was thrown.
+        exc (RequestValidationError): The original `RequestValidationError` exception.
+
+    Raises:
+        UnsupportedSchemaError: Raised, if a user tuple is invalid, missing required values, or contains fields with unsupported values.
+    """
     user_index = error.loc[-2]
     match error.type:
         case "too_long":

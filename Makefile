@@ -21,9 +21,8 @@ check:
 
 .PHONY: format
 format:
-	autoflake .
-	isort .
-	black .
+	uv run ruff check --fix ./src ./tests
+	uv run ruff format ./src ./tests
 
 # testing
 .PHONY: coverage

@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Annotated, Any, Optional
+from typing import Annotated, Any
 
 from fastapi import Depends, Header, Path, Query, Request
 
@@ -133,13 +133,13 @@ async def from_to_date_parameters(
 
 async def list_filter_parameters(
     interval: Annotated[
-        Optional[ParameterInterval],
+        ParameterInterval | None,
         Query(
             description="Return the data from the specified time frame in hourly, daily (last Collection of a day) or monthly (last Collection of a month) interval.",
             examples=[ParameterInterval.MONTHLY],
         ),
     ] = ParameterInterval.MONTHLY,
-    desc: Annotated[Optional[bool], Query(description="Return the results in descending order by timestamp.", examples=[False])] = False,
+    desc: Annotated[bool | None, Query(description="Return the results in descending order by timestamp.", examples=[False])] = False,
 ) -> ListFilter:
     """
     Adds query parameters `interval` and `desc` to a path.

@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Any, Optional, Union
+from typing import Any, Union
 
 from pydantic import field_validator
 from sqlalchemy.orm import foreign, relationship
@@ -229,7 +229,7 @@ class UserDB(UserBaseDB, table=True):
 
     collection: CollectionDB = Relationship(back_populates="users", sa_relationship_kwargs={"lazy": "noload"})
     """The Collection this User data is referencing."""
-    alliance: Optional[AllianceDB] = Relationship()
+    alliance: AllianceDB | None = Relationship()
     """The fleet of this player."""
 
 

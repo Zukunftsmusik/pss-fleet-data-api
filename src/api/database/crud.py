@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta, timezone
-from typing import Optional, Union
+from typing import Union
 
 from sqlalchemy.ext.asyncio.engine import AsyncEngine
 from sqlalchemy.orm import selectinload
@@ -61,7 +61,7 @@ async def delete_collection(session: AsyncSession, collection_id: int) -> bool:
             return False
 
 
-async def get_alliance_from_collection(session: AsyncSession, collection_id: int, alliance_id: int) -> Optional[AllianceHistoryDB]:
+async def get_alliance_from_collection(session: AsyncSession, collection_id: int, alliance_id: int) -> AllianceHistoryDB | None:
     """Retrieves information about a specific Alliance from a specific Collection.
 
     Args:
@@ -70,7 +70,7 @@ async def get_alliance_from_collection(session: AsyncSession, collection_id: int
         alliance_id (int): The `alliance_id` of the Alliance to retrieve.
 
     Returns:
-        Optional[AllianceDB]: Returns the specified Alliance from the specified Collection, if there's one with the specified `alliance_id`. Else, it returns `None`. If an Alliance is returned and `include_users` is `True`, then the property `users` will be populated. Else, it will be empty.
+        AllianceHistoryDB | None: Returns the specified Alliance from the specified Collection, if there's one with the specified `alliance_id`. Else, it returns `None`. If an Alliance is returned and `include_users` is `True`, then the property `users` will be populated. Else, it will be empty.
     """
     async with session:
         alliance_query = (
@@ -155,7 +155,7 @@ async def get_alliance_history(
         return alliance_histories
 
 
-async def get_collection(session: AsyncSession, collection_id: int, include_alliances: bool, include_users: bool) -> Optional[CollectionDB]:
+async def get_collection(session: AsyncSession, collection_id: int, include_alliances: bool, include_users: bool) -> CollectionDB | None:
     """Retrieves the Collection with the specified `collection_id`.
 
     Args:
@@ -165,7 +165,7 @@ async def get_collection(session: AsyncSession, collection_id: int, include_alli
         include_users (bool): Determines, whether to also retrieve the Users related to the Collection.
 
     Returns:
-        Optional[CollectionDB]: The requested Collection, if it exists. Else, None. If a Collection is returned and `include_alliances` is `True`, then the property `alliances` will be populated. Else, it will be empty. If a Collection is returned and `include_users` is `True`, then the property `users` will be populated. Else, it will be empty.
+        CollectionDB | None: The requested Collection, if it exists. Else, None. If a Collection is returned and `include_alliances` is `True`, then the property `alliances` will be populated. Else, it will be empty. If a Collection is returned and `include_users` is `True`, then the property `users` will be populated. Else, it will be empty.
     """
     async with session:
         collection = await session.get(CollectionDB, collection_id)
@@ -189,7 +189,7 @@ async def get_collection(session: AsyncSession, collection_id: int, include_alli
         return collection
 
 
-async def get_collection_by_timestamp(session: AsyncSession, collected_at: datetime) -> Optional[CollectionDB]:
+async def get_collection_by_timestamp(session: AsyncSession, collected_at: datetime) -> CollectionDB | None:
     """Retrieves the Collection with the given `collected_at` datetime.
 
     Args:
@@ -266,7 +266,7 @@ async def get_top_100_from_collection(session: AsyncSession, collection_id: int,
         return list(results.all())
 
 
-async def get_user_from_collection(session: AsyncSession, collection_id: int, user_id: int) -> Optional[UserHistoryDB]:
+async def get_user_from_collection(session: AsyncSession, collection_id: int, user_id: int) -> UserHistoryDB | None:
     """Retrieves information about a specific User from a specific collection.
 
     Args:
@@ -275,7 +275,7 @@ async def get_user_from_collection(session: AsyncSession, collection_id: int, us
         user_id (int): The `user_id` of the User to retrieve.
 
     Returns:
-        Optional[UserDB]: Returns the specified User from the specified Collection, if there's one with the specified `user_id`. Else, it returns `None`. If a User is returned, `include_alliance` is `True` and the User was in an Alliance, then the property `alliance` will be populated. Else, it will be `None`.
+        UserHistoryDB | None: Returns the specified User from the specified Collection, if there's one with the specified `user_id`. Else, it returns `None`. If a User is returned, `include_alliance` is `True` and the User was in an Alliance, then the property `alliance` will be populated. Else, it will be `None`.
     """
     async with session:
         user_history_query = (

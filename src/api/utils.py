@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta, timezone
-from typing import Optional, Union
+from typing import Union
 
 import dateutil
 
@@ -147,7 +147,7 @@ def localize_to_utc(dt: datetime | None) -> datetime:
         return dt
 
 
-def parse_datetime(dt: Optional[Union[datetime, int, str]]) -> datetime:
+def parse_datetime(dt: Union[datetime, int, str] | None) -> datetime:
     """Parses a `str` or `int` to `datetime` or returns the passed datetime.
 
     Args:

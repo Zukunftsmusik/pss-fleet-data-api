@@ -1,5 +1,4 @@
 import datetime
-from typing import Optional
 
 import pytest
 
@@ -78,10 +77,10 @@ test_cases__get_date_defaults = [
 
 @pytest.mark.parametrize(["from_date", "to_date", "expected_from_date", "expected_to_date"], test_cases__get_date_defaults)
 def test__get_date_defaults(
-    from_date: Optional[datetime.datetime],
-    to_date: Optional[datetime.datetime],
+    from_date: datetime.datetime | None,
+    to_date: datetime.datetime | None,
     expected_from_date: datetime.datetime,
-    expected_to_date: Optional[datetime.datetime],
+    expected_to_date: datetime.datetime | None,
 ):
     utc_start = utils.remove_timezone(datetime.datetime.now(datetime.timezone.utc))
 

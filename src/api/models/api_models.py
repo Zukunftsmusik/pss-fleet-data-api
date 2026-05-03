@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Annotated, Optional, Union
+from typing import Annotated, Union
 
 from pydantic import BaseModel, Field, field_validator
 
@@ -618,7 +618,7 @@ class UserHistoryOut(BaseModel):
     """The metadata of the Collection that represents the point in the history of the Alliance."""
     user: UserOut
     """The recorded User data."""
-    fleet: Optional[AllianceOut]
+    fleet: AllianceOut | None
     """The Alliance of the User at the time of recording the User data. May be `None`, if the User was not in an Alliance at the time."""
 
 

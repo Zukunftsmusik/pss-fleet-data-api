@@ -1,10 +1,8 @@
 from contextlib import asynccontextmanager
 
-import sqlmodel
 from fastapi import FastAPI
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.gzip import GZipMiddleware
-from sqlmodel.ext.asyncio.session import AsyncSession
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from . import exception_handlers
@@ -96,28 +94,3 @@ async def initialize_app(app: FastAPI, database_connection_string: str, echo: bo
 
     if create_dummy_data:
         await db.create_dummy_data(["examples/generated_dummy_data.json"])
-
-
-async def refresh_calendar_view():
-    if not db.ENGINE:
-        raise RuntimeError("The database engine has not been initialized, yet!")
-
-    sql_check = sqlmodel.select(
-        """
-            SELECT EXISTS (
-                SELECT 1 
-                FROM pg_matviews 
-                WHERE schemaname = 'public' 
-                AND matviewname = 'calendar_hours'
-            )
-        """
-    )
-    sql_refresh = sqlmodel.text("REFRESH MATERIALIZED VIEW calendar_hours;")
-
-    async with AsyncSession(db.ENGINE) as session:
-        result = await session.exec(sql_check)
-        view_exists = result.one()
-
-        if view_exists:
-            await session.exec(sql_refresh)
-            await session.commit()

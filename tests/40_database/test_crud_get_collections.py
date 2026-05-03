@@ -11,16 +11,16 @@ from src.api.models.enums import ParameterInterval, ParameterOnMissing
 
 test_cases_interval = [
     # interval, expected_length
-    pytest.param(ParameterInterval.HOURLY, 18, id="by_interval hourly"),
-    pytest.param(ParameterInterval.DAILY, 9, id="by_interval daily"),
-    pytest.param(ParameterInterval.MONTHLY, 3, id="by_interval monthly"),
+    pytest.param(ParameterInterval.HOURLY, 37, id="by_interval hourly"),
+    pytest.param(ParameterInterval.DAILY, 17, id="by_interval daily"),
+    pytest.param(ParameterInterval.MONTHLY, 7, id="by_interval monthly"),
 ]
 
 test_cases_by_date = [
     # from_date, to_date, expected_length
-    pytest.param(None, None, 18, id="by_date None"),
-    pytest.param(dt.datetime(2024, 4, 1), None, 16, id="by_date from_April_1st"),
-    pytest.param(dt.datetime(2024, 4, 2), None, 14, id="by_date from_April_2nd"),
+    pytest.param(None, None, 37, id="by_date None"),
+    pytest.param(dt.datetime(2024, 4, 1), None, 35, id="by_date from_April_1st"),
+    pytest.param(dt.datetime(2024, 4, 2), None, 33, id="by_date from_April_2nd"),
     pytest.param(None, dt.datetime(2024, 6, 1), 14, id="by_date to_June_1st"),
     pytest.param(dt.datetime(2024, 4, 1), dt.datetime(2024, 6, 1), 12, id="from_April_1st_to_June_1st"),
     pytest.param(dt.datetime(2024, 4, 2), dt.datetime(2024, 6, 1), 10, id="from_April_2nd_to_June_1st"),
@@ -28,12 +28,12 @@ test_cases_by_date = [
 
 test_cases_skip_take = [
     # skip, take, expected_length
-    pytest.param(0, 100, 18, id="skip_0_take_100"),
+    pytest.param(0, 100, 37, id="skip_0_take_100"),
     pytest.param(0, 18, 18, id="skip_0_take_18"),
-    pytest.param(5, 18, 13, id="skip_5_take_18"),
+    pytest.param(5, 18, 18, id="skip_5_take_18"),
     pytest.param(5, 13, 13, id="skip_5_take_13"),
     pytest.param(5, 5, 5, id="skip_5_take_5"),
-    pytest.param(18, 100, 0, id="skip_18_take_100"),
+    pytest.param(37, 100, 0, id="skip_18_take_100"),
     pytest.param(0, 0, 0, id="skip_0_take_0"),
 ]
 
@@ -114,17 +114,52 @@ async def test_get_collections_onMissing_skip(
         assert collections[i].collected_at == expected_timestamps[i]
 
 
-@pytest.mark.parametrize(["interval", "to_date", "expected_timestamps", "expected_count"], test_cases_db.test_cases_parameter_onMissing_last)
-async def test_get_collections_onMissing_last(
-    interval: ParameterInterval, to_date: dt.datetime, expected_timestamps: list[dt.datetime | None], expected_count: int, session: AsyncSession
+@pytest.mark.parametrize(
+    ["interval", "from_date", "to_date", "expected_timestamps", "expected_count"], test_cases_db.test_cases_parameter_onMissing_last_desc
+)
+async def test_get_collections_onMissing_last_desc(
+    interval: ParameterInterval,
+    from_date: dt.datetime,
+    to_date: dt.datetime,
+    expected_timestamps: list[dt.datetime | None],
+    expected_count: int,
+    session: AsyncSession,
 ):
     collections = await get_collections(
         session,
+        from_date=from_date,
         to_date=to_date,
         interval=interval,
         skip=0,
         take=3,
         desc=True,
+        on_missing=ParameterOnMissing.LAST,
+    )
+
+    assert len(collections) == expected_count
+    for i in range(expected_count):
+        assert collections[i].collected_at == expected_timestamps[i]
+
+
+@pytest.mark.parametrize(
+    ["interval", "from_date", "to_date", "expected_timestamps", "expected_count"], test_cases_db.test_cases_parameter_onMissing_last_asc
+)
+async def test_get_collections_onMissing_last_asc(
+    interval: ParameterInterval,
+    from_date: dt.datetime,
+    to_date: dt.datetime,
+    expected_timestamps: list[dt.datetime | None],
+    expected_count: int,
+    session: AsyncSession,
+):
+    collections = await get_collections(
+        session,
+        from_date=from_date,
+        to_date=to_date,
+        interval=interval,
+        skip=0,
+        take=3,
+        desc=False,
         on_missing=ParameterOnMissing.LAST,
     )
 

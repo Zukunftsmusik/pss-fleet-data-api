@@ -122,18 +122,54 @@ async def test_get_user_history_onMissing_skip(
         assert user_history[i][0].collected_at == expected_timestamps[i]
 
 
-@pytest.mark.parametrize(["interval", "to_date", "expected_timestamps", "expected_count"], test_cases_db.test_cases_parameter_onMissing_last)
-async def test_get_user_history_onMissing_last(
-    interval: ParameterInterval, to_date: dt.datetime, expected_timestamps: list[dt.datetime | None], expected_count: int, session: AsyncSession
+@pytest.mark.parametrize(
+    ["interval", "from_date", "to_date", "expected_timestamps", "expected_count"], test_cases_db.test_cases_parameter_onMissing_last_desc
+)
+async def test_get_user_history_onMissing_last_desc(
+    interval: ParameterInterval,
+    from_date: dt.datetime,
+    to_date: dt.datetime,
+    expected_timestamps: list[dt.datetime | None],
+    expected_count: int,
+    session: AsyncSession,
 ):
     user_history = await get_user_history(
         session,
         1,
+        from_date=from_date,
         to_date=to_date,
         interval=interval,
         skip=0,
         take=3,
         desc=True,
+        on_missing=ParameterOnMissing.LAST,
+    )
+
+    assert len(user_history) == expected_count
+    for i in range(expected_count):
+        assert user_history[i][0].collected_at == expected_timestamps[i]
+
+
+@pytest.mark.parametrize(
+    ["interval", "from_date", "to_date", "expected_timestamps", "expected_count"], test_cases_db.test_cases_parameter_onMissing_last_asc
+)
+async def test_get_user_history_onMissing_last_asc(
+    interval: ParameterInterval,
+    from_date: dt.datetime,
+    to_date: dt.datetime,
+    expected_timestamps: list[dt.datetime | None],
+    expected_count: int,
+    session: AsyncSession,
+):
+    user_history = await get_user_history(
+        session,
+        1,
+        from_date=from_date,
+        to_date=to_date,
+        interval=interval,
+        skip=0,
+        take=3,
+        desc=False,
         on_missing=ParameterOnMissing.LAST,
     )
 

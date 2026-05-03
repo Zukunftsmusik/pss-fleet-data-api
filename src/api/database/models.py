@@ -104,11 +104,11 @@ class AllianceDB(AllianceBaseDB, table=True):
 
 
 class UserBaseDB(SQLModel):
-    alliance_join_date: Optional[datetime] = Field(default=None, nullable=True)
+    alliance_join_date: datetime | None = Field(default=None, nullable=True)
     """The PSS property `AllianceJoinDate` of the User as returned by the PSS API."""
-    last_login_date: Optional[datetime] = Field(default=None, nullable=True)
+    last_login_date: datetime | None = Field(default=None, nullable=True)
     """The PSS property `LastLoginDate` of the User as returned by the PSS API."""
-    last_heartbeat_date: Optional[datetime] = Field(default=None, nullable=True)
+    last_heartbeat_date: datetime | None = Field(default=None, nullable=True)
     """The PSS property `LastHeartBeatDate` of the User as returned by the PSS API."""
 
     @field_validator("alliance_join_date", mode="before")
@@ -198,11 +198,11 @@ class UserDB(UserBaseDB, table=True):
     """The PSS property `AllianceScore` (stars) of the User as returned by the PSS API."""
     alliance_membership: str | None = Field(default=None, nullable=True)
     """The PSS property `AllianceMembership` (fleet rank) of the User as returned by the PSS API."""
-    alliance_join_date: Optional[datetime] = Field(default=None, nullable=True)
+    alliance_join_date: datetime | None = Field(default=None, nullable=True)
     """The PSS property `AllianceJoinDate` of the User as returned by the PSS API."""
-    last_login_date: Optional[datetime] = Field(default=None, nullable=True)
+    last_login_date: datetime | None = Field(default=None, nullable=True)
     """The PSS property `LastLoginDate` of the User as returned by the PSS API."""
-    last_heartbeat_date: Optional[datetime] = Field(default=None, nullable=True)
+    last_heartbeat_date: datetime | None = Field(default=None, nullable=True)
     """The PSS property `LastHeartBeatDate` of the User as returned by the PSS API."""
     crew_donated: int | None = Field(ge=0)
     """The PSS property `CrewDonated` of the User as returned by the PSS API."""

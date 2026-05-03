@@ -99,8 +99,8 @@ async def get_alliance_history(
     session: AsyncSession,
     alliance_id: int,
     include_users: bool = True,
-    from_date: Optional[datetime] = None,
-    to_date: Optional[datetime] = None,
+    from_date: datetime | None = None,
+    to_date: datetime | None = None,
     interval: ParameterInterval = ParameterInterval.MONTHLY,
     desc: bool = False,
     skip: int = 0,
@@ -209,8 +209,8 @@ async def get_collection_by_timestamp(session: AsyncSession, collected_at: datet
 
 async def get_collections(
     session: AsyncSession,
-    from_date: Optional[datetime] = None,
-    to_date: Optional[datetime] = None,
+    from_date: datetime | None = None,
+    to_date: datetime | None = None,
     interval: ParameterInterval = ParameterInterval.MONTHLY,
     desc: bool = False,
     skip: int = 0,
@@ -298,8 +298,8 @@ async def get_user_history(
     session: AsyncSession,
     user_id: int,
     include_alliance: bool = True,
-    from_date: Optional[datetime] = None,
-    to_date: Optional[datetime] = None,
+    from_date: datetime | None = None,
+    to_date: datetime | None = None,
     interval: ParameterInterval = ParameterInterval.MONTHLY,
     desc: bool = False,
     skip: int = 0,
@@ -514,8 +514,8 @@ async def update_collection(session: AsyncSession, collection_id: int, new_colle
 
 def _apply_select_parameters_to_query(
     query: Union[SelectOfScalar, Select],
-    from_date: Optional[datetime],
-    to_date: Optional[datetime],
+    from_date: datetime | None,
+    to_date: datetime | None,
     interval: ParameterInterval,
     desc: bool,
     *,
@@ -542,7 +542,7 @@ def _apply_select_parameters_to_query(
 
 
 def _apply_datetime_limits_to_query(
-    query: Union[SelectOfScalar, Select], from_date: Optional[datetime], to_date: Optional[datetime], entity_type: type = CollectionDB
+    query: Union[SelectOfScalar, Select], from_date: datetime | None, to_date: datetime | None, entity_type: type = CollectionDB
 ) -> Union[SelectOfScalar, Select]:
     """Applies date limits to the given select `query`.
 
@@ -602,8 +602,8 @@ def _apply_order_by_collected_at_to_query(
 
 async def _get_collections_on_missing_empty_or_null(
     session: AsyncSession,
-    from_date: Optional[datetime],
-    to_date: Optional[datetime],
+    from_date: datetime | None,
+    to_date: datetime | None,
     interval: ParameterInterval,
     desc: bool,
     skip: int,
@@ -614,8 +614,8 @@ async def _get_collections_on_missing_empty_or_null(
 
     Args:
         session (AsyncSession): The database session.
-        from_date (Optional[datetime]): The start date for the query.
-        to_date (Optional[datetime]): The end date for the query.
+        from_date (datetime | None): The start date for the query.
+        to_date (datetime | None): The end date for the query.
         interval (ParameterInterval): The interval for data aggregation.
         desc (bool): Whether to sort in descending order.
         skip (int): Number of records to skip.
@@ -671,8 +671,8 @@ async def _get_collections_on_missing_empty_or_null(
 
 async def _get_collections_on_missing_last(
     session: AsyncSession,
-    from_date: Optional[datetime],
-    to_date: Optional[datetime],
+    from_date: datetime | None,
+    to_date: datetime | None,
     interval: ParameterInterval,
     desc: bool,
     skip: int,
@@ -682,8 +682,8 @@ async def _get_collections_on_missing_last(
 
     Args:
         session (AsyncSession): The database session to use.
-        from_date (Optional[datetime]): The start date for the query. If None, defaults to the PSS start date.
-        to_date (Optional[datetime]): The end date for the query. If None, defaults to the current UTC time.
+        from_date (datetime | None): The start date for the query. If None, defaults to the PSS start date.
+        to_date (datetime | None): The end date for the query. If None, defaults to the current UTC time.
         interval (ParameterInterval): The interval to group collections by (e.g., HOURLY, DAILY).
         desc (bool): Whether to order the results in descending order by collected_at.
         skip (int): The number of results to skip.
@@ -722,8 +722,8 @@ async def _get_collections_on_missing_last(
 
 async def _get_collections_on_missing_skip(
     session: AsyncSession,
-    from_date: Optional[datetime],
-    to_date: Optional[datetime],
+    from_date: datetime | None,
+    to_date: datetime | None,
     interval: ParameterInterval,
     desc: bool,
     skip: int,
@@ -733,8 +733,8 @@ async def _get_collections_on_missing_skip(
 
     Args:
         session (AsyncSession): The database session to use.
-        from_date (Optional[datetime]): The start date for the query. If None, defaults to the PSS start date.
-        to_date (Optional[datetime]): The end date for the query. If None, defaults to the current UTC time.
+        from_date (datetime | None): The start date for the query. If None, defaults to the PSS start date.
+        to_date (datetime | None): The end date for the query. If None, defaults to the current UTC time.
         interval (ParameterInterval): The interval to group collections by (e.g., HOURLY, DAILY).
         desc (bool): Whether to order the results in descending order by collected_at.
         skip (int): The number of results to skip.
@@ -753,12 +753,12 @@ async def _get_collections_on_missing_skip(
         return list(collections)
 
 
-def _get_date_defaults(from_date: Optional[datetime], to_date: Optional[datetime]) -> tuple[datetime, datetime]:
+def _get_date_defaults(from_date: datetime | None, to_date: datetime | None) -> tuple[datetime, datetime]:
     """Returns default values for `from_date` and `to_date` if they are not provided and removes timezone information from the provided dates.
 
     Args:
-        from_date (Optional[datetime]): The provided `from_date`, or None if not provided.
-        to_date (Optional[datetime]): The provided `to_date`, or None if not provided.
+        from_date (datetime | None): The provided `from_date`, or None if not provided.
+        to_date (datetime | None): The provided `to_date`, or None if not provided.
 
     Returns:
         tuple[datetime, datetime]: A tuple containing the `from_date` and `to_date`, with defaults applied if necessary. If `from_date` is None, it defaults to the PSS start date. If `to_date` is None, it defaults to the current UTC time.

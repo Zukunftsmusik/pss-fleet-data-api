@@ -22,7 +22,7 @@ ALLIANCE_MEMBERSHIP_ENCODE_LOOKUP = {
 ALLIANCE_MEMBERSHIP_DECODE_LOOKUP = {value: key for key, value in ALLIANCE_MEMBERSHIP_ENCODE_LOOKUP.items()}
 
 
-def add_timezone_utc(dt: Optional[datetime]) -> datetime:
+def add_timezone_utc(dt: datetime | None) -> datetime:
     """Takes a `datetime` and makes it a timezone-aware `datetime` with timezone UTC, if it's not timezone-aware, yet.
 
     Args:
@@ -46,7 +46,7 @@ def add_timezone_utc(dt: Optional[datetime]) -> datetime:
         return dt
 
 
-def convert_datetime_to_seconds(dt: Optional[datetime]) -> int:
+def convert_datetime_to_seconds(dt: datetime | None) -> int:
     """Takes a `datetime` and converts it to seconds since the PSS start date.
 
     Args:
@@ -121,7 +121,7 @@ def encode_alliance_membership(membership: Union[str, UserAllianceMembership]) -
     return int(ALLIANCE_MEMBERSHIP_ENCODE_LOOKUP.get(membership, UserAllianceMembershipEncoded.NONE))
 
 
-def localize_to_utc(dt: Optional[datetime]) -> datetime:
+def localize_to_utc(dt: datetime | None) -> datetime:
     """Takes a `datetime` and converts it to a timezone-aware UTC `datetime`.
 
     Args:
@@ -175,7 +175,7 @@ def parse_datetime(dt: Optional[Union[datetime, int, str]]) -> datetime:
     return dt
 
 
-def remove_timezone(dt: Optional[datetime]) -> datetime:
+def remove_timezone(dt: datetime | None) -> datetime:
     """Removes timezone information from a timezone-aware `datetime` object.
 
     Args:

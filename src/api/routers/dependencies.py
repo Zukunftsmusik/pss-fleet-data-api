@@ -99,7 +99,7 @@ async def user_id(user_id: Annotated[int, Path(alias="userId", ge=1, description
 
 async def from_to_date_parameters(
     from_date: Annotated[
-        Optional[datetime],
+        datetime | None,
         Query(
             alias="fromDate",
             ge=CONSTANTS.pss_start_date,
@@ -108,7 +108,7 @@ async def from_to_date_parameters(
         ),
     ] = None,
     to_date: Annotated[
-        Optional[datetime],
+        datetime | None,
         Query(
             alias="toDate",
             ge=CONSTANTS.pss_start_date,

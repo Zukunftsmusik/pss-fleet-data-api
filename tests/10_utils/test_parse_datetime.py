@@ -39,6 +39,6 @@ def test_parse_datetime_invalid(value: Any, expected_exception: AbstractContextM
 
 
 @pytest.mark.parametrize(["value", "expected_result"], test_cases_valid)
-def test_parse_datetime_valid(value: Optional[Union[datetime, int, str]], expected_result: Optional[datetime]):
+def test_parse_datetime_valid(value: Optional[Union[datetime, int, str]], expected_result: datetime | None):
     result = parse_datetime(value)
     assert result == expected_result

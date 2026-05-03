@@ -613,10 +613,7 @@ async def _get_collections_on_missing_empty_or_null(
     take: int,
     on_missing: ParameterOnMissing,
 ) -> list[CollectionDB]:
-    if not from_date:
-        from_date = utils.remove_timezone(CONSTANTS.pss_start_date)
-    if not to_date:
-        to_date = utils.remove_timezone(datetime.now(timezone.utc))
+    from_date, to_date = _get_date_defaults(from_date, to_date)
 
     hour_series = select(
         func.generate_series(
@@ -669,10 +666,7 @@ async def _get_collections_on_missing_last(
     skip: int,
     take: int,
 ) -> list[CollectionDB]:
-    if not from_date:
-        from_date = utils.remove_timezone(CONSTANTS.pss_start_date)
-    if not to_date:
-        to_date = utils.remove_timezone(datetime.now(timezone.utc))
+    from_date, to_date = _get_date_defaults(from_date, to_date)
 
     async with session:
         date_trunc_type = DATE_TRUNC_TYPE_BY_INTERVAL.get(interval)
@@ -717,6 +711,23 @@ async def _get_collections_on_missing_skip(
 
         collections = (await session.exec(query)).all()
         return list(collections)
+
+
+def _get_date_defaults(from_date: Optional[datetime], to_date: Optional[datetime]) -> tuple[datetime, datetime]:
+    """Returns default values for `from_date` and `to_date` if they are not provided.
+
+    Args:
+        from_date (Optional[datetime]): The provided `from_date`, or None if not provided.
+        to_date (Optional[datetime]): The provided `to_date`, or None if not provided.
+
+    Returns:
+        tuple[datetime, datetime]: A tuple containing the `from_date` and `to_date`, with defaults applied if necessary. If `from_date` is None, it defaults to the PSS start date. If `to_date` is None, it defaults to the current UTC time.
+    """
+    if not from_date:
+        from_date = utils.remove_timezone(CONSTANTS.pss_start_date)
+    if not to_date:
+        to_date = utils.remove_timezone(datetime.now(timezone.utc))
+    return from_date, to_date
 
 
 __all__ = [

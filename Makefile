@@ -36,7 +36,7 @@ format:
 # testing
 .PHONY: coverage
 coverage:
-	uv run --no-project pytest --cov=./src/api --cov-report=xml:cov.xml --cov-report=term
+	uv run --no-project pytest --cov=./src/api --cov-report=xml:cov.xml --cov-report=term --cov-report=lcov
 
 .PHONY: test
 test:

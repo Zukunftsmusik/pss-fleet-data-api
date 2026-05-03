@@ -194,3 +194,4 @@ def remove_timezone(dt: Optional[datetime]) -> datetime:
         raise TypeError("The parameter `dt` must be of type `datetime`!")
 
     return dt.replace(tzinfo=None)
+    return dt.replace(tzinfo=None)

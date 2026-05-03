@@ -232,9 +232,6 @@ async def get_collections(
     Returns:
         list[CollectionDB]: A list of Collections without any Alliances or Users.
     """
-    if not on_missing:
-        on_missing = ParameterOnMissing.SKIP
-
     match on_missing:
         case ParameterOnMissing.SKIP:
             return await _get_collections_on_missing_skip(session, from_date, to_date, interval, desc, skip, take)
@@ -757,7 +754,7 @@ async def _get_collections_on_missing_skip(
 
 
 def _get_date_defaults(from_date: Optional[datetime], to_date: Optional[datetime]) -> tuple[datetime, datetime]:
-    """Returns default values for `from_date` and `to_date` if they are not provided.
+    """Returns default values for `from_date` and `to_date` if they are not provided and removes timezone information from the provided dates.
 
     Args:
         from_date (Optional[datetime]): The provided `from_date`, or None if not provided.
@@ -770,7 +767,7 @@ def _get_date_defaults(from_date: Optional[datetime], to_date: Optional[datetime
         from_date = utils.remove_timezone(CONSTANTS.pss_start_date)
     if not to_date:
         to_date = utils.remove_timezone(datetime.now(timezone.utc))
-    return from_date, to_date
+    return utils.remove_timezone(from_date), utils.remove_timezone(to_date)
 
 
 __all__ = [

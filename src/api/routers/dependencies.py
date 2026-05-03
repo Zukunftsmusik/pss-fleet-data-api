@@ -151,8 +151,8 @@ async def list_filter_parameters(
 
 
 async def skip_take_parameters(
-    skip: Annotated[Optional[int], Query(ge=0, description="Skip this number of results from the result set.", examples=[0])] = 0,
-    take: Annotated[Optional[int], Query(ge=1, le=100, description="Limit the number of results returned.", examples=[100])] = 100,
+    skip: Annotated[int | None, Query(ge=0, description="Skip this number of results from the result set.", examples=[0])] = 0,
+    take: Annotated[int | None, Query(ge=1, le=100, description="Limit the number of results returned.", examples=[100])] = 100,
 ) -> SkipTakeFilter:
     """
     Adds query parameters `skip` and `take` to a path.

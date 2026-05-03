@@ -15,7 +15,7 @@ INT_GE_1 = Annotated[int, Field(ge=1)]
 STR_LENGTH_GE_0 = Annotated[str, Field(min_length=0)]
 STR_LENGTH_GE_1 = Annotated[str, Field(min_length=1)]
 
-OPTIONAL_INT_GE_0 = Annotated[Optional[int], Field(ge=0, default=None)]
+OPTIONAL_INT_GE_0 = Annotated[int | None, Field(ge=0, default=None)]
 OPTIONAL_STR_LENGTH_GE_0 = Annotated[str | None, Field(default=None)]
 OPTIONAL_STR_LENGTH_GE_1 = Annotated[str | None, Field(min_length=1, default=None)]
 
@@ -197,7 +197,7 @@ class CollectionMetadataCreateBase(BaseModel):
     """The number of players recorded in this Collection."""
     tourney_running: bool
     """Determines, whether a monthly fleet tournament was running at the time of recording the data in this Collection."""
-    data_version: Optional[int] = Field(ge=3, nullable=True, default=None)
+    data_version: int | None = Field(ge=3, nullable=True, default=None)
     """The schema version with which this data was first collected and stored."""
 
     @field_validator("timestamp", mode="before")
@@ -520,7 +520,7 @@ class CollectionMetadataOut(CollectionMetadataCreate9):
 
     collection_id: int
     """The ID of the collection in the database."""
-    max_tournament_battle_attempts: Optional[int]
+    max_tournament_battle_attempts: int | None
     """The maximum number of tournament battles any given player can do on a given monthly fleet tournament day."""
 
 

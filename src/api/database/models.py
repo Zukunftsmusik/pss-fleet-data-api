@@ -196,7 +196,7 @@ class UserDB(UserBaseDB, table=True):
     """The PSS property `Trophy` of the User as returned by the PSS API."""
     alliance_score: int = Field(ge=0, default=0)
     """The PSS property `AllianceScore` (stars) of the User as returned by the PSS API."""
-    alliance_membership: Optional[str] = Field(default=None, nullable=True)
+    alliance_membership: str | None = Field(default=None, nullable=True)
     """The PSS property `AllianceMembership` (fleet rank) of the User as returned by the PSS API."""
     alliance_join_date: Optional[datetime] = Field(default=None, nullable=True)
     """The PSS property `AllianceJoinDate` of the User as returned by the PSS API."""

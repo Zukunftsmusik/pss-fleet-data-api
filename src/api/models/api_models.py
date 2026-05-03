@@ -16,8 +16,8 @@ STR_LENGTH_GE_0 = Annotated[str, Field(min_length=0)]
 STR_LENGTH_GE_1 = Annotated[str, Field(min_length=1)]
 
 OPTIONAL_INT_GE_0 = Annotated[Optional[int], Field(ge=0, default=None)]
-OPTIONAL_STR_LENGTH_GE_0 = Annotated[Optional[str], Field(default=None)]
-OPTIONAL_STR_LENGTH_GE_1 = Annotated[Optional[str], Field(min_length=1, default=None)]
+OPTIONAL_STR_LENGTH_GE_0 = Annotated[str | None, Field(default=None)]
+OPTIONAL_STR_LENGTH_GE_1 = Annotated[str | None, Field(min_length=1, default=None)]
 
 
 AllianceCreate2 = tuple[STR_LENGTH_GE_1, STR_LENGTH_GE_1, STR_LENGTH_GE_1]

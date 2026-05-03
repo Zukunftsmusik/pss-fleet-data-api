@@ -1,6 +1,6 @@
 import io
 import json
-from typing import AsyncGenerator, Union
+from typing import AsyncGenerator
 
 import alembic.command
 import sqlalchemy_utils
@@ -23,11 +23,11 @@ from .models import AllianceBaseDB, AllianceDB, CollectionBaseDB, CollectionDB, 
 ENGINE: AsyncEngine = None
 
 
-def create_collections_from_dummy_data(data: Union[dict, list[dict]]) -> list[CollectionDB]:
+def create_collections_from_dummy_data(data: dict | list[dict]) -> list[CollectionDB]:
     """Takes verbose Collection dummy data from a file and converts it to a list of `CollectionDB` objects.
 
     Args:
-        data (Union[dict, list[dict]]): Either a verbose Collection or a list of verbose Collections read from a file.
+        data (dict | list[dict]): Either a verbose Collection or a list of verbose Collections read from a file.
 
     Returns:
         list[CollectionDB]: The converted data.

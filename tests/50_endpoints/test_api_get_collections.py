@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Any, Callable, Union
+from typing import Any, Callable
 
 import pytest
 import test_cases
@@ -12,7 +12,7 @@ from src.api.models.enums import ErrorCode, ParameterInterval
 @pytest.mark.usefixtures("assert_error_code")
 @pytest.mark.parametrize(["parameters", "expected_error_code"], test_cases.invalid_filter_parameters)
 def test_get_collections_invalid_parameters(
-    parameters: dict[str, Union[bool, datetime, int, ParameterInterval]],
+    parameters: dict[str, bool | datetime | int | ParameterInterval],
     expected_error_code: ErrorCode,
     assert_error_code: Callable[[HttpXResponse, ErrorCode], None],
     client: TestClient,
@@ -28,7 +28,7 @@ def test_get_collections_invalid_parameters(
 @pytest.mark.parametrize(["_", "parameters", "headers"], test_cases.valid_id_and_filter_parameters)
 def test_get_collections_valid_parameters(
     _,
-    parameters: dict[str, Union[bool, datetime, int, ParameterInterval]],
+    parameters: dict[str, bool | datetime | int | ParameterInterval],
     headers: dict[str, str],
     collection_metadata_out_json: Any,
     client: TestClient,

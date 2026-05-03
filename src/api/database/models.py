@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Any, Union
+from typing import Any
 
 from pydantic import field_validator
 from sqlalchemy.orm import foreign, relationship
@@ -15,7 +15,7 @@ class CollectionBaseDB(SQLModel):
 
     @field_validator("collected_at", mode="before")
     @staticmethod
-    def transform_collected_at(value: Any) -> Union[datetime, Any]:
+    def transform_collected_at(value: Any) -> datetime | Any:
         """Takes the value provided to set the property `collected_at`, parses it, localizes it to UTC and then removes the timezone information.
 
         Args:
@@ -25,7 +25,7 @@ class CollectionBaseDB(SQLModel):
             ValueError: Raised, if the parsed datetime is lower than the PSS start date.
 
         Returns:
-            Union[datetime, Any]: The transformed datetime or the original value, if it's not been transformed.
+            datetime | Any: The transformed datetime or the original value, if it's not been transformed.
         """
         if isinstance(value, (datetime, int, str)):
             result = utils.remove_timezone(utils.localize_to_utc(utils.parse_datetime(value)))
@@ -123,7 +123,7 @@ class UserBaseDB(SQLModel):
             ValueError: Raised, if the parsed datetime is lower than the PSS start date.
 
         Returns:
-            Union[datetime, Any]: The transformed datetime or the original value, if it's not been transformed.
+            datetime | Any: The transformed datetime or the original value, if it's not been transformed.
         """
         if isinstance(value, (datetime, int, str)):
             result = utils.remove_timezone(utils.localize_to_utc(utils.parse_datetime(value)))
@@ -145,7 +145,7 @@ class UserBaseDB(SQLModel):
             ValueError: Raised, if the parsed datetime is lower than the PSS start date.
 
         Returns:
-            Union[datetime, Any]: The transformed datetime or the original value, if it's not been transformed.
+            datetime | Any: The transformed datetime or the original value, if it's not been transformed.
         """
         if isinstance(value, (datetime, int, str)):
             result = utils.remove_timezone(utils.localize_to_utc(utils.parse_datetime(value)))
@@ -167,7 +167,7 @@ class UserBaseDB(SQLModel):
             ValueError: Raised, if the parsed datetime is lower than the PSS start date.
 
         Returns:
-            Union[datetime, Any]: The transformed datetime or the original value, if it's not been transformed.
+            datetime | Any: The transformed datetime or the original value, if it's not been transformed.
         """
         if isinstance(value, (datetime, int, str)):
             result = utils.remove_timezone(utils.localize_to_utc(utils.parse_datetime(value)))

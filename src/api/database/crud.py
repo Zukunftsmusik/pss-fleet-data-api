@@ -1,5 +1,4 @@
 from datetime import datetime, timedelta, timezone
-from typing import Union
 
 from sqlalchemy.ext.asyncio.engine import AsyncEngine
 from sqlalchemy.orm import selectinload
@@ -513,14 +512,14 @@ async def update_collection(session: AsyncSession, collection_id: int, new_colle
 
 
 def _apply_select_parameters_to_query(
-    query: Union[SelectOfScalar, Select],
+    query: SelectOfScalar | Select,
     from_date: datetime | None,
     to_date: datetime | None,
     interval: ParameterInterval,
     desc: bool,
     *,
     entity_type: type = CollectionDB,
-) -> Union[SelectOfScalar, Select]:
+) -> SelectOfScalar | Select:
     """Applies the specified query parameters to the given Select `query`.
 
     Args:
@@ -542,8 +541,8 @@ def _apply_select_parameters_to_query(
 
 
 def _apply_datetime_limits_to_query(
-    query: Union[SelectOfScalar, Select], from_date: datetime | None, to_date: datetime | None, entity_type: type = CollectionDB
-) -> Union[SelectOfScalar, Select]:
+    query: SelectOfScalar | Select, from_date: datetime | None, to_date: datetime | None, entity_type: type = CollectionDB
+) -> SelectOfScalar | Select:
     """Applies date limits to the given select `query`.
 
     Args:
@@ -562,8 +561,8 @@ def _apply_datetime_limits_to_query(
 
 
 def _apply_interval_to_query(
-    query: Union[SelectOfScalar, Select], interval: ParameterInterval, entity_type: type = CollectionDB
-) -> Union[SelectOfScalar, Select]:
+    query: SelectOfScalar | Select, interval: ParameterInterval, entity_type: type = CollectionDB
+) -> SelectOfScalar | Select:
     """Applies an interval to the given Select `query`.
 
     Args:
@@ -581,9 +580,7 @@ def _apply_interval_to_query(
     return query
 
 
-def _apply_order_by_collected_at_to_query(
-    query: Union[SelectOfScalar, Select], desc: bool, entity_type: type = CollectionDB
-) -> Union[SelectOfScalar, Select]:
+def _apply_order_by_collected_at_to_query(query: SelectOfScalar | Select, desc: bool, entity_type: type = CollectionDB) -> SelectOfScalar | Select:
     """Applies a sort direction to the given Select `query`.
 
     Args:

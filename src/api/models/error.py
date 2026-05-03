@@ -1,4 +1,4 @@
-from typing import Any, Union
+from typing import Any
 
 from pydantic import BaseModel
 
@@ -29,7 +29,7 @@ class RequestValidationErrorOut(BaseModel):
     """
 
     type: str
-    loc: tuple[Union[int, str], ...]
+    loc: tuple[int | str, ...]
     msg: str
     input: Any | None
     ctx: dict[str, Any] | None = None

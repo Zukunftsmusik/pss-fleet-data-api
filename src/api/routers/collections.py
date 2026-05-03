@@ -1,5 +1,5 @@
 import json
-from typing import Annotated, Union
+from typing import Annotated
 
 from fastapi import APIRouter, Body, Depends, File, UploadFile
 from pydantic import ValidationError
@@ -225,7 +225,7 @@ async def update_collection(
 async def convert_uploaded_file(uploaded_file: UploadFile) -> CollectionDB:
     file_contents = await uploaded_file.read()
     try:
-        decoded_json: dict[str, Union[dict[str, Union[bool, float, int, str]], list[list]]] = json.loads(file_contents)
+        decoded_json: dict[str, dict[str, bool | float | int | str] | list[list]] = json.loads(file_contents)
     except json.decoder.JSONDecodeError as json_decoder_error:
         raise exceptions.invalid_json_upload(json_decoder_error) from json_decoder_error
 

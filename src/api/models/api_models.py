@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Annotated, Union
+from typing import Annotated
 
 from pydantic import BaseModel, Field, field_validator
 
@@ -101,7 +101,7 @@ class CollectionCreate3(CollectionCreateBase):
     See also: https://github.com/Zukunftsmusik/pss-fleet-data?tab=readme-ov-file#schema-version-3
     """
 
-    fleets: list[Union["AllianceCreate2", "AllianceCreate3"]]
+    fleets: list["AllianceCreate2" | "AllianceCreate3"]
     """The fleets recorded in this Collection."""
     users: list["UserCreate3"]
     """The IDs and names of the players recorded in this Collection."""
@@ -202,7 +202,7 @@ class CollectionMetadataCreateBase(BaseModel):
 
     @field_validator("timestamp", mode="before")
     @staticmethod
-    def transform_timestamp(value: Union[datetime, str]) -> datetime:
+    def transform_timestamp(value: datetime | str) -> datetime:
         if not value:
             return value
 

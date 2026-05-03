@@ -13,6 +13,13 @@ from ..models.enums import ParameterInterval, ParameterOnMissing
 from .models import AllianceDB, AllianceHistoryDB, CollectionDB, UserDB, UserHistoryDB
 
 
+DATE_TRUNC_TYPE_BY_INTERVAL: dict[ParameterInterval, str] = {
+    ParameterInterval.HOURLY: "hour",
+    ParameterInterval.DAILY: "day",
+    ParameterInterval.MONTHLY: "month",
+}
+
+
 async def drop_tables(engine: AsyncEngine):
     """Drops all tables from the SQLModel metadata.
 
@@ -240,129 +247,6 @@ async def get_collections(
                 return await _get_collections_on_missing_skip(session, from_date, to_date, interval, desc, skip, take)
 
             return await _get_collections_on_missing_last(session, from_date, to_date, interval, desc, skip, take)
-
-
-async def _get_collections_on_missing_skip(
-    session: AsyncSession,
-    from_date: Optional[datetime],
-    to_date: Optional[datetime],
-    interval: ParameterInterval,
-    desc: bool,
-    skip: int,
-    take: int,
-) -> list[CollectionDB]:
-    async with session:
-        entity_type = CollectionDB
-        query = select(entity_type)
-        query = _apply_select_parameters_to_query(query, from_date, to_date, interval, desc, entity_type=entity_type)
-        query = query.offset(skip).limit(take)
-
-        collections = (await session.exec(query)).all()
-        return list(collections)
-
-
-async def _get_collections_on_missing_empty_or_null(
-    session: AsyncSession,
-    from_date: Optional[datetime],
-    to_date: Optional[datetime],
-    interval: ParameterInterval,
-    desc: bool,
-    skip: int,
-    take: int,
-    on_missing: ParameterOnMissing,
-) -> list[CollectionDB]:
-    if not from_date:
-        from_date = utils.remove_timezone(CONSTANTS.pss_start_date)
-    if not to_date:
-        to_date = utils.remove_timezone(datetime.now(timezone.utc))
-
-    hour_series = select(
-        func.generate_series(
-            from_date + timedelta(minutes=59),
-            to_date + timedelta(minutes=59),
-            text("interval '1 hour'"),
-        ).label("collected_at")
-    ).cte("hour_series")
-
-    async with session:
-        query_hour_series = select(hour_series)
-        query_hour_series = _apply_select_parameters_to_query(query_hour_series, from_date, to_date, interval, desc, entity_type=hour_series.c)
-        query_hour_series = query_hour_series.offset(skip).limit(take)
-
-        timestamps = (await session.exec(query_hour_series)).all()
-
-        query_collections = select(CollectionDB).where(col(CollectionDB.collected_at).in_(timestamps))
-
-        collections = (await session.exec(query_collections)).all()
-        collections_by_timestamp = {collection.collected_at: collection for collection in collections}
-
-        result = []
-        for timestamp in timestamps:
-            if timestamp in collections_by_timestamp.keys():
-                result.append(collections_by_timestamp[timestamp])
-            else:
-                if on_missing == ParameterOnMissing.EMPTY:
-                    result.append(
-                        CollectionDB(
-                            collected_at=timestamp,
-                            data_version=0,
-                            duration=0.0,
-                            fleet_count=0,
-                            user_count=0,
-                            tournament_running=False,
-                        )
-                    )
-                elif on_missing == ParameterOnMissing.NULL:
-                    result.append(None)
-
-        return result
-
-
-DATE_TRUNC_TYPE_BY_INTERVAL: dict[ParameterInterval, str] = {
-    ParameterInterval.HOURLY: "hour",
-    ParameterInterval.DAILY: "day",
-    ParameterInterval.MONTHLY: "month",
-}
-
-
-async def _get_collections_on_missing_last(
-    session: AsyncSession,
-    from_date: Optional[datetime],
-    to_date: Optional[datetime],
-    interval: ParameterInterval,
-    desc: bool,
-    skip: int,
-    take: int,
-) -> list[CollectionDB]:
-    if not from_date:
-        from_date = utils.remove_timezone(CONSTANTS.pss_start_date)
-    if not to_date:
-        to_date = utils.remove_timezone(datetime.now(timezone.utc))
-
-    async with session:
-        date_trunc_type = DATE_TRUNC_TYPE_BY_INTERVAL.get(interval)
-        date_trunc = func.date_trunc(date_trunc_type, CollectionDB.collected_at)
-
-        subquery = (
-            select(CollectionDB)
-            .where(CollectionDB.collected_at >= from_date)
-            .where(CollectionDB.collected_at <= to_date)
-            .distinct(date_trunc)
-            .order_by(date_trunc.desc(), col(CollectionDB.collected_at).desc())
-            .subquery()
-        )
-
-        query = (
-            select(*[subquery.c[name] for name in subquery.c.keys()])
-            .order_by(subquery.c.collected_at.desc() if desc else subquery.c.collected_at.asc())
-            .offset(skip)
-            .limit(take)
-        )
-
-        print(query)
-
-        collections = (await session.exec(query)).all()
-        return sorted(collections, key=lambda collection: collection.collected_at, reverse=desc)
 
 
 async def get_top_100_from_collection(session: AsyncSession, collection_id: int, skip: int = 0, take: int = 100) -> list[UserDB]:
@@ -628,6 +512,9 @@ async def update_collection(session: AsyncSession, collection_id: int, new_colle
         return collection
 
 
+# ----- Helper functions -----
+
+
 def _apply_select_parameters_to_query(
     query: Union[SelectOfScalar, Select],
     from_date: Optional[datetime],
@@ -714,6 +601,122 @@ def _apply_order_by_collected_at_to_query(
     else:
         query = query.order_by(col(entity_type.collected_at).asc())
     return query
+
+
+async def _get_collections_on_missing_empty_or_null(
+    session: AsyncSession,
+    from_date: Optional[datetime],
+    to_date: Optional[datetime],
+    interval: ParameterInterval,
+    desc: bool,
+    skip: int,
+    take: int,
+    on_missing: ParameterOnMissing,
+) -> list[CollectionDB]:
+    if not from_date:
+        from_date = utils.remove_timezone(CONSTANTS.pss_start_date)
+    if not to_date:
+        to_date = utils.remove_timezone(datetime.now(timezone.utc))
+
+    hour_series = select(
+        func.generate_series(
+            from_date + timedelta(minutes=59),
+            to_date + timedelta(minutes=59),
+            text("interval '1 hour'"),
+        ).label("collected_at")
+    ).cte("hour_series")
+
+    async with session:
+        query_hour_series = select(hour_series)
+        query_hour_series = _apply_select_parameters_to_query(query_hour_series, from_date, to_date, interval, desc, entity_type=hour_series.c)
+        query_hour_series = query_hour_series.offset(skip).limit(take)
+
+        timestamps = (await session.exec(query_hour_series)).all()
+
+        query_collections = select(CollectionDB).where(col(CollectionDB.collected_at).in_(timestamps))
+
+        collections = (await session.exec(query_collections)).all()
+        collections_by_timestamp = {collection.collected_at: collection for collection in collections}
+
+        result = []
+        for timestamp in timestamps:
+            if timestamp in collections_by_timestamp.keys():
+                result.append(collections_by_timestamp[timestamp])
+            else:
+                if on_missing == ParameterOnMissing.EMPTY:
+                    result.append(
+                        CollectionDB(
+                            collected_at=timestamp,
+                            data_version=0,
+                            duration=0.0,
+                            fleet_count=0,
+                            user_count=0,
+                            tournament_running=False,
+                        )
+                    )
+                elif on_missing == ParameterOnMissing.NULL:
+                    result.append(None)
+
+        return result
+
+
+async def _get_collections_on_missing_last(
+    session: AsyncSession,
+    from_date: Optional[datetime],
+    to_date: Optional[datetime],
+    interval: ParameterInterval,
+    desc: bool,
+    skip: int,
+    take: int,
+) -> list[CollectionDB]:
+    if not from_date:
+        from_date = utils.remove_timezone(CONSTANTS.pss_start_date)
+    if not to_date:
+        to_date = utils.remove_timezone(datetime.now(timezone.utc))
+
+    async with session:
+        date_trunc_type = DATE_TRUNC_TYPE_BY_INTERVAL.get(interval)
+        date_trunc = func.date_trunc(date_trunc_type, CollectionDB.collected_at)
+
+        subquery = (
+            select(CollectionDB)
+            .where(CollectionDB.collected_at >= from_date)
+            .where(CollectionDB.collected_at <= to_date)
+            .distinct(date_trunc)
+            .order_by(date_trunc.desc(), col(CollectionDB.collected_at).desc())
+            .subquery()
+        )
+
+        query = (
+            select(*[subquery.c[name] for name in subquery.c.keys()])
+            .order_by(subquery.c.collected_at.desc() if desc else subquery.c.collected_at.asc())
+            .offset(skip)
+            .limit(take)
+        )
+
+        print(query)
+
+        collections = (await session.exec(query)).all()
+        return sorted(collections, key=lambda collection: collection.collected_at, reverse=desc)
+
+
+async def _get_collections_on_missing_skip(
+    session: AsyncSession,
+    from_date: Optional[datetime],
+    to_date: Optional[datetime],
+    interval: ParameterInterval,
+    desc: bool,
+    skip: int,
+    take: int,
+) -> list[CollectionDB]:
+    async with session:
+        entity_type = CollectionDB
+        query = select(entity_type)
+        query = _apply_select_parameters_to_query(query, from_date, to_date, interval, desc, entity_type=entity_type)
+        query = query.offset(skip).limit(take)
+
+        collections = (await session.exec(query)).all()
+        return list(collections)
 
 
 __all__ = [

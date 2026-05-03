@@ -613,6 +613,21 @@ async def _get_collections_on_missing_empty_or_null(
     take: int,
     on_missing: ParameterOnMissing,
 ) -> list[CollectionDB]:
+    """Retrieves collections with handling for missing data by filling with empty or null entries.
+
+    Args:
+        session (AsyncSession): The database session.
+        from_date (Optional[datetime]): The start date for the query.
+        to_date (Optional[datetime]): The end date for the query.
+        interval (ParameterInterval): The interval for data aggregation.
+        desc (bool): Whether to sort in descending order.
+        skip (int): Number of records to skip.
+        take (int): Number of records to take.
+        on_missing (ParameterOnMissing): How to handle missing data.
+
+    Returns:
+        list[CollectionDB]: The list of collections with missing data handled.
+    """
     from_date, to_date = _get_date_defaults(from_date, to_date)
 
     hour_series = select(
@@ -666,6 +681,20 @@ async def _get_collections_on_missing_last(
     skip: int,
     take: int,
 ) -> list[CollectionDB]:
+    """Retrieves collections within the specified date range, filling missing intervals with the last available collection for that interval.
+
+    Args:
+        session (AsyncSession): The database session to use.
+        from_date (Optional[datetime]): The start date for the query. If None, defaults to the PSS start date.
+        to_date (Optional[datetime]): The end date for the query. If None, defaults to the current UTC time.
+        interval (ParameterInterval): The interval to group collections by (e.g., HOURLY, DAILY).
+        desc (bool): Whether to order the results in descending order by collected_at.
+        skip (int): The number of results to skip.
+        take (int): The number of results to take.
+
+    Returns:
+        list[CollectionDB]: A list of CollectionDB objects, with missing intervals filled by the last collection in that interval.
+    """
     from_date, to_date = _get_date_defaults(from_date, to_date)
 
     async with session:
@@ -703,6 +732,20 @@ async def _get_collections_on_missing_skip(
     skip: int,
     take: int,
 ) -> list[CollectionDB]:
+    """Retrieves collections within the specified date range, skipping missing intervals.
+
+    Args:
+        session (AsyncSession): The database session to use.
+        from_date (Optional[datetime]): The start date for the query. If None, defaults to the PSS start date.
+        to_date (Optional[datetime]): The end date for the query. If None, defaults to the current UTC time.
+        interval (ParameterInterval): The interval to group collections by (e.g., HOURLY, DAILY).
+        desc (bool): Whether to order the results in descending order by collected_at.
+        skip (int): The number of results to skip.
+        take (int): The number of results to take.
+
+    Returns:
+        list[CollectionDB]: A list of CollectionDB objects.
+    """
     async with session:
         entity_type = CollectionDB
         query = select(entity_type)

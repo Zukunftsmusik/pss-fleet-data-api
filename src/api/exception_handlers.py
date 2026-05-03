@@ -415,4 +415,3 @@ def _raise_query_parameter_error(error: RequestValidationErrorOut, exc: RequestV
         case "onMissing":
             raise InvalidOnMissingError(error.msg)
     raise ServerError("An error occured while raising an error for an invalid query parameter.") from exc
-    raise ServerError("An error occured while raising an error for an invalid query parameter.") from exc

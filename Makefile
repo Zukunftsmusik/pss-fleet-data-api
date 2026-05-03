@@ -24,7 +24,7 @@ lock:
 # formatting and linting
 .PHONY: check
 check:
-	uv run --no-project flake8 ./src
+	uv run --no-project ruff check ./src
 	uv run --no-project vulture ./src
 
 .PHONY: format

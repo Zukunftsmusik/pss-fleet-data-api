@@ -235,7 +235,7 @@ async def get_collections(
     if not on_missing:
         on_missing = ParameterOnMissing.SKIP
 
-    match (on_missing):
+    match on_missing:
         case ParameterOnMissing.SKIP:
             return await _get_collections_on_missing_skip(session, from_date, to_date, interval, desc, skip, take)
         case ParameterOnMissing.EMPTY:

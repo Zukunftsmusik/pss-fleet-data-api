@@ -5,6 +5,7 @@ from typing import Union
 from ..models.enums import ErrorCode
 from .link import Link
 
+
 # Base Exception
 
 

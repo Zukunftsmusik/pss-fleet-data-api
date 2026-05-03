@@ -24,7 +24,7 @@ lock:
 # formatting and linting
 .PHONY: check
 check:
-	uv run --no-project flake8 ./src
+	uv run --no-project ruff check ./src
 	uv run --no-project vulture ./src
 
 .PHONY: format
@@ -36,7 +36,7 @@ format:
 # testing
 .PHONY: coverage
 coverage:
-	uv run --no-project pytest --cov=./src/api --cov-report=xml:cov.xml --cov-report=term
+	uv run --no-project pytest --cov=./src/api --cov-report=xml:cov.xml --cov-report=term --cov-report=lcov
 
 .PHONY: test
 test:

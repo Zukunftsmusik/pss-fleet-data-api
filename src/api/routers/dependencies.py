@@ -6,8 +6,12 @@ from fastapi import Depends, Header, Path, Query, Request
 
 from .. import utils
 from ..config import CONSTANTS, SETTINGS
-from ..models.enums import ParameterInterval
-from ..models.exceptions import FromDateAfterToDateError, MissingAccessError, NotAuthenticatedError
+from ..models.enums import ParameterInterval, ParameterOnMissing
+from ..models.exceptions import (
+    FromDateAfterToDateError,
+    MissingAccessError,
+    NotAuthenticatedError,
+)
 
 
 @dataclass(frozen=True)
@@ -18,8 +22,8 @@ class ListFilter:
 
 @dataclass(frozen=True)
 class DatetimeFilter:
-    from_date: datetime = None
-    to_date: datetime = None
+    from_date: datetime | None = None
+    to_date: datetime | None = None
 
 
 @dataclass(frozen=True)
@@ -50,16 +54,6 @@ async def collection_id(
     return collection_id
 
 
-async def user_id(user_id: Annotated[int, Path(alias="userId", ge=1, description="The ID of a PSS User.", examples=[4510693])]) -> int:
-    """
-    Adds path parameter `userId` to a path.
-
-    Returns:
-        int: The UserId.
-    """
-    return user_id
-
-
 async def division_design_id(
     division_design_id: Annotated[
         int, Query(alias="divisionDesignId", ge=0, description="The ID of the PSS Monthly Fleet Tournament Division.", examples=[1])
@@ -72,6 +66,35 @@ async def division_design_id(
         int: The DivisionDesignId.
     """
     return division_design_id
+
+
+async def on_missing(
+    on_missing: Annotated[
+        ParameterOnMissing,
+        Query(
+            alias="onMissing",
+            description="Specify how missing collections should be handled.",
+            examples=[ParameterOnMissing.SKIP],
+        ),
+    ] = ParameterOnMissing.SKIP,
+) -> ParameterOnMissing:
+    """
+    Adds path parameter `onMissing` to a path.
+
+    Returns:
+        ParameterOnMissing: The specified onMissing parameter or "skip".
+    """
+    return on_missing
+
+
+async def user_id(user_id: Annotated[int, Path(alias="userId", ge=1, description="The ID of a PSS User.", examples=[4510693])]) -> int:
+    """
+    Adds path parameter `userId` to a path.
+
+    Returns:
+        int: The UserId.
+    """
+    return user_id
 
 
 async def from_to_date_parameters(

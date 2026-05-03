@@ -42,6 +42,7 @@ async def lifespan(app: FastAPI):
         SETTINGS.reinitialize_database_on_startup,
         SETTINGS.create_dummy_data_on_startup,
     )
+
     yield
 
 

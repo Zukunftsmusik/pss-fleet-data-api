@@ -1,0 +1,895 @@
+[ 
+  {
+    "meta": {
+      "schema_version": 9,
+      "duration": 11.244335,
+      "fleet_count": 1,
+      "user_count": 1,
+      "tournament_running": false,
+      "max_tournament_battle_attempts": 6,
+      "collected_at": "2025-10-31 23:59:00"
+    },
+    "fleets": [
+      {
+        "alliance_id": 1,
+        "alliance_name": "Alliance #1",
+        "score": 0,
+        "division_design_id": 0,
+        "trophy": 1000,
+        "championship_score": 0,
+        "number_of_members": 1,
+        "number_of_approved_members": 1
+      }
+    ],
+    "users": [
+      {
+        "user_id": 1,
+        "user_name": "User #1",
+        "alliance_id": 1,
+        "trophy": 1000,
+        "alliance_score": 0,
+        "alliance_membership": "FleetAdmiral",
+        "alliance_join_date": "2025-01-03T08:09:24Z",
+        "last_login_date": "2025-06-15T22:10:18Z",
+        "last_heartbeat_date": "2025-06-15T22:12:04Z",
+        "crew_donated": 0,
+        "crew_received": 0,
+        "pvp_attack_wins": 0,
+        "pvp_attack_losses": 0,
+        "pvp_attack_draws": 0,
+        "pvp_defence_wins": 0,
+        "pvp_defence_losses": 0,
+        "pvp_defence_draws": 0,
+        "championship_score": 0,
+        "highest_trophy": 1000,
+        "tournament_bonus_score": 0
+      }
+    ]
+  },
+  {
+    "meta": {
+      "schema_version": 9,
+      "duration": 11.244335,
+      "fleet_count": 1,
+      "user_count": 1,
+      "tournament_running": false,
+      "max_tournament_battle_attempts": 6,
+      "collected_at": "2025-10-01 03:59:00"
+    },
+    "fleets": [
+      {
+        "alliance_id": 1,
+        "alliance_name": "Alliance #1",
+        "score": 0,
+        "division_design_id": 0,
+        "trophy": 1000,
+        "championship_score": 0,
+        "number_of_members": 1,
+        "number_of_approved_members": 1
+      }
+    ],
+    "users": [
+      {
+        "user_id": 1,
+        "user_name": "User #1",
+        "alliance_id": 1,
+        "trophy": 1000,
+        "alliance_score": 0,
+        "alliance_membership": "FleetAdmiral",
+        "alliance_join_date": "2025-01-03T08:09:24Z",
+        "last_login_date": "2025-06-15T22:10:18Z",
+        "last_heartbeat_date": "2025-06-15T22:12:04Z",
+        "crew_donated": 0,
+        "crew_received": 0,
+        "pvp_attack_wins": 0,
+        "pvp_attack_losses": 0,
+        "pvp_attack_draws": 0,
+        "pvp_defence_wins": 0,
+        "pvp_defence_losses": 0,
+        "pvp_defence_draws": 0,
+        "championship_score": 0,
+        "highest_trophy": 1000,
+        "tournament_bonus_score": 0
+      }
+    ]
+  },
+  {
+    "meta": {
+      "schema_version": 9,
+      "duration": 11.244335,
+      "fleet_count": 1,
+      "user_count": 1,
+      "tournament_running": false,
+      "max_tournament_battle_attempts": 6,
+      "collected_at": "2025-10-01 02:59:00"
+    },
+    "fleets": [
+      {
+        "alliance_id": 1,
+        "alliance_name": "Alliance #1",
+        "score": 0,
+        "division_design_id": 0,
+        "trophy": 1000,
+        "championship_score": 0,
+        "number_of_members": 1,
+        "number_of_approved_members": 1
+      }
+    ],
+    "users": [
+      {
+        "user_id": 1,
+        "user_name": "User #1",
+        "alliance_id": 1,
+        "trophy": 1000,
+        "alliance_score": 0,
+        "alliance_membership": "FleetAdmiral",
+        "alliance_join_date": "2025-01-03T08:09:24Z",
+        "last_login_date": "2025-06-15T22:10:18Z",
+        "last_heartbeat_date": "2025-06-15T22:12:04Z",
+        "crew_donated": 0,
+        "crew_received": 0,
+        "pvp_attack_wins": 0,
+        "pvp_attack_losses": 0,
+        "pvp_attack_draws": 0,
+        "pvp_defence_wins": 0,
+        "pvp_defence_losses": 0,
+        "pvp_defence_draws": 0,
+        "championship_score": 0,
+        "highest_trophy": 1000,
+        "tournament_bonus_score": 0
+      }
+    ]
+  },
+  {
+    "meta": {
+      "schema_version": 9,
+      "duration": 11.244335,
+      "fleet_count": 1,
+      "user_count": 1,
+      "tournament_running": false,
+      "max_tournament_battle_attempts": 6,
+      "collected_at": "2025-10-01 01:59:00"
+    },
+    "fleets": [
+      {
+        "alliance_id": 1,
+        "alliance_name": "Alliance #1",
+        "score": 0,
+        "division_design_id": 0,
+        "trophy": 1000,
+        "championship_score": 0,
+        "number_of_members": 1,
+        "number_of_approved_members": 1
+      }
+    ],
+    "users": [
+      {
+        "user_id": 1,
+        "user_name": "User #1",
+        "alliance_id": 1,
+        "trophy": 1000,
+        "alliance_score": 0,
+        "alliance_membership": "FleetAdmiral",
+        "alliance_join_date": "2025-01-03T08:09:24Z",
+        "last_login_date": "2025-06-15T22:10:18Z",
+        "last_heartbeat_date": "2025-06-15T22:12:04Z",
+        "crew_donated": 0,
+        "crew_received": 0,
+        "pvp_attack_wins": 0,
+        "pvp_attack_losses": 0,
+        "pvp_attack_draws": 0,
+        "pvp_defence_wins": 0,
+        "pvp_defence_losses": 0,
+        "pvp_defence_draws": 0,
+        "championship_score": 0,
+        "highest_trophy": 1000,
+        "tournament_bonus_score": 0
+      }
+    ]
+  },
+  {
+    "meta": {
+      "schema_version": 9,
+      "duration": 11.244335,
+      "fleet_count": 1,
+      "user_count": 1,
+      "tournament_running": false,
+      "max_tournament_battle_attempts": 6,
+      "collected_at": "2025-10-01 00:59:00"
+    },
+    "fleets": [
+      {
+        "alliance_id": 1,
+        "alliance_name": "Alliance #1",
+        "score": 0,
+        "division_design_id": 0,
+        "trophy": 1000,
+        "championship_score": 0,
+        "number_of_members": 1,
+        "number_of_approved_members": 1
+      }
+    ],
+    "users": [
+      {
+        "user_id": 1,
+        "user_name": "User #1",
+        "alliance_id": 1,
+        "trophy": 1000,
+        "alliance_score": 0,
+        "alliance_membership": "FleetAdmiral",
+        "alliance_join_date": "2025-01-03T08:09:24Z",
+        "last_login_date": "2025-06-15T22:10:18Z",
+        "last_heartbeat_date": "2025-06-15T22:12:04Z",
+        "crew_donated": 0,
+        "crew_received": 0,
+        "pvp_attack_wins": 0,
+        "pvp_attack_losses": 0,
+        "pvp_attack_draws": 0,
+        "pvp_defence_wins": 0,
+        "pvp_defence_losses": 0,
+        "pvp_defence_draws": 0,
+        "championship_score": 0,
+        "highest_trophy": 1000,
+        "tournament_bonus_score": 0
+      }
+    ]
+  },
+  {
+    "meta": {
+      "schema_version": 9,
+      "duration": 11.244335,
+      "fleet_count": 1,
+      "user_count": 1,
+      "tournament_running": true,
+      "max_tournament_battle_attempts": 6,
+      "collected_at": "2025-09-30 22:59:00"
+    },
+    "fleets": [
+      {
+        "alliance_id": 1,
+        "alliance_name": "Alliance #1",
+        "score": 167,
+        "division_design_id": 0,
+        "trophy": 1000,
+        "championship_score": 0,
+        "number_of_members": 1,
+        "number_of_approved_members": 1
+      }
+    ],
+    "users": [
+      {
+        "user_id": 1,
+        "user_name": "User #1",
+        "alliance_id": 1,
+        "trophy": 1000,
+        "alliance_score": 167,
+        "alliance_membership": "FleetAdmiral",
+        "alliance_join_date": "2025-01-03T08:09:24Z",
+        "last_login_date": "2025-06-15T22:10:18Z",
+        "last_heartbeat_date": "2025-06-15T22:12:04Z",
+        "crew_donated": 0,
+        "crew_received": 0,
+        "pvp_attack_wins": 0,
+        "pvp_attack_losses": 0,
+        "pvp_attack_draws": 0,
+        "pvp_defence_wins": 0,
+        "pvp_defence_losses": 0,
+        "pvp_defence_draws": 0,
+        "championship_score": 0,
+        "highest_trophy": 1000,
+        "tournament_bonus_score": 5
+      }
+    ]
+  },
+  {
+    "meta": {
+      "schema_version": 9,
+      "duration": 11.244335,
+      "fleet_count": 1,
+      "user_count": 1,
+      "tournament_running": true,
+      "max_tournament_battle_attempts": 6,
+      "collected_at": "2025-09-30 21:59:00"
+    },
+    "fleets": [
+      {
+        "alliance_id": 1,
+        "alliance_name": "Alliance #1",
+        "score": 166,
+        "division_design_id": 0,
+        "trophy": 1000,
+        "championship_score": 0,
+        "number_of_members": 1,
+        "number_of_approved_members": 1
+      }
+    ],
+    "users": [
+      {
+        "user_id": 1,
+        "user_name": "User #1",
+        "alliance_id": 1,
+        "trophy": 1000,
+        "alliance_score": 166,
+        "alliance_membership": "FleetAdmiral",
+        "alliance_join_date": "2025-01-03T08:09:24Z",
+        "last_login_date": "2025-06-15T22:10:18Z",
+        "last_heartbeat_date": "2025-06-15T22:12:04Z",
+        "crew_donated": 0,
+        "crew_received": 0,
+        "pvp_attack_wins": 0,
+        "pvp_attack_losses": 0,
+        "pvp_attack_draws": 0,
+        "pvp_defence_wins": 0,
+        "pvp_defence_losses": 0,
+        "pvp_defence_draws": 0,
+        "championship_score": 0,
+        "highest_trophy": 1000,
+        "tournament_bonus_score": 5
+      }
+    ]
+  },
+  {
+    "meta": {
+      "schema_version": 9,
+      "duration": 11.244335,
+      "fleet_count": 1,
+      "user_count": 1,
+      "tournament_running": true,
+      "max_tournament_battle_attempts": 6,
+      "collected_at": "2025-09-30 20:59:00"
+    },
+    "fleets": [
+      {
+        "alliance_id": 1,
+        "alliance_name": "Alliance #1",
+        "score": 165,
+        "division_design_id": 0,
+        "trophy": 1000,
+        "championship_score": 0,
+        "number_of_members": 1,
+        "number_of_approved_members": 1
+      }
+    ],
+    "users": [
+      {
+        "user_id": 1,
+        "user_name": "User #1",
+        "alliance_id": 1,
+        "trophy": 1000,
+        "alliance_score": 165,
+        "alliance_membership": "FleetAdmiral",
+        "alliance_join_date": "2025-01-03T08:09:24Z",
+        "last_login_date": "2025-06-15T22:10:18Z",
+        "last_heartbeat_date": "2025-06-15T22:12:04Z",
+        "crew_donated": 0,
+        "crew_received": 0,
+        "pvp_attack_wins": 0,
+        "pvp_attack_losses": 0,
+        "pvp_attack_draws": 0,
+        "pvp_defence_wins": 0,
+        "pvp_defence_losses": 0,
+        "pvp_defence_draws": 0,
+        "championship_score": 0,
+        "highest_trophy": 1000,
+        "tournament_bonus_score": 5
+      }
+    ]
+  },
+  {
+    "meta": {
+      "schema_version": 9,
+      "duration": 11.244335,
+      "fleet_count": 1,
+      "user_count": 1,
+      "tournament_running": true,
+      "max_tournament_battle_attempts": 6,
+      "collected_at": "2025-09-30 19:59:00"
+    },
+    "fleets": [
+      {
+        "alliance_id": 1,
+        "alliance_name": "Alliance #1",
+        "score": 164,
+        "division_design_id": 0,
+        "trophy": 1000,
+        "championship_score": 0,
+        "number_of_members": 1,
+        "number_of_approved_members": 1
+      }
+    ],
+    "users": [
+      {
+        "user_id": 1,
+        "user_name": "User #1",
+        "alliance_id": 1,
+        "trophy": 1000,
+        "alliance_score": 164,
+        "alliance_membership": "FleetAdmiral",
+        "alliance_join_date": "2025-01-03T08:09:24Z",
+        "last_login_date": "2025-06-15T22:10:18Z",
+        "last_heartbeat_date": "2025-06-15T22:12:04Z",
+        "crew_donated": 0,
+        "crew_received": 0,
+        "pvp_attack_wins": 0,
+        "pvp_attack_losses": 0,
+        "pvp_attack_draws": 0,
+        "pvp_defence_wins": 0,
+        "pvp_defence_losses": 0,
+        "pvp_defence_draws": 0,
+        "championship_score": 0,
+        "highest_trophy": 1000,
+        "tournament_bonus_score": 5
+      }
+    ]
+  },
+  {
+    "meta": {
+      "schema_version": 9,
+      "duration": 11.244335,
+      "fleet_count": 1,
+      "user_count": 1,
+      "tournament_running": true,
+      "max_tournament_battle_attempts": 6,
+      "collected_at": "2025-09-30 18:59:00"
+    },
+    "fleets": [
+      {
+        "alliance_id": 1,
+        "alliance_name": "Alliance #1",
+        "score": 163,
+        "division_design_id": 0,
+        "trophy": 1000,
+        "championship_score": 0,
+        "number_of_members": 1,
+        "number_of_approved_members": 1
+      }
+    ],
+    "users": [
+      {
+        "user_id": 1,
+        "user_name": "User #1",
+        "alliance_id": 1,
+        "trophy": 1000,
+        "alliance_score": 163,
+        "alliance_membership": "FleetAdmiral",
+        "alliance_join_date": "2025-01-03T08:09:24Z",
+        "last_login_date": "2025-06-15T22:10:18Z",
+        "last_heartbeat_date": "2025-06-15T22:12:04Z",
+        "crew_donated": 0,
+        "crew_received": 0,
+        "pvp_attack_wins": 0,
+        "pvp_attack_losses": 0,
+        "pvp_attack_draws": 0,
+        "pvp_defence_wins": 0,
+        "pvp_defence_losses": 0,
+        "pvp_defence_draws": 0,
+        "championship_score": 0,
+        "highest_trophy": 1000,
+        "tournament_bonus_score": 5
+      }
+    ]
+  },
+  {
+    "meta": {
+      "schema_version": 9,
+      "duration": 11.244335,
+      "fleet_count": 1,
+      "user_count": 1,
+      "tournament_running": true,
+      "max_tournament_battle_attempts": 6,
+      "collected_at": "2025-09-30 16:59:00"
+    },
+    "fleets": [
+      {
+        "alliance_id": 1,
+        "alliance_name": "Alliance #1",
+        "score": 161,
+        "division_design_id": 0,
+        "trophy": 1000,
+        "championship_score": 0,
+        "number_of_members": 1,
+        "number_of_approved_members": 1
+      }
+    ],
+    "users": [
+      {
+        "user_id": 1,
+        "user_name": "User #1",
+        "alliance_id": 1,
+        "trophy": 1000,
+        "alliance_score": 161,
+        "alliance_membership": "FleetAdmiral",
+        "alliance_join_date": "2025-01-03T08:09:24Z",
+        "last_login_date": "2025-06-15T22:10:18Z",
+        "last_heartbeat_date": "2025-06-15T22:12:04Z",
+        "crew_donated": 0,
+        "crew_received": 0,
+        "pvp_attack_wins": 0,
+        "pvp_attack_losses": 0,
+        "pvp_attack_draws": 0,
+        "pvp_defence_wins": 0,
+        "pvp_defence_losses": 0,
+        "pvp_defence_draws": 0,
+        "championship_score": 0,
+        "highest_trophy": 1000,
+        "tournament_bonus_score": 5
+      }
+    ]
+  },
+  {
+    "meta": {
+      "schema_version": 9,
+      "duration": 11.244335,
+      "fleet_count": 1,
+      "user_count": 1,
+      "tournament_running": true,
+      "max_tournament_battle_attempts": 6,
+      "collected_at": "2025-09-29 23:59:00"
+    },
+    "fleets": [
+      {
+        "alliance_id": 1,
+        "alliance_name": "Alliance #1",
+        "score": 144,
+        "division_design_id": 0,
+        "trophy": 1000,
+        "championship_score": 0,
+        "number_of_members": 1,
+        "number_of_approved_members": 1
+      }
+    ],
+    "users": [
+      {
+        "user_id": 1,
+        "user_name": "User #1",
+        "alliance_id": 1,
+        "trophy": 1000,
+        "alliance_score": 144,
+        "alliance_membership": "FleetAdmiral",
+        "alliance_join_date": "2025-01-03T08:09:24Z",
+        "last_login_date": "2025-06-15T22:10:18Z",
+        "last_heartbeat_date": "2025-06-15T22:12:04Z",
+        "crew_donated": 0,
+        "crew_received": 0,
+        "pvp_attack_wins": 0,
+        "pvp_attack_losses": 0,
+        "pvp_attack_draws": 0,
+        "pvp_defence_wins": 0,
+        "pvp_defence_losses": 0,
+        "pvp_defence_draws": 0,
+        "championship_score": 0,
+        "highest_trophy": 1000,
+        "tournament_bonus_score": 5
+      }
+    ]
+  },
+  {
+    "meta": {
+      "schema_version": 9,
+      "duration": 11.244335,
+      "fleet_count": 1,
+      "user_count": 1,
+      "tournament_running": true,
+      "max_tournament_battle_attempts": 6,
+      "collected_at": "2025-09-28 23:59:00"
+    },
+    "fleets": [
+      {
+        "alliance_id": 1,
+        "alliance_name": "Alliance #1",
+        "score": 120,
+        "division_design_id": 0,
+        "trophy": 1000,
+        "championship_score": 0,
+        "number_of_members": 1,
+        "number_of_approved_members": 1
+      }
+    ],
+    "users": [
+      {
+        "user_id": 1,
+        "user_name": "User #1",
+        "alliance_id": 1,
+        "trophy": 1000,
+        "alliance_score": 120,
+        "alliance_membership": "FleetAdmiral",
+        "alliance_join_date": "2025-01-03T08:09:24Z",
+        "last_login_date": "2025-06-15T22:10:18Z",
+        "last_heartbeat_date": "2025-06-15T22:12:04Z",
+        "crew_donated": 0,
+        "crew_received": 0,
+        "pvp_attack_wins": 0,
+        "pvp_attack_losses": 0,
+        "pvp_attack_draws": 0,
+        "pvp_defence_wins": 0,
+        "pvp_defence_losses": 0,
+        "pvp_defence_draws": 0,
+        "championship_score": 0,
+        "highest_trophy": 1000,
+        "tournament_bonus_score": 5
+      }
+    ]
+  },
+  {
+    "meta": {
+      "schema_version": 9,
+      "duration": 11.244335,
+      "fleet_count": 1,
+      "user_count": 1,
+      "tournament_running": true,
+      "max_tournament_battle_attempts": 6,
+      "collected_at": "2025-09-27 23:59:00"
+    },
+    "fleets": [
+      {
+        "alliance_id": 1,
+        "alliance_name": "Alliance #1",
+        "score": 96,
+        "division_design_id": 0,
+        "trophy": 1000,
+        "championship_score": 0,
+        "number_of_members": 1,
+        "number_of_approved_members": 1
+      }
+    ],
+    "users": [
+      {
+        "user_id": 1,
+        "user_name": "User #1",
+        "alliance_id": 1,
+        "trophy": 1000,
+        "alliance_score": 96,
+        "alliance_membership": "FleetAdmiral",
+        "alliance_join_date": "2025-01-03T08:09:24Z",
+        "last_login_date": "2025-06-15T22:10:18Z",
+        "last_heartbeat_date": "2025-06-15T22:12:04Z",
+        "crew_donated": 0,
+        "crew_received": 0,
+        "pvp_attack_wins": 0,
+        "pvp_attack_losses": 0,
+        "pvp_attack_draws": 0,
+        "pvp_defence_wins": 0,
+        "pvp_defence_losses": 0,
+        "pvp_defence_draws": 0,
+        "championship_score": 0,
+        "highest_trophy": 1000,
+        "tournament_bonus_score": 5
+      }
+    ]
+  },
+  {
+    "meta": {
+      "schema_version": 9,
+      "duration": 11.244335,
+      "fleet_count": 1,
+      "user_count": 1,
+      "tournament_running": true,
+      "max_tournament_battle_attempts": 6,
+      "collected_at": "2025-09-26 22:59:00"
+    },
+    "fleets": [
+      {
+        "alliance_id": 1,
+        "alliance_name": "Alliance #1",
+        "score": 71,
+        "division_design_id": 0,
+        "trophy": 1000,
+        "championship_score": 0,
+        "number_of_members": 1,
+        "number_of_approved_members": 1
+      }
+    ],
+    "users": [
+      {
+        "user_id": 1,
+        "user_name": "User #1",
+        "alliance_id": 1,
+        "trophy": 1000,
+        "alliance_score": 71,
+        "alliance_membership": "FleetAdmiral",
+        "alliance_join_date": "2025-01-03T08:09:24Z",
+        "last_login_date": "2025-06-15T22:10:18Z",
+        "last_heartbeat_date": "2025-06-15T22:12:04Z",
+        "crew_donated": 0,
+        "crew_received": 0,
+        "pvp_attack_wins": 0,
+        "pvp_attack_losses": 0,
+        "pvp_attack_draws": 0,
+        "pvp_defence_wins": 0,
+        "pvp_defence_losses": 0,
+        "pvp_defence_draws": 0,
+        "championship_score": 0,
+        "highest_trophy": 1000,
+        "tournament_bonus_score": 5
+      }
+    ]
+  },
+  {
+    "meta": {
+      "schema_version": 9,
+      "duration": 11.244335,
+      "fleet_count": 1,
+      "user_count": 1,
+      "tournament_running": true,
+      "max_tournament_battle_attempts": 6,
+      "collected_at": "2025-09-25 23:59:00"
+    },
+    "fleets": [
+      {
+        "alliance_id": 1,
+        "alliance_name": "Alliance #1",
+        "score": 48,
+        "division_design_id": 0,
+        "trophy": 1000,
+        "championship_score": 0,
+        "number_of_members": 1,
+        "number_of_approved_members": 1
+      }
+    ],
+    "users": [
+      {
+        "user_id": 1,
+        "user_name": "User #1",
+        "alliance_id": 1,
+        "trophy": 1000,
+        "alliance_score": 48,
+        "alliance_membership": "FleetAdmiral",
+        "alliance_join_date": "2025-01-03T08:09:24Z",
+        "last_login_date": "2025-06-15T22:10:18Z",
+        "last_heartbeat_date": "2025-06-15T22:12:04Z",
+        "crew_donated": 0,
+        "crew_received": 0,
+        "pvp_attack_wins": 0,
+        "pvp_attack_losses": 0,
+        "pvp_attack_draws": 0,
+        "pvp_defence_wins": 0,
+        "pvp_defence_losses": 0,
+        "pvp_defence_draws": 0,
+        "championship_score": 0,
+        "highest_trophy": 1000,
+        "tournament_bonus_score": 5
+      }
+    ]
+  },
+  {
+    "meta": {
+      "schema_version": 9,
+      "duration": 11.244335,
+      "fleet_count": 1,
+      "user_count": 1,
+      "tournament_running": true,
+      "max_tournament_battle_attempts": 6,
+      "collected_at": "2025-08-31 23:59:00"
+    },
+    "fleets": [
+      {
+        "alliance_id": 1,
+        "alliance_name": "Alliance #1",
+        "score": 168,
+        "division_design_id": 0,
+        "trophy": 1000,
+        "championship_score": 0,
+        "number_of_members": 1,
+        "number_of_approved_members": 1
+      }
+    ],
+    "users": [
+      {
+        "user_id": 1,
+        "user_name": "User #1",
+        "alliance_id": 1,
+        "trophy": 1000,
+        "alliance_score": 168,
+        "alliance_membership": "FleetAdmiral",
+        "alliance_join_date": "2025-01-03T08:09:24Z",
+        "last_login_date": "2025-06-15T22:10:18Z",
+        "last_heartbeat_date": "2025-06-15T22:12:04Z",
+        "crew_donated": 0,
+        "crew_received": 0,
+        "pvp_attack_wins": 0,
+        "pvp_attack_losses": 0,
+        "pvp_attack_draws": 0,
+        "pvp_defence_wins": 0,
+        "pvp_defence_losses": 0,
+        "pvp_defence_draws": 0,
+        "championship_score": 0,
+        "highest_trophy": 1000,
+        "tournament_bonus_score": 5
+      }
+    ]
+  },
+  {
+    "meta": {
+      "schema_version": 9,
+      "duration": 11.244335,
+      "fleet_count": 1,
+      "user_count": 1,
+      "tournament_running": true,
+      "max_tournament_battle_attempts": 6,
+      "collected_at": "2025-07-31 23:59:00"
+    },
+    "fleets": [
+      {
+        "alliance_id": 1,
+        "alliance_name": "Alliance #1",
+        "score": 168,
+        "division_design_id": 0,
+        "trophy": 1000,
+        "championship_score": 0,
+        "number_of_members": 1,
+        "number_of_approved_members": 1
+      }
+    ],
+    "users": [
+      {
+        "user_id": 1,
+        "user_name": "User #1",
+        "alliance_id": 1,
+        "trophy": 1000,
+        "alliance_score": 168,
+        "alliance_membership": "FleetAdmiral",
+        "alliance_join_date": "2025-01-03T08:09:24Z",
+        "last_login_date": "2025-06-15T22:10:18Z",
+        "last_heartbeat_date": "2025-06-15T22:12:04Z",
+        "crew_donated": 0,
+        "crew_received": 0,
+        "pvp_attack_wins": 0,
+        "pvp_attack_losses": 0,
+        "pvp_attack_draws": 0,
+        "pvp_defence_wins": 0,
+        "pvp_defence_losses": 0,
+        "pvp_defence_draws": 0,
+        "championship_score": 0,
+        "highest_trophy": 1000,
+        "tournament_bonus_score": 5
+      }
+    ]
+  },
+  {
+    "meta": {
+      "schema_version": 9,
+      "duration": 11.244335,
+      "fleet_count": 1,
+      "user_count": 1,
+      "tournament_running": true,
+      "max_tournament_battle_attempts": 6,
+      "collected_at": "2025-06-30 23:59:00"
+    },
+    "fleets": [
+      {
+        "alliance_id": 1,
+        "alliance_name": "Alliance #1",
+        "score": 168,
+        "division_design_id": 0,
+        "trophy": 1000,
+        "championship_score": 0,
+        "number_of_members": 1,
+        "number_of_approved_members": 1
+      }
+    ],
+    "users": [
+      {
+        "user_id": 1,
+        "user_name": "User #1",
+        "alliance_id": 1,
+        "trophy": 1000,
+        "alliance_score": 168,
+        "alliance_membership": "FleetAdmiral",
+        "alliance_join_date": "2025-01-03T08:09:24Z",
+        "last_login_date": "2025-06-15T22:10:18Z",
+        "last_heartbeat_date": "2025-06-15T22:12:04Z",
+        "crew_donated": 0,
+        "crew_received": 0,
+        "pvp_attack_wins": 0,
+        "pvp_attack_losses": 0,
+        "pvp_attack_draws": 0,
+        "pvp_defence_wins": 0,
+        "pvp_defence_losses": 0,
+        "pvp_defence_draws": 0,
+        "championship_score": 0,
+        "highest_trophy": 1000,
+        "tournament_bonus_score": 5
+      }
+    ]
+  }
+]

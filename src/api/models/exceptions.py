@@ -195,6 +195,11 @@ class InvalidIntervalError(ParameterValueError):
     message = "The provided value for the parameter `interval` is invalid."
 
 
+class InvalidOnMissingError(ParameterValueError):
+    code = ErrorCode.PARAMETER_ONMISSING_INVALID
+    message = "The provided value for the parameter `onMissing` is invalid."
+
+
 class InvalidSkipError(ParameterValueError):
     code = ErrorCode.PARAMETER_SKIP_INVALID
     message = "The provided value for the parameter `skip` is invalid."

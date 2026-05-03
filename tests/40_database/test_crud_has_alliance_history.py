@@ -7,7 +7,7 @@ from src.api.database.crud import has_alliance_history
 test_cases = [
     # alliance_id, expected_result
     pytest.param(205906, True, id="true"),
-    pytest.param(1, False, id="false"),
+    pytest.param(1337, False, id="false"),
 ]
 
 

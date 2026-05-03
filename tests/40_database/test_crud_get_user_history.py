@@ -1,12 +1,13 @@
-from datetime import datetime
+import datetime as dt
 from typing import Sequence
 
 import pytest
+import test_cases_db
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from src.api.database.crud import get_user_history
 from src.api.database.models import CollectionDB, UserDB
-from src.api.models.enums import ParameterInterval
+from src.api.models.enums import ParameterInterval, ParameterOnMissing
 
 
 test_cases_interval = [
@@ -19,11 +20,11 @@ test_cases_interval = [
 test_cases_by_date = [
     # user_id, from_date, to_date, expected_length
     pytest.param(20013541, None, None, 18, id="by_date None"),
-    pytest.param(20013541, datetime(2024, 4, 1), None, 16, id="by_date from_April_1st"),
-    pytest.param(20013541, datetime(2024, 4, 2), None, 14, id="by_date from_April_2nd"),
-    pytest.param(20013541, None, datetime(2024, 6, 1), 14, id="by_date to_June_1st"),
-    pytest.param(20013541, datetime(2024, 4, 1), datetime(2024, 6, 1), 12, id="from_April_1st_to_June_1st"),
-    pytest.param(20013541, datetime(2024, 4, 2), datetime(2024, 6, 1), 10, id="from_April_2nd_to_June_1st"),
+    pytest.param(20013541, dt.datetime(2024, 4, 1), None, 16, id="by_date from_April_1st"),
+    pytest.param(20013541, dt.datetime(2024, 4, 2), None, 14, id="by_date from_April_2nd"),
+    pytest.param(20013541, None, dt.datetime(2024, 6, 1), 14, id="by_date to_June_1st"),
+    pytest.param(20013541, dt.datetime(2024, 4, 1), dt.datetime(2024, 6, 1), 12, id="from_April_1st_to_June_1st"),
+    pytest.param(20013541, dt.datetime(2024, 4, 2), dt.datetime(2024, 6, 1), 10, id="from_April_2nd_to_June_1st"),
 ]
 
 test_cases_skip_take = [
@@ -45,6 +46,9 @@ test_cases_ordered_by = [
 ]
 
 
+# ----- Test functions -----
+
+
 @pytest.mark.parametrize(["user_id", "interval", "expected_length"], test_cases_interval)
 async def test_get_user_history_by_interval(user_id: int, interval: ParameterInterval, expected_length: int, session: AsyncSession):
     user_history = await get_user_history(session, user_id, include_alliance=False, interval=interval)
@@ -53,7 +57,7 @@ async def test_get_user_history_by_interval(user_id: int, interval: ParameterInt
 
 
 @pytest.mark.parametrize(["user_id", "from_date", "to_date", "expected_length"], test_cases_by_date)
-async def test_get_user_history_by_date(user_id: int, from_date: datetime, to_date: datetime, expected_length: int, session: AsyncSession):
+async def test_get_user_history_by_date(user_id: int, from_date: dt.datetime, to_date: dt.datetime, expected_length: int, session: AsyncSession):
     user_history = await get_user_history(
         session, user_id, include_alliance=False, from_date=from_date, to_date=to_date, interval=ParameterInterval.HOURLY
     )
@@ -79,6 +83,156 @@ async def test_get_user_history_ordered_asc(user_id: int, desc: bool, session: A
             assert entry_1[0].collected_at < entry_2[0].collected_at
 
 
+@pytest.mark.parametrize(["interval", "to_date", "expected_timestamps", "expected_count"], test_cases_db.test_cases_parameter_onMissing_not_specified)
+async def test_get_user_history_onMissing_not_specified(
+    interval: ParameterInterval, to_date: dt.datetime, expected_timestamps: list[dt.datetime | None], expected_count: int, session: AsyncSession
+):
+    user_history = await get_user_history(
+        session,
+        1,
+        to_date=to_date,
+        interval=interval,
+        skip=0,
+        take=3,
+        desc=True,
+    )
+
+    assert len(user_history) == expected_count
+    for i in range(expected_count):
+        assert user_history[i][0].collected_at == expected_timestamps[i]
+
+
+@pytest.mark.parametrize(["interval", "to_date", "expected_timestamps", "expected_count"], test_cases_db.test_cases_parameter_onMissing_not_specified)
+async def test_get_user_history_onMissing_skip(
+    interval: ParameterInterval, to_date: dt.datetime, expected_timestamps: list[dt.datetime | None], expected_count: int, session: AsyncSession
+):
+    user_history = await get_user_history(
+        session,
+        1,
+        to_date=to_date,
+        interval=interval,
+        skip=0,
+        take=3,
+        desc=True,
+        on_missing=ParameterOnMissing.SKIP,
+    )
+
+    assert len(user_history) == expected_count
+    for i in range(expected_count):
+        assert user_history[i][0].collected_at == expected_timestamps[i]
+
+
+@pytest.mark.parametrize(
+    ["interval", "from_date", "to_date", "expected_timestamps", "expected_count"], test_cases_db.test_cases_parameter_onMissing_last_desc
+)
+async def test_get_user_history_onMissing_last_desc(
+    interval: ParameterInterval,
+    from_date: dt.datetime,
+    to_date: dt.datetime,
+    expected_timestamps: list[dt.datetime | None],
+    expected_count: int,
+    session: AsyncSession,
+):
+    user_history = await get_user_history(
+        session,
+        1,
+        from_date=from_date,
+        to_date=to_date,
+        interval=interval,
+        skip=0,
+        take=3,
+        desc=True,
+        on_missing=ParameterOnMissing.LAST,
+    )
+
+    assert len(user_history) == expected_count
+    for i in range(expected_count):
+        assert user_history[i][0].collected_at == expected_timestamps[i]
+
+
+@pytest.mark.parametrize(
+    ["interval", "from_date", "to_date", "expected_timestamps", "expected_count"], test_cases_db.test_cases_parameter_onMissing_last_asc
+)
+async def test_get_user_history_onMissing_last_asc(
+    interval: ParameterInterval,
+    from_date: dt.datetime,
+    to_date: dt.datetime,
+    expected_timestamps: list[dt.datetime | None],
+    expected_count: int,
+    session: AsyncSession,
+):
+    user_history = await get_user_history(
+        session,
+        1,
+        from_date=from_date,
+        to_date=to_date,
+        interval=interval,
+        skip=0,
+        take=3,
+        desc=False,
+        on_missing=ParameterOnMissing.LAST,
+    )
+
+    assert len(user_history) == expected_count
+    for i in range(expected_count):
+        assert user_history[i][0].collected_at == expected_timestamps[i]
+
+
+@pytest.mark.parametrize(["interval", "to_date", "expected_timestamps", "expected_count"], test_cases_db.test_cases_parameter_onMissing_null)
+async def test_get_user_history_onMissing_null(
+    interval: ParameterInterval, to_date: dt.datetime, expected_timestamps: list[dt.datetime | None], expected_count: int, session: AsyncSession
+):
+    user_history = await get_user_history(
+        session,
+        1,
+        to_date=to_date,
+        interval=interval,
+        skip=0,
+        take=3,
+        desc=True,
+        on_missing=ParameterOnMissing.NULL,
+    )
+
+    assert len(user_history) == expected_count
+    for i in range(expected_count):
+        if expected_timestamps[i] is None:
+            assert user_history[i] is None
+        else:
+            assert user_history[i][0].collected_at == expected_timestamps[i]
+
+
+@pytest.mark.parametrize(
+    ["interval", "to_date", "expected_timestamps", "expected_count", "empty_collection_index"], test_cases_db.test_cases_parameter_onMissing_empty
+)
+async def test_get_user_history_onMissing_empty(
+    interval: ParameterInterval,
+    to_date: dt.datetime,
+    expected_timestamps: list[dt.datetime | None],
+    expected_count: int,
+    empty_collection_index: int,
+    session: AsyncSession,
+):
+    user_history = await get_user_history(
+        session,
+        1,
+        to_date=to_date,
+        interval=interval,
+        skip=0,
+        take=3,
+        desc=True,
+        on_missing=ParameterOnMissing.EMPTY,
+    )
+
+    assert len(user_history) == expected_count
+    for i in range(expected_count):
+        assert user_history[i][0].collected_at == expected_timestamps[i]
+
+    __assert_dummy_collection(user_history[empty_collection_index])
+
+
+# ----- Helpers -----
+
+
 def __assert_correct_types(user_history: list[tuple[CollectionDB, UserDB]]):
     assert isinstance(user_history, Sequence)
     for entry in user_history:
@@ -86,3 +240,9 @@ def __assert_correct_types(user_history: list[tuple[CollectionDB, UserDB]]):
         assert len(entry) == 2
         assert isinstance(entry[0], CollectionDB)
         assert isinstance(entry[1], UserDB)
+
+
+def __assert_dummy_collection(user_history_collection: tuple[CollectionDB, UserDB]):
+    assert user_history_collection[0].fleet_count == 0
+    assert user_history_collection[0].user_count == 0
+    assert user_history_collection[1] is None

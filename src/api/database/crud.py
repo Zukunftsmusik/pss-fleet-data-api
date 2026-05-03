@@ -1,13 +1,14 @@
-from datetime import datetime, timedelta
-from typing import Optional
+from datetime import datetime, timedelta, timezone
+from typing import Optional, Union
 
 from sqlalchemy.ext.asyncio.engine import AsyncEngine
 from sqlalchemy.orm import selectinload
-from sqlmodel import SQLModel, col, extract, func, select
+from sqlmodel import SQLModel, col, extract, func, select, text
 from sqlmodel.ext.asyncio.session import AsyncSession
-from sqlmodel.sql.expression import Select
+from sqlmodel.sql.expression import Select, SelectOfScalar
 
 from .. import utils
+from ..config import CONSTANTS
 from ..models.enums import ParameterInterval, ParameterOnMissing
 from .models import AllianceDB, AllianceHistoryDB, CollectionDB, UserDB, UserHistoryDB
 
@@ -117,18 +118,34 @@ async def get_alliance_history(
         list[tuple[CollectionDB, AllianceDB]]: A list of tuples representing entries in the Alliance history. A tuple contains the metadata of the respective Collection and the Alliance's data from that Collection.
     """
     async with session:
+        collections = await get_collections(session, from_date, to_date, interval, desc, skip, take, on_missing)
+        collection_ids = [collection.collection_id for collection in collections if collection is not None and collection.collection_id is not None]
+
         query = (
             select(AllianceDB, CollectionDB)
             .join(CollectionDB, AllianceDB.collection_id == CollectionDB.collection_id)
+            .where(col(CollectionDB.collection_id).in_(collection_ids))
             .where(AllianceDB.alliance_id == alliance_id)
         )
-        query = _apply_select_parameters_to_query(query, from_date, to_date, interval, desc)
-        query = query.offset(skip).limit(take)
         if include_users:
             query = query.options(selectinload(AllianceDB.users))
 
-        results = (await session.exec(query)).all()
-        return [(collection, alliance) for alliance, collection in results]
+        result = (await session.exec(query)).all()
+
+        alliance_histories_by_collection_id = {collection.collection_id: (alliance, collection) for alliance, collection in result}
+        alliance_histories = []
+
+        for collection in collections:
+            if collection is None and on_missing == ParameterOnMissing.NULL:
+                alliance_histories.append(None)
+            elif collection.collection_id is None and on_missing == ParameterOnMissing.EMPTY:
+                alliance_histories.append((collection, None))
+            else:
+                alliance, _ = alliance_histories_by_collection_id.get(collection.collection_id, (None, None))
+                if alliance:
+                    alliance_histories.append((collection, alliance))
+
+        return alliance_histories
 
 
 async def get_collection(session: AsyncSession, collection_id: int, include_alliances: bool, include_users: bool) -> Optional[CollectionDB]:
@@ -208,13 +225,144 @@ async def get_collections(
     Returns:
         list[CollectionDB]: A list of Collections without any Alliances or Users.
     """
+    if not on_missing:
+        on_missing = ParameterOnMissing.SKIP
+
+    match (on_missing):
+        case ParameterOnMissing.SKIP:
+            return await _get_collections_on_missing_skip(session, from_date, to_date, interval, desc, skip, take)
+        case ParameterOnMissing.EMPTY:
+            return await _get_collections_on_missing_empty_or_null(session, from_date, to_date, interval, desc, skip, take, on_missing)
+        case ParameterOnMissing.NULL:
+            return await _get_collections_on_missing_empty_or_null(session, from_date, to_date, interval, desc, skip, take, on_missing)
+        case ParameterOnMissing.LAST:
+            if interval == ParameterInterval.HOURLY:
+                return await _get_collections_on_missing_skip(session, from_date, to_date, interval, desc, skip, take)
+
+            return await _get_collections_on_missing_last(session, from_date, to_date, interval, desc, skip, take)
+
+
+async def _get_collections_on_missing_skip(
+    session: AsyncSession,
+    from_date: Optional[datetime],
+    to_date: Optional[datetime],
+    interval: ParameterInterval,
+    desc: bool,
+    skip: int,
+    take: int,
+) -> list[CollectionDB]:
     async with session:
-        query = select(CollectionDB)
-        query = _apply_select_parameters_to_query(query, from_date, to_date, interval, desc)
+        entity_type = CollectionDB
+        query = select(entity_type)
+        query = _apply_select_parameters_to_query(query, from_date, to_date, interval, desc, entity_type=entity_type)
         query = query.offset(skip).limit(take)
 
-        results = await session.exec(query)
-        return list(results.all())
+        collections = (await session.exec(query)).all()
+        return list(collections)
+
+
+async def _get_collections_on_missing_empty_or_null(
+    session: AsyncSession,
+    from_date: Optional[datetime],
+    to_date: Optional[datetime],
+    interval: ParameterInterval,
+    desc: bool,
+    skip: int,
+    take: int,
+    on_missing: ParameterOnMissing,
+) -> list[CollectionDB]:
+    if not from_date:
+        from_date = utils.remove_timezone(CONSTANTS.pss_start_date)
+    if not to_date:
+        to_date = utils.remove_timezone(datetime.now(timezone.utc))
+
+    hour_series = select(
+        func.generate_series(
+            from_date + timedelta(minutes=59),
+            to_date + timedelta(minutes=59),
+            text("interval '1 hour'"),
+        ).label("collected_at")
+    ).cte("hour_series")
+
+    async with session:
+        query_hour_series = select(hour_series)
+        query_hour_series = _apply_select_parameters_to_query(query_hour_series, from_date, to_date, interval, desc, entity_type=hour_series.c)
+        query_hour_series = query_hour_series.offset(skip).limit(take)
+
+        timestamps = (await session.exec(query_hour_series)).all()
+
+        query_collections = select(CollectionDB).where(col(CollectionDB.collected_at).in_(timestamps))
+
+        collections = (await session.exec(query_collections)).all()
+        collections_by_timestamp = {collection.collected_at: collection for collection in collections}
+
+        result = []
+        for timestamp in timestamps:
+            if timestamp in collections_by_timestamp.keys():
+                result.append(collections_by_timestamp[timestamp])
+            else:
+                if on_missing == ParameterOnMissing.EMPTY:
+                    result.append(
+                        CollectionDB(
+                            collected_at=timestamp,
+                            data_version=0,
+                            duration=0.0,
+                            fleet_count=0,
+                            user_count=0,
+                            tournament_running=False,
+                        )
+                    )
+                elif on_missing == ParameterOnMissing.NULL:
+                    result.append(None)
+
+        return result
+
+
+DATE_TRUNC_TYPE_BY_INTERVAL: dict[ParameterInterval, str] = {
+    ParameterInterval.HOURLY: "hour",
+    ParameterInterval.DAILY: "day",
+    ParameterInterval.MONTHLY: "month",
+}
+
+
+async def _get_collections_on_missing_last(
+    session: AsyncSession,
+    from_date: Optional[datetime],
+    to_date: Optional[datetime],
+    interval: ParameterInterval,
+    desc: bool,
+    skip: int,
+    take: int,
+) -> list[CollectionDB]:
+    if not from_date:
+        from_date = utils.remove_timezone(CONSTANTS.pss_start_date)
+    if not to_date:
+        to_date = utils.remove_timezone(datetime.now(timezone.utc))
+
+    async with session:
+        date_trunc_type = DATE_TRUNC_TYPE_BY_INTERVAL.get(interval)
+        date_trunc = func.date_trunc(date_trunc_type, CollectionDB.collected_at)
+
+        subquery = (
+            select(CollectionDB)
+            .where(CollectionDB.collected_at >= from_date)
+            .where(CollectionDB.collected_at <= to_date)
+            .distinct(date_trunc)
+            .order_by(date_trunc.desc(), col(CollectionDB.collected_at).desc())
+            .subquery()
+        )
+
+        query = (
+            select(*[subquery.c[name] for name in subquery.c.keys()])
+            .order_by(subquery.c.collected_at.desc() if desc else subquery.c.collected_at.asc())
+            .offset(skip)
+            .limit(take)
+        )
+
+        print(query)
+
+        collections = (await session.exec(query)).all()
+        return sorted(collections, key=lambda collection: collection.collected_at, reverse=desc)
 
 
 async def get_top_100_from_collection(session: AsyncSession, collection_id: int, skip: int = 0, take: int = 100) -> list[UserDB]:
@@ -295,15 +443,34 @@ async def get_user_history(
         list[tuple[CollectionDB, UserDB]]: A list of tuples representing entries in the User history. A tuple contains the metadata of the respective Collection and the User's data from that Collection.
     """
     async with session:
-        query = select(UserDB, CollectionDB).join(CollectionDB, UserDB.collection_id == CollectionDB.collection_id).where(UserDB.user_id == user_id)
-        query = _apply_select_parameters_to_query(query, from_date, to_date, interval, desc)
-        query = query.offset(skip).limit(take)
+        collections = await get_collections(session, from_date, to_date, interval, desc, skip, take, on_missing)
+        collection_ids = [collection.collection_id for collection in collections if collection is not None and collection.collection_id is not None]
 
+        query = (
+            select(UserDB, CollectionDB)
+            .join(CollectionDB, UserDB.collection_id == CollectionDB.collection_id)
+            .where(col(CollectionDB.collection_id).in_(collection_ids))
+            .where(UserDB.user_id == user_id)
+        )
         if include_alliance:
             query = query.options(selectinload(UserDB.alliance))
 
-        results = (await session.exec(query)).all()
-        return [(collection, user) for user, collection in results]
+        result = (await session.exec(query)).all()
+
+        user_histories_by_collection_id = {collection.collection_id: (user, collection) for user, collection in result}
+        user_histories = []
+
+        for collection in collections:
+            if collection is None and on_missing == ParameterOnMissing.NULL:
+                user_histories.append(None)
+            elif collection.collection_id is None and on_missing == ParameterOnMissing.EMPTY:
+                user_histories.append((collection, None))
+            else:
+                user, _ = user_histories_by_collection_id.get(collection.collection_id, (None, None))
+                if user:
+                    user_histories.append((collection, user))
+
+        return user_histories
 
 
 async def has_alliance_history(session: AsyncSession, alliance_id: int) -> bool:
@@ -461,7 +628,15 @@ async def update_collection(session: AsyncSession, collection_id: int, new_colle
         return collection
 
 
-def _apply_select_parameters_to_query(query: Select, from_date: datetime, to_date: datetime, interval: ParameterInterval, desc: bool) -> Select:
+def _apply_select_parameters_to_query(
+    query: Union[SelectOfScalar, Select],
+    from_date: Optional[datetime],
+    to_date: Optional[datetime],
+    interval: ParameterInterval,
+    desc: bool,
+    *,
+    entity_type: type = CollectionDB,
+) -> Union[SelectOfScalar, Select]:
     """Applies the specified query parameters to the given Select `query`.
 
     Args:
@@ -470,17 +645,21 @@ def _apply_select_parameters_to_query(query: Select, from_date: datetime, to_dat
         to_date (datetime): Specifies the latest date to return data from.
         interval (ParameterInterval): Specifies the interval of the data to be returned.
         desc (bool): Specifies the sort direction of the returned data.
+        on_missing (ParameterOnMissing): Specifies how to handle missing data.
 
     Returns:
         Select: The modified query.
     """
-    query = _apply_datetime_limits_to_query(query, from_date, to_date)
-    query = _apply_interval_to_query(query, interval)
-    query = _apply_order_by_collected_at_to_query(query, desc)
+    query = _apply_datetime_limits_to_query(query, from_date, to_date, entity_type)
+    query = _apply_interval_to_query(query, interval, entity_type)
+    query = _apply_order_by_collected_at_to_query(query, desc, entity_type)
+
     return query
 
 
-def _apply_datetime_limits_to_query(query: Select, from_date: datetime, to_date: datetime) -> Select:
+def _apply_datetime_limits_to_query(
+    query: Union[SelectOfScalar, Select], from_date: Optional[datetime], to_date: Optional[datetime], entity_type: type = CollectionDB
+) -> Union[SelectOfScalar, Select]:
     """Applies date limits to the given select `query`.
 
     Args:
@@ -492,13 +671,15 @@ def _apply_datetime_limits_to_query(query: Select, from_date: datetime, to_date:
         Select: The modified query.
     """
     if from_date:
-        query = query.where(CollectionDB.collected_at >= from_date)
+        query = query.where(entity_type.collected_at >= from_date)
     if to_date:
-        query = query.where(CollectionDB.collected_at <= to_date)
+        query = query.where(entity_type.collected_at <= to_date)
     return query
 
 
-def _apply_interval_to_query(query: Select, interval: ParameterInterval) -> Select:
+def _apply_interval_to_query(
+    query: Union[SelectOfScalar, Select], interval: ParameterInterval, entity_type: type = CollectionDB
+) -> Union[SelectOfScalar, Select]:
     """Applies an interval to the given Select `query`.
 
     Args:
@@ -510,13 +691,15 @@ def _apply_interval_to_query(query: Select, interval: ParameterInterval) -> Sele
     """
     match interval:
         case ParameterInterval.DAILY:
-            return query.where(extract("hour", CollectionDB.collected_at) == 23)
+            return query.where(extract("hour", entity_type.collected_at) == 23)
         case ParameterInterval.MONTHLY:
-            return query.where(extract("month", CollectionDB.collected_at) != extract("month", (CollectionDB.collected_at + timedelta(hours=1))))
+            return query.where(extract("month", entity_type.collected_at) != extract("month", (entity_type.collected_at + timedelta(hours=1))))
     return query
 
 
-def _apply_order_by_collected_at_to_query(query: Select, desc: bool) -> Select:
+def _apply_order_by_collected_at_to_query(
+    query: Union[SelectOfScalar, Select], desc: bool, entity_type: type = CollectionDB
+) -> Union[SelectOfScalar, Select]:
     """Applies a sort direction to the given Select `query`.
 
     Args:
@@ -527,9 +710,9 @@ def _apply_order_by_collected_at_to_query(query: Select, desc: bool) -> Select:
         Select: The modified query.
     """
     if desc:
-        query = query.order_by(col(CollectionDB.collected_at).desc())
+        query = query.order_by(col(entity_type.collected_at).desc())
     else:
-        query = query.order_by(col(CollectionDB.collected_at).asc())
+        query = query.order_by(col(entity_type.collected_at).asc())
     return query
 
 

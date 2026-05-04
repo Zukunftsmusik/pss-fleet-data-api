@@ -1,4 +1,4 @@
-import datetime as dt
+from datetime import datetime
 
 import pytest
 import test_cases_db
@@ -19,11 +19,11 @@ test_cases_interval = [
 test_cases_by_date = [
     # from_date, to_date, expected_length
     pytest.param(None, None, 37, id="by_date None"),
-    pytest.param(dt.datetime(2024, 4, 1), None, 35, id="by_date from_April_1st"),
-    pytest.param(dt.datetime(2024, 4, 2), None, 33, id="by_date from_April_2nd"),
-    pytest.param(None, dt.datetime(2024, 6, 1), 14, id="by_date to_June_1st"),
-    pytest.param(dt.datetime(2024, 4, 1), dt.datetime(2024, 6, 1), 12, id="from_April_1st_to_June_1st"),
-    pytest.param(dt.datetime(2024, 4, 2), dt.datetime(2024, 6, 1), 10, id="from_April_2nd_to_June_1st"),
+    pytest.param(datetime(2024, 4, 1), None, 35, id="by_date from_April_1st"),
+    pytest.param(datetime(2024, 4, 2), None, 33, id="by_date from_April_2nd"),
+    pytest.param(None, datetime(2024, 6, 1), 14, id="by_date to_June_1st"),
+    pytest.param(datetime(2024, 4, 1), datetime(2024, 6, 1), 12, id="from_April_1st_to_June_1st"),
+    pytest.param(datetime(2024, 4, 2), datetime(2024, 6, 1), 10, id="from_April_2nd_to_June_1st"),
 ]
 
 test_cases_skip_take = [
@@ -53,7 +53,7 @@ async def test_get_collections_by_interval(interval: ParameterInterval, expected
 
 
 @pytest.mark.parametrize(["from_date", "to_date", "expected_length"], test_cases_by_date)
-async def test_get_collections_by_date(from_date: dt.datetime, to_date: dt.datetime, expected_length: int, session: AsyncSession):
+async def test_get_collections_by_date(from_date: datetime, to_date: datetime, expected_length: int, session: AsyncSession):
     collections = await get_collections(session, from_date=from_date, to_date=to_date, interval=ParameterInterval.HOURLY)
     assert all(isinstance(collection, CollectionDB) for collection in collections)
     assert len(collections) == expected_length
@@ -79,7 +79,7 @@ async def test_get_collections_ordered_asc(desc: bool, session: AsyncSession):
 
 @pytest.mark.parametrize(["interval", "to_date", "expected_timestamps", "expected_count"], test_cases_db.test_cases_parameter_onMissing_not_specified)
 async def test_get_collections_onMissing_not_specified(
-    interval: ParameterInterval, to_date: dt.datetime, expected_timestamps: list[dt.datetime | None], expected_count: int, session: AsyncSession
+    interval: ParameterInterval, to_date: datetime, expected_timestamps: list[datetime | None], expected_count: int, session: AsyncSession
 ):
     collections = await get_collections(
         session,
@@ -97,7 +97,7 @@ async def test_get_collections_onMissing_not_specified(
 
 @pytest.mark.parametrize(["interval", "to_date", "expected_timestamps", "expected_count"], test_cases_db.test_cases_parameter_onMissing_not_specified)
 async def test_get_collections_onMissing_skip(
-    interval: ParameterInterval, to_date: dt.datetime, expected_timestamps: list[dt.datetime | None], expected_count: int, session: AsyncSession
+    interval: ParameterInterval, to_date: datetime, expected_timestamps: list[datetime | None], expected_count: int, session: AsyncSession
 ):
     collections = await get_collections(
         session,
@@ -119,9 +119,9 @@ async def test_get_collections_onMissing_skip(
 )
 async def test_get_collections_onMissing_last_desc(
     interval: ParameterInterval,
-    from_date: dt.datetime,
-    to_date: dt.datetime,
-    expected_timestamps: list[dt.datetime | None],
+    from_date: datetime,
+    to_date: datetime,
+    expected_timestamps: list[datetime | None],
     expected_count: int,
     session: AsyncSession,
 ):
@@ -146,9 +146,9 @@ async def test_get_collections_onMissing_last_desc(
 )
 async def test_get_collections_onMissing_last_asc(
     interval: ParameterInterval,
-    from_date: dt.datetime,
-    to_date: dt.datetime,
-    expected_timestamps: list[dt.datetime | None],
+    from_date: datetime,
+    to_date: datetime,
+    expected_timestamps: list[datetime | None],
     expected_count: int,
     session: AsyncSession,
 ):
@@ -170,7 +170,7 @@ async def test_get_collections_onMissing_last_asc(
 
 @pytest.mark.parametrize(["interval", "to_date", "expected_timestamps", "expected_count"], test_cases_db.test_cases_parameter_onMissing_null)
 async def test_get_collections_onMissing_null(
-    interval: ParameterInterval, to_date: dt.datetime, expected_timestamps: list[dt.datetime | None], expected_count: int, session: AsyncSession
+    interval: ParameterInterval, to_date: datetime, expected_timestamps: list[datetime | None], expected_count: int, session: AsyncSession
 ):
     collections = await get_collections(
         session,
@@ -195,8 +195,8 @@ async def test_get_collections_onMissing_null(
 )
 async def test_get_collections_onMissing_empty(
     interval: ParameterInterval,
-    to_date: dt.datetime,
-    expected_timestamps: list[dt.datetime | None],
+    to_date: datetime,
+    expected_timestamps: list[datetime | None],
     expected_count: int,
     empty_collection_index: int,
     session: AsyncSession,

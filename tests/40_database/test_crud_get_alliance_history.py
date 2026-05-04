@@ -1,4 +1,4 @@
-import datetime as dt
+from datetime import datetime
 from typing import Sequence
 
 import pytest
@@ -20,11 +20,11 @@ test_cases_interval = [
 test_cases_by_date = [
     # alliance_id, from_date, to_date, expected_length
     pytest.param(201549, None, None, 18, id="by_date None"),
-    pytest.param(201549, dt.datetime(2024, 4, 1), None, 16, id="by_date from_April_1st"),
-    pytest.param(201549, dt.datetime(2024, 4, 2), None, 14, id="by_date from_April_2nd"),
-    pytest.param(201549, None, dt.datetime(2024, 6, 1), 14, id="by_date to_June_1st"),
-    pytest.param(201549, dt.datetime(2024, 4, 1), dt.datetime(2024, 6, 1), 12, id="from_April_1st_to_June_1st"),
-    pytest.param(201549, dt.datetime(2024, 4, 2), dt.datetime(2024, 6, 1), 10, id="from_April_2nd_to_June_1st"),
+    pytest.param(201549, datetime(2024, 4, 1), None, 16, id="by_date from_April_1st"),
+    pytest.param(201549, datetime(2024, 4, 2), None, 14, id="by_date from_April_2nd"),
+    pytest.param(201549, None, datetime(2024, 6, 1), 14, id="by_date to_June_1st"),
+    pytest.param(201549, datetime(2024, 4, 1), datetime(2024, 6, 1), 12, id="from_April_1st_to_June_1st"),
+    pytest.param(201549, datetime(2024, 4, 2), datetime(2024, 6, 1), 10, id="from_April_2nd_to_June_1st"),
 ]
 
 test_cases_skip_take = [
@@ -63,9 +63,7 @@ async def test_get_alliance_history_by_interval(alliance_id: int, interval: Para
 
 
 @pytest.mark.parametrize(["alliance_id", "from_date", "to_date", "expected_length"], test_cases_by_date)
-async def test_get_alliance_history_by_date(
-    alliance_id: int, from_date: dt.datetime, to_date: dt.datetime, expected_length: int, session: AsyncSession
-):
+async def test_get_alliance_history_by_date(alliance_id: int, from_date: datetime, to_date: datetime, expected_length: int, session: AsyncSession):
     alliance_history = await get_alliance_history(session, alliance_id, from_date=from_date, to_date=to_date, interval=ParameterInterval.HOURLY)
     __assert_correct_types(alliance_history)
     assert len(alliance_history) == expected_length
@@ -91,7 +89,7 @@ async def test_get_alliance_history_ordered_asc(alliance_id: int, desc: bool, se
 
 @pytest.mark.parametrize(["interval", "to_date", "expected_timestamps", "expected_count"], test_cases_db.test_cases_parameter_onMissing_not_specified)
 async def test_get_alliance_history_onMissing_not_specified(
-    interval: ParameterInterval, to_date: dt.datetime, expected_timestamps: list[dt.datetime | None], expected_count: int, session: AsyncSession
+    interval: ParameterInterval, to_date: datetime, expected_timestamps: list[datetime | None], expected_count: int, session: AsyncSession
 ):
     alliance_history = await get_alliance_history(
         session,
@@ -110,7 +108,7 @@ async def test_get_alliance_history_onMissing_not_specified(
 
 @pytest.mark.parametrize(["interval", "to_date", "expected_timestamps", "expected_count"], test_cases_db.test_cases_parameter_onMissing_not_specified)
 async def test_get_alliance_history_onMissing_skip(
-    interval: ParameterInterval, to_date: dt.datetime, expected_timestamps: list[dt.datetime | None], expected_count: int, session: AsyncSession
+    interval: ParameterInterval, to_date: datetime, expected_timestamps: list[datetime | None], expected_count: int, session: AsyncSession
 ):
     alliance_history = await get_alliance_history(
         session,
@@ -133,9 +131,9 @@ async def test_get_alliance_history_onMissing_skip(
 )
 async def test_get_alliance_history_onMissing_last_desc(
     interval: ParameterInterval,
-    from_date: dt.datetime,
-    to_date: dt.datetime,
-    expected_timestamps: list[dt.datetime | None],
+    from_date: datetime,
+    to_date: datetime,
+    expected_timestamps: list[datetime | None],
     expected_count: int,
     session: AsyncSession,
 ):
@@ -161,9 +159,9 @@ async def test_get_alliance_history_onMissing_last_desc(
 )
 async def test_get_alliance_history_onMissing_last_asc(
     interval: ParameterInterval,
-    from_date: dt.datetime,
-    to_date: dt.datetime,
-    expected_timestamps: list[dt.datetime | None],
+    from_date: datetime,
+    to_date: datetime,
+    expected_timestamps: list[datetime | None],
     expected_count: int,
     session: AsyncSession,
 ):
@@ -186,7 +184,7 @@ async def test_get_alliance_history_onMissing_last_asc(
 
 @pytest.mark.parametrize(["interval", "to_date", "expected_timestamps", "expected_count"], test_cases_db.test_cases_parameter_onMissing_null)
 async def test_get_alliance_history_onMissing_null(
-    interval: ParameterInterval, to_date: dt.datetime, expected_timestamps: list[dt.datetime | None], expected_count: int, session: AsyncSession
+    interval: ParameterInterval, to_date: datetime, expected_timestamps: list[datetime | None], expected_count: int, session: AsyncSession
 ):
     alliance_history = await get_alliance_history(
         session,
@@ -212,8 +210,8 @@ async def test_get_alliance_history_onMissing_null(
 )
 async def test_get_alliance_history_onMissing_empty(
     interval: ParameterInterval,
-    to_date: dt.datetime,
-    expected_timestamps: list[dt.datetime | None],
+    to_date: datetime,
+    expected_timestamps: list[datetime | None],
     expected_count: int,
     empty_collection_index: int,
     session: AsyncSession,

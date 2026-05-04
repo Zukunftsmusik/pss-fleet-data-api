@@ -611,8 +611,8 @@ async def _get_collections_on_missing_empty_or_null(
 
     Args:
         session (AsyncSession): The database session.
-        from_date (datetime | None): The start date for the query.
-        to_date (datetime | None): The end date for the query.
+        from_date (datetime, optional): The start date for the query.
+        to_date (datetime, optional): The end date for the query.
         interval (ParameterInterval): The interval for data aggregation.
         desc (bool): Whether to sort in descending order.
         skip (int): Number of records to skip.
@@ -679,8 +679,8 @@ async def _get_collections_on_missing_last(
 
     Args:
         session (AsyncSession): The database session to use.
-        from_date (datetime | None): The start date for the query. If None, defaults to the PSS start date.
-        to_date (datetime | None): The end date for the query. If None, defaults to the current UTC time.
+        from_date (datetime, optional): The start date for the query. If None, defaults to the PSS start date.
+        to_date (datetime, optional): The end date for the query. If None, defaults to the current UTC time.
         interval (ParameterInterval): The interval to group collections by (e.g., HOURLY, DAILY).
         desc (bool): Whether to order the results in descending order by collected_at.
         skip (int): The number of results to skip.
@@ -730,8 +730,8 @@ async def _get_collections_on_missing_skip(
 
     Args:
         session (AsyncSession): The database session to use.
-        from_date (datetime | None): The start date for the query. If None, defaults to the PSS start date.
-        to_date (datetime | None): The end date for the query. If None, defaults to the current UTC time.
+        from_date (datetime, optional): The start date for the query. If None, defaults to the PSS start date.
+        to_date (datetime, optional): The end date for the query. If None, defaults to the current UTC time.
         interval (ParameterInterval): The interval to group collections by (e.g., HOURLY, DAILY).
         desc (bool): Whether to order the results in descending order by collected_at.
         skip (int): The number of results to skip.
@@ -754,8 +754,8 @@ def _get_date_defaults(from_date: datetime | None, to_date: datetime | None) -> 
     """Returns default values for `from_date` and `to_date` if they are not provided and removes timezone information from the provided dates.
 
     Args:
-        from_date (datetime | None): The provided `from_date`, or None if not provided.
-        to_date (datetime | None): The provided `to_date`, or None if not provided.
+        from_date (datetime, optional): The provided `from_date`, or None if not provided.
+        to_date (datetime, optional): The provided `to_date`, or None if not provided.
 
     Returns:
         tuple[datetime, datetime]: A tuple containing the `from_date` and `to_date`, with defaults applied if necessary. If `from_date` is None, it defaults to the PSS start date. If `to_date` is None, it defaults to the current UTC time.

@@ -150,7 +150,7 @@ def parse_datetime(dt: datetime | int | str | None) -> datetime:
     """Parses a `str` or `int` to `datetime` or returns the passed datetime.
 
     Args:
-        dt (datetime | int | str | None): The `str` or `int` to be parsed. If it's an `int`, it represents the seconds since Jan 6th, 2016 12 am.
+        dt (datetime | int | str, optional): The `str` or `int` to be parsed. If it's an `int`, it represents the seconds since Jan 6th, 2016 12 am.
 
     Raises:
         ValueError: Raised, if parameter `dt` is not of type `datetime`, `int` or `str`.

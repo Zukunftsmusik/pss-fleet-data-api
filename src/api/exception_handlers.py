@@ -394,6 +394,7 @@ def _raise_query_parameter_error(error: RequestValidationErrorOut, exc: RequestV
         InvalidSkipError: Raised, if the query parameter `skip` received a value that can't be parsed to an `int` or if it's negative.
         InvalidTakeError: Raised, if the query parameter `skip` received a value that can't be parsed to an `int`, if it's negative or if it's greater than 100.
         ServerError: Raised, if none of the other exceptions was raised.
+        ToDateTooEarlyError: Raised, if the query parameter `toDate` received a value that is before the PSS start date.
     """
     match error.param_name:
         case "fromDate":
@@ -414,5 +415,4 @@ def _raise_query_parameter_error(error: RequestValidationErrorOut, exc: RequestV
             raise InvalidTakeError(error.msg)
         case "onMissing":
             raise InvalidOnMissingError(error.msg)
-    raise ServerError("An error occured while raising an error for an invalid query parameter.") from exc
     raise ServerError("An error occured while raising an error for an invalid query parameter.") from exc

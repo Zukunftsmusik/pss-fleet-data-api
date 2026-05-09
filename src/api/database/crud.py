@@ -69,7 +69,7 @@ async def get_alliance_from_collection(session: AsyncSession, collection_id: int
         alliance_id (int): The `alliance_id` of the Alliance to retrieve.
 
     Returns:
-        AllianceHistoryDB | None: Returns the specified Alliance from the specified Collection, if there's one with the specified `alliance_id`. Else, it returns `None`. If an Alliance is returned and `include_users` is `True`, then the property `users` will be populated. Else, it will be empty.
+        tuple[CollectionDB, AllianceDB] | None: Returns the specified Alliance from the specified Collection, if there's one with the specified `alliance_id`. Else, it returns `None`. If an Alliance is returned and `include_users` is `True`, then the property `users` will be populated. Else, it will be empty.
     """
     async with session:
         alliance_query = (
@@ -274,7 +274,7 @@ async def get_user_from_collection(session: AsyncSession, collection_id: int, us
         user_id (int): The `user_id` of the User to retrieve.
 
     Returns:
-        UserHistoryDB | None: Returns the specified User from the specified Collection, if there's one with the specified `user_id`. Else, it returns `None`. If a User is returned, `include_alliance` is `True` and the User was in an Alliance, then the property `alliance` will be populated. Else, it will be `None`.
+        tuple[CollectionDB, UserDB] | None: Returns the specified User from the specified Collection, if there's one with the specified `user_id`. Else, it returns `None`. If a User is returned, `include_alliance` is `True` and the User was in an Alliance, then the property `alliance` will be populated. Else, it will be `None`.
     """
     async with session:
         user_history_query = (
@@ -446,9 +446,8 @@ async def update_collection(session: AsyncSession, collection_id: int, new_colle
 
     Args:
         session (AsyncSession): The database session to use.
-        collection (CollectionDB): The Collection to be saved.
-        include_alliances (bool): Determines, if the `alliances` related to the Collection should be saved to the database, too.
-        include_users (bool): Determines, if the `alliances` related to the Collection should be saved to the database, too.
+        collection_id (int): The `collection_id` of the Collection to update.
+        new_collection (CollectionDB): The Collection to update with.
 
     Returns:
         CollectionDB: The inserted or updated Collection.
@@ -523,14 +522,14 @@ def _apply_select_parameters_to_query(
     """Applies the specified query parameters to the given Select `query`.
 
     Args:
-        query (Select): The query to be modified.
+        query (SelectOfScalar | Select): The query to be modified.
         from_date (datetime): Specifies the earliest date to return data from.
         to_date (datetime): Specifies the latest date to return data from.
         interval (ParameterInterval): Specifies the interval of the data to be returned.
         desc (bool): Specifies the sort direction of the returned data.
 
     Returns:
-        Select: The modified query.
+        SelectOfScalar | Select: The modified query.
     """
     query = _apply_datetime_limits_to_query(query, from_date, to_date, entity_type)
     query = _apply_interval_to_query(query, interval, entity_type)
@@ -545,12 +544,12 @@ def _apply_datetime_limits_to_query(
     """Applies date limits to the given select `query`.
 
     Args:
-        query (Select): The query to be modified.
+        query (SelectOfScalar | Select): The query to be modified.
         from_date (datetime): Specifies the earliest date to return data from.
         to_date (datetime): Specifies the latest date to return data from.
 
     Returns:
-        Select: The modified query.
+        SelectOfScalar | Select: The modified query.
     """
     if from_date:
         query = query.where(entity_type.collected_at >= from_date)
@@ -565,11 +564,11 @@ def _apply_interval_to_query(
     """Applies an interval to the given Select `query`.
 
     Args:
-        query (Select): The query to be modified.
+        query (SelectOfScalar | Select): The query to be modified.
         interval (ParameterInterval): Specifies the interval of the data to be returned.
 
     Returns:
-        Select: The modified query.
+        SelectOfScalar | Select: The modified query.
     """
     match interval:
         case ParameterInterval.DAILY:
@@ -583,11 +582,11 @@ def _apply_order_by_collected_at_to_query(query: SelectOfScalar | Select, desc: 
     """Applies a sort direction to the given Select `query`.
 
     Args:
-        query (Select): The query to be modified.
+        query (SelectOfScalar | Select): The query to be modified.
         desc (bool): Specifies the sort direction of the returned data.
 
     Returns:
-        Select: The modified query.
+        SelectOfScalar | Select: The modified query.
     """
     if desc:
         query = query.order_by(col(entity_type.collected_at).desc())
@@ -757,7 +756,7 @@ def _get_date_defaults(from_date: datetime | None, to_date: datetime | None) -> 
         to_date (datetime, optional): The provided `to_date`, or None if not provided.
 
     Returns:
-        tuple[datetime, datetime]: A tuple containing the `from_date` and `to_date`, with defaults applied if necessary. If `from_date` is None, it defaults to the PSS start date. If `to_date` is None, it defaults to the current UTC time.
+        tuple[datetime, datetime]: A tuple containing the `from_date` and `to_date`, with defaults applied if necessary. If `from_date` is None, it defaults to the PSS start date. If `to_date` is None, it defaults to the current UTC time. Both values are timezone-naive.
     """
     if not from_date:
         from_date = utils.remove_timezone(CONSTANTS.pss_start_date)

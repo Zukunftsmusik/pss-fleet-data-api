@@ -203,6 +203,11 @@ class CollectionMetadataCreateBase(BaseModel):
     @field_validator("timestamp", mode="before")
     @staticmethod
     def transform_timestamp(value: datetime | str) -> datetime:
+        """Transforms the timestamp to a timezone-aware datetime in UTC. If the value is already a datetime, it will be localized to UTC if it is naive. If the value is a string, it will be parsed and localized to UTC.
+
+        Args:
+            value (datetime | str): The timestamp to transform.
+        """
         if not value:
             return value
 
@@ -554,7 +559,7 @@ UserOut = tuple[
     INT_GE_0,
     INT_GE_0,
     int,
-    UserAllianceMembershipEncoded,
+    int,
     OPTIONAL_INT_GE_0,
     OPTIONAL_INT_GE_0,
     OPTIONAL_INT_GE_0,

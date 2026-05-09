@@ -6,6 +6,8 @@ description = "A REST API server for Pixelstarships Fleet Data"
 authors = [
     { name = "The worst.", email = "theworstpss@gmail.com" }
 ]
+readme = "README.md"
+requires-python = ">= 3.13.3"
 dependencies = [
     "alembic>=1.18.4",
     "asyncpg>=0.31.0",
@@ -17,8 +19,6 @@ dependencies = [
     "sqlmodel>=0.0.38",
     "sqlalchemy-utils>=0.42.1",
 ]
-readme = "README.md"
-requires-python = ">= 3.13.3"
 
 [dependency-groups]
 dev = [

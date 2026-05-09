@@ -18,7 +18,7 @@ dependencies = [
     "sqlalchemy-utils>=0.42.1",
 ]
 readme = "README.md"
-requires-python = ">= 3.12.3"
+requires-python = ">= 3.13.3"
 
 [dependency-groups]
 dev = [
@@ -31,39 +31,6 @@ dev = [
     "ruff>=0.15.12",
     "vulture>=2.16",
 ]
-
-[tool.autoflake]
-in-place = true
-remove-all-unused-imports = true
-ignore-init-module-imports = true
-recursive = true
-
-[tool.black]
-line-length = 150
-target-version = ['py312']
-include = '\.pyi?$'
-
-[tool.flake8]
-exclude = [
-    "__pycache__",
-    ".direnv",
-    ".git",
-    ".venv",
-    "build",
-    "dist",
-]
-extend-ignore = "B008,B907,B950,E501,W291"
-show-source = true
-statistics = true
-select = "B,B9,BLK,C,E,F,W"
-max-complexity = 10
-max-line-length = 150
-
-[tool.isort]
-src_paths = ["src", "tests"]
-profile = "black"
-line_length = 150
-lines_after_imports = 2
 
 [tool.ruff]
 line-length = 150

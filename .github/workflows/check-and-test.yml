@@ -5,8 +5,10 @@ name: Check and Test
 on:
   pull_request:
     branches: ["main", "release/*", "hotfix/*"]
+    paths: [".", "./.github"]
   push:
     branches: ["main"]
+    paths: [".", "./.github"]
 
 permissions:
   contents: read

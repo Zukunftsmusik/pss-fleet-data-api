@@ -1,7 +1,6 @@
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from os import getenv
-from typing import Optional
 
 
 @dataclass(frozen=True)
@@ -53,7 +52,7 @@ class Settings:
     reinitialize_database_on_startup: bool = getenv("REINITIALIZE_DATABASE", "false") == "true"
 
     # Access
-    root_api_key: Optional[str] = getenv("ROOT_API_KEY", None)
+    root_api_key: str | None = getenv("ROOT_API_KEY", None)
 
 
 SETTINGS = Settings()

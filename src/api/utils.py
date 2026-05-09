@@ -1,5 +1,4 @@
 from datetime import datetime, timedelta, timezone
-from typing import Optional, Union
 
 import dateutil
 
@@ -22,7 +21,7 @@ ALLIANCE_MEMBERSHIP_ENCODE_LOOKUP = {
 ALLIANCE_MEMBERSHIP_DECODE_LOOKUP = {value: key for key, value in ALLIANCE_MEMBERSHIP_ENCODE_LOOKUP.items()}
 
 
-def add_timezone_utc(dt: Optional[datetime]) -> datetime:
+def add_timezone_utc(dt: datetime | None) -> datetime:
     """Takes a `datetime` and makes it a timezone-aware `datetime` with timezone UTC, if it's not timezone-aware, yet.
 
     Args:
@@ -46,7 +45,7 @@ def add_timezone_utc(dt: Optional[datetime]) -> datetime:
         return dt
 
 
-def convert_datetime_to_seconds(dt: Optional[datetime]) -> int:
+def convert_datetime_to_seconds(dt: datetime | None) -> int:
     """Takes a `datetime` and converts it to seconds since the PSS start date.
 
     Args:
@@ -71,11 +70,11 @@ def convert_datetime_to_seconds(dt: Optional[datetime]) -> int:
     return int((dt - CONSTANTS.pss_start_date).total_seconds())
 
 
-def decode_alliance_membership(membership: Union[int, UserAllianceMembershipEncoded]) -> UserAllianceMembership:
+def decode_alliance_membership(membership: int | UserAllianceMembershipEncoded) -> UserAllianceMembership:
     """Converts an `int` or `UserCreateAllianceMembership` enum into a `UserAllianceMembership`.
 
     Args:
-        membership (Union[int, UserCreateAllianceMembership]): The alliance membership (member rank) to be decoded.
+        membership (int | UserAllianceMembershipEncoded): The alliance membership (member rank) to be decoded.
 
     Raises:
         ValueError: Raised, if parameter `membership` is `None` or not a valid value for the enum `UserCreateAllianceMembership`.
@@ -96,11 +95,11 @@ def decode_alliance_membership(membership: Union[int, UserAllianceMembershipEnco
     return ALLIANCE_MEMBERSHIP_DECODE_LOOKUP.get(membership, UserAllianceMembership.NONE)
 
 
-def encode_alliance_membership(membership: Union[str, UserAllianceMembership]) -> int:
+def encode_alliance_membership(membership: str | UserAllianceMembership) -> int:
     """Converts a `str` or `UserAllianceMembership` enum into an `int`.
 
     Args:
-        membership (Union[str, UserAllianceMembership]): The alliance membership (member rank) to be encoded.
+        membership (str | UserAllianceMembership]): The alliance membership (member rank) to be encoded.
 
     Raises:
         TypeError: Raised, if the parameter `membership` is not of type `str` or `UserAllianceMembership`.
@@ -121,7 +120,7 @@ def encode_alliance_membership(membership: Union[str, UserAllianceMembership]) -
     return int(ALLIANCE_MEMBERSHIP_ENCODE_LOOKUP.get(membership, UserAllianceMembershipEncoded.NONE))
 
 
-def localize_to_utc(dt: Optional[datetime]) -> datetime:
+def localize_to_utc(dt: datetime | None) -> datetime:
     """Takes a `datetime` and converts it to a timezone-aware UTC `datetime`.
 
     Args:
@@ -147,11 +146,11 @@ def localize_to_utc(dt: Optional[datetime]) -> datetime:
         return dt
 
 
-def parse_datetime(dt: Optional[Union[datetime, int, str]]) -> datetime:
+def parse_datetime(dt: datetime | int | str | None) -> datetime:
     """Parses a `str` or `int` to `datetime` or returns the passed datetime.
 
     Args:
-        dt (Union[datetime, int, str]): The `str` or `int` to be parsed. If it's an `int`, it represents the seconds since Jan 6th, 2016 12 am.
+        dt (datetime | int | str, optional): The `str` or `int` to be parsed. If it's an `int`, it represents the seconds since Jan 6th, 2016 12 am.
 
     Raises:
         ValueError: Raised, if parameter `dt` is not of type `datetime`, `int` or `str`.
@@ -175,7 +174,7 @@ def parse_datetime(dt: Optional[Union[datetime, int, str]]) -> datetime:
     return dt
 
 
-def remove_timezone(dt: Optional[datetime]) -> datetime:
+def remove_timezone(dt: datetime | None) -> datetime:
     """Removes timezone information from a timezone-aware `datetime` object.
 
     Args:

@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Annotated, Any, Optional
+from typing import Annotated, Any
 
 from fastapi import Depends, Header, Path, Query, Request
 
@@ -99,7 +99,7 @@ async def user_id(user_id: Annotated[int, Path(alias="userId", ge=1, description
 
 async def from_to_date_parameters(
     from_date: Annotated[
-        Optional[datetime],
+        datetime | None,
         Query(
             alias="fromDate",
             ge=CONSTANTS.pss_start_date,
@@ -108,7 +108,7 @@ async def from_to_date_parameters(
         ),
     ] = None,
     to_date: Annotated[
-        Optional[datetime],
+        datetime | None,
         Query(
             alias="toDate",
             ge=CONSTANTS.pss_start_date,
@@ -133,13 +133,13 @@ async def from_to_date_parameters(
 
 async def list_filter_parameters(
     interval: Annotated[
-        Optional[ParameterInterval],
+        ParameterInterval | None,
         Query(
             description="Return the data from the specified time frame in hourly, daily (last Collection of a day) or monthly (last Collection of a month) interval.",
             examples=[ParameterInterval.MONTHLY],
         ),
     ] = ParameterInterval.MONTHLY,
-    desc: Annotated[Optional[bool], Query(description="Return the results in descending order by timestamp.", examples=[False])] = False,
+    desc: Annotated[bool | None, Query(description="Return the results in descending order by timestamp.", examples=[False])] = False,
 ) -> ListFilter:
     """
     Adds query parameters `interval` and `desc` to a path.
@@ -151,8 +151,8 @@ async def list_filter_parameters(
 
 
 async def skip_take_parameters(
-    skip: Annotated[Optional[int], Query(ge=0, description="Skip this number of results from the result set.", examples=[0])] = 0,
-    take: Annotated[Optional[int], Query(ge=1, le=100, description="Limit the number of results returned.", examples=[100])] = 100,
+    skip: Annotated[int | None, Query(ge=0, description="Skip this number of results from the result set.", examples=[0])] = 0,
+    take: Annotated[int | None, Query(ge=1, le=100, description="Limit the number of results returned.", examples=[100])] = 100,
 ) -> SkipTakeFilter:
     """
     Adds query parameters `skip` and `take` to a path.
@@ -163,14 +163,14 @@ async def skip_take_parameters(
     return SkipTakeFilter(skip=skip, take=take)
 
 
-def root_api_key() -> Optional[str]:
+def root_api_key() -> str | None:
     return SETTINGS.root_api_key
 
 
 async def verify_api_key(
     request: Request,
     api_key: Annotated[str, Header(alias="Authorization", description="Your API key.")],
-    root_api_key: Optional[str] = Depends(root_api_key),
+    root_api_key: str | None = Depends(root_api_key),
 ):
     """Verifies, if an api key has been provided in the 'Authorization' header and if it's authorized to access the endpoint.
 

@@ -1,5 +1,4 @@
 from datetime import datetime, timedelta, timezone
-from typing import Optional, Union
 
 from sqlalchemy.ext.asyncio.engine import AsyncEngine
 from sqlalchemy.orm import selectinload
@@ -44,7 +43,7 @@ async def delete_collection(session: AsyncSession, collection_id: int) -> bool:
     """Attempts to delete the collection with the provided `collection_id`.
 
     Args:
-        session (Session): The database session to use.
+        session (AsyncSession): The database session to use.
         collection_id (int): The `collection_id` of the Collection to delete.
 
     Returns:
@@ -61,16 +60,16 @@ async def delete_collection(session: AsyncSession, collection_id: int) -> bool:
             return False
 
 
-async def get_alliance_from_collection(session: AsyncSession, collection_id: int, alliance_id: int) -> Optional[AllianceHistoryDB]:
+async def get_alliance_from_collection(session: AsyncSession, collection_id: int, alliance_id: int) -> AllianceHistoryDB | None:
     """Retrieves information about a specific Alliance from a specific Collection.
 
     Args:
-        session (Session): The database session to use.
+        session (AsyncSession): The database session to use.
         collection_id (int): The `collection_id` of the Collection to retrieve the data from.
         alliance_id (int): The `alliance_id` of the Alliance to retrieve.
 
     Returns:
-        Optional[AllianceDB]: Returns the specified Alliance from the specified Collection, if there's one with the specified `alliance_id`. Else, it returns `None`. If an Alliance is returned and `include_users` is `True`, then the property `users` will be populated. Else, it will be empty.
+        tuple[CollectionDB, AllianceDB] | None: Returns the specified Alliance from the specified Collection, if there's one with the specified `alliance_id`. Else, it returns `None`. If an Alliance is returned and `include_users` is `True`, then the property `users` will be populated. Else, it will be empty.
     """
     async with session:
         alliance_query = (
@@ -99,8 +98,8 @@ async def get_alliance_history(
     session: AsyncSession,
     alliance_id: int,
     include_users: bool = True,
-    from_date: Optional[datetime] = None,
-    to_date: Optional[datetime] = None,
+    from_date: datetime | None = None,
+    to_date: datetime | None = None,
     interval: ParameterInterval = ParameterInterval.MONTHLY,
     desc: bool = False,
     skip: int = 0,
@@ -110,7 +109,7 @@ async def get_alliance_history(
     """Retrieve an Alliance's history over time.
 
     Args:
-        session (Session): The database session to use.
+        session (AsyncSession): The database session to use.
         alliance_id (int): The `alliance_id` of the Alliance to retrieve data for.
         include_users (bool): Determines, if the Alliance's members should be included in the results.
         from_date (datetime, optional): Return only data collected after this date and time or exactly at this point. Defaults to None.
@@ -119,7 +118,7 @@ async def get_alliance_history(
         desc (bool, optional): Determines, whether the data should be returned in descending order by the collection date and time. Defaults to False.
         skip (int, optional): Skip this number of results from the result set. Defaults to 0.
         take (int, optional): Limit the number of results returned. Defaults to 100.
-        on_missing (ParameterInterval, optional): Specify, how to handle missing collections.
+        on_missing (ParameterOnMissing, optional): Specify, how to handle missing collections. Defaults to ParameterOnMissing.SKIP.
 
     Returns:
         list[tuple[CollectionDB, AllianceDB]]: A list of tuples representing entries in the Alliance history. A tuple contains the metadata of the respective Collection and the Alliance's data from that Collection.
@@ -155,17 +154,17 @@ async def get_alliance_history(
         return alliance_histories
 
 
-async def get_collection(session: AsyncSession, collection_id: int, include_alliances: bool, include_users: bool) -> Optional[CollectionDB]:
+async def get_collection(session: AsyncSession, collection_id: int, include_alliances: bool, include_users: bool) -> CollectionDB | None:
     """Retrieves the Collection with the specified `collection_id`.
 
     Args:
-        session (Session): The database session to use.
+        session (AsyncSession): The database session to use.
         collection_id (int): The `collection_id` of the Collection to retrieve.
         include_alliances (bool): Determines, whether to also retrieve the Alliances related to the Collection.
         include_users (bool): Determines, whether to also retrieve the Users related to the Collection.
 
     Returns:
-        Optional[CollectionDB]: The requested Collection, if it exists. Else, None. If a Collection is returned and `include_alliances` is `True`, then the property `alliances` will be populated. Else, it will be empty. If a Collection is returned and `include_users` is `True`, then the property `users` will be populated. Else, it will be empty.
+        CollectionDB | None: The requested Collection, if it exists. Else, None. If a Collection is returned and `include_alliances` is `True`, then the property `alliances` will be populated. Else, it will be empty. If a Collection is returned and `include_users` is `True`, then the property `users` will be populated. Else, it will be empty.
     """
     async with session:
         collection = await session.get(CollectionDB, collection_id)
@@ -189,11 +188,11 @@ async def get_collection(session: AsyncSession, collection_id: int, include_alli
         return collection
 
 
-async def get_collection_by_timestamp(session: AsyncSession, collected_at: datetime) -> Optional[CollectionDB]:
+async def get_collection_by_timestamp(session: AsyncSession, collected_at: datetime) -> CollectionDB | None:
     """Retrieves the Collection with the given `collected_at` datetime.
 
     Args:
-        session (Session): The database session to use.
+        session (AsyncSession): The database session to use.
         collected_at (datetime): The `collected_at` of the Collection to look for.
 
     Returns:
@@ -209,8 +208,8 @@ async def get_collection_by_timestamp(session: AsyncSession, collected_at: datet
 
 async def get_collections(
     session: AsyncSession,
-    from_date: Optional[datetime] = None,
-    to_date: Optional[datetime] = None,
+    from_date: datetime | None = None,
+    to_date: datetime | None = None,
     interval: ParameterInterval = ParameterInterval.MONTHLY,
     desc: bool = False,
     skip: int = 0,
@@ -220,14 +219,14 @@ async def get_collections(
     """Retrieves metadata of Collections meeting the specified criteria.
 
     Args:
-        session (Session): The database session to use.
+        session (AsyncSession): The database session to use.
         from_date (datetime, optional): Return only data collected after this date and time or exactly at this point. Defaults to None.
         to_date (datetime, optional): Return only data collected before this date and time or exactly at this point. Defaults to None.
         interval (ParameterInterval, optional): Specify the interval of the data returned. Defaults to ParameterInterval.MONTHLY.
         desc (bool, optional): Determines, whether the data should be returned in descending order by the collection date and time. Defaults to False.
         skip (int, optional): Skip this number of results from the result set. Defaults to 0.
         take (int, optional): Limit the number of results returned. Defaults to 100.
-        on_missing (ParameterInterval, optional): Specify, how to handle missing collections.
+        on_missing (ParameterOnMissing, optional): Specify, how to handle missing collections. Defaults to ParameterOnMissing.SKIP.
 
     Returns:
         list[CollectionDB]: A list of Collections without any Alliances or Users.
@@ -250,7 +249,7 @@ async def get_top_100_from_collection(session: AsyncSession, collection_id: int,
     """_summary_
 
     Args:
-        session (Session): The database session to use.
+        session (AsyncSession): The database session to use.
         collection_id (int): The `collection_id` of the Collection to retrieve the data from.
         skip (int, optional): Skip this number of results from the result set. Defaults to 0.
         take (int, optional): Limit the number of results returned. Defaults to 100.
@@ -266,16 +265,16 @@ async def get_top_100_from_collection(session: AsyncSession, collection_id: int,
         return list(results.all())
 
 
-async def get_user_from_collection(session: AsyncSession, collection_id: int, user_id: int) -> Optional[UserHistoryDB]:
+async def get_user_from_collection(session: AsyncSession, collection_id: int, user_id: int) -> UserHistoryDB | None:
     """Retrieves information about a specific User from a specific collection.
 
     Args:
-        session (Session): The database session to use.
+        session (AsyncSession): The database session to use.
         collection_id (int): The `collection_id` of the Collection to retrieve the data from.
         user_id (int): The `user_id` of the User to retrieve.
 
     Returns:
-        Optional[UserDB]: Returns the specified User from the specified Collection, if there's one with the specified `user_id`. Else, it returns `None`. If a User is returned, `include_alliance` is `True` and the User was in an Alliance, then the property `alliance` will be populated. Else, it will be `None`.
+        tuple[CollectionDB, UserDB] | None: Returns the specified User from the specified Collection, if there's one with the specified `user_id`. Else, it returns `None`. If a User is returned, `include_alliance` is `True` and the User was in an Alliance, then the property `alliance` will be populated. Else, it will be `None`.
     """
     async with session:
         user_history_query = (
@@ -298,8 +297,8 @@ async def get_user_history(
     session: AsyncSession,
     user_id: int,
     include_alliance: bool = True,
-    from_date: Optional[datetime] = None,
-    to_date: Optional[datetime] = None,
+    from_date: datetime | None = None,
+    to_date: datetime | None = None,
     interval: ParameterInterval = ParameterInterval.MONTHLY,
     desc: bool = False,
     skip: int = 0,
@@ -309,7 +308,7 @@ async def get_user_history(
     """Retrieve an User's history over time.
 
     Args:
-        session (Session): The database session to use.
+        session (AsyncSession): The database session to use.
         user_id (int): The `user_id` of the User to retrieve data for.
         include_alliance (bool): Determines, whether to also retrieve the Alliance of the User. Defaults to True.
         from_date (datetime, optional): Return only data collected after this date and time or exactly at this point. Defaults to None.
@@ -318,7 +317,7 @@ async def get_user_history(
         desc (bool, optional): Determines, whether the data should be returned in descending order by the collection date and time. Defaults to False.
         skip (int, optional): Skip this number of results from the result set. Defaults to 0.
         take (int, optional): Limit the number of results returned. Defaults to 100.
-        on_missing (ParameterInterval, optional): Specify, how to handle missing collections.
+        on_missing (ParameterOnMissing, optional): Specify, how to handle missing collections. Defaults to ParameterOnMissing.SKIP.
 
     Returns:
         list[tuple[CollectionDB, UserDB]]: A list of tuples representing entries in the User history. A tuple contains the metadata of the respective Collection and the User's data from that Collection.
@@ -358,7 +357,7 @@ async def has_alliance_history(session: AsyncSession, alliance_id: int) -> bool:
     """Checks, if there's any recorded history for an Alliance with the given `alliance_id`.
 
     Args:
-        session (Session): The database session to use.
+        session (AsyncSession): The database session to use.
         alliance_id (int): The `alliance_id` of the Alliance to look for.
 
     Returns:
@@ -374,7 +373,7 @@ async def has_collection(session: AsyncSession, collection_id: int) -> bool:
     """Checks, if a Collection with the given `collection_id` exists.
 
     Args:
-        session (Session): The database session to use.
+        session (AsyncSession): The database session to use.
         collection_id (int): The `collection_id` of the Collection to look for.
 
     Returns:
@@ -387,7 +386,7 @@ async def has_collection_with_timestamp(session: AsyncSession, collected_at: dat
     """Checks, if a Collection with the given `collected_at` exists.
 
     Args:
-        session (Session): The database session to use.
+        session (AsyncSession): The database session to use.
         collected_at (datetime): The `collected_at` of the Collection to look for.
 
     Returns:
@@ -405,7 +404,7 @@ async def has_user_history(session: AsyncSession, user_id: int) -> bool:
     """Checks, if there's any recorded history for a User with the given `user_id`.
 
     Args:
-        session (Session): The database session to use.
+        session (AsyncSession): The database session to use.
         user_id (int): The `user_id` of the User to look for.
 
     Returns:
@@ -421,7 +420,7 @@ async def save_collection(session: AsyncSession, collection: CollectionDB, inclu
     """Inserts a Collection into the database or updates an existing one.
 
     Args:
-        session (Session): The database session to use.
+        session (AsyncSession): The database session to use.
         collection (CollectionDB): The Collection to be saved.
         include_alliances (bool): Determines, if the `alliances` related to the Collection should be saved to the database, too.
         include_users (bool): Determines, if the `alliances` related to the Collection should be saved to the database, too.
@@ -446,10 +445,9 @@ async def update_collection(session: AsyncSession, collection_id: int, new_colle
     """Inserts a Collection into the database or updates an existing one.
 
     Args:
-        session (Session): The database session to use.
-        collection (CollectionDB): The Collection to be saved.
-        include_alliances (bool): Determines, if the `alliances` related to the Collection should be saved to the database, too.
-        include_users (bool): Determines, if the `alliances` related to the Collection should be saved to the database, too.
+        session (AsyncSession): The database session to use.
+        collection_id (int): The `collection_id` of the Collection to update.
+        new_collection (CollectionDB): The Collection to update with.
 
     Returns:
         CollectionDB: The inserted or updated Collection.
@@ -513,26 +511,25 @@ async def update_collection(session: AsyncSession, collection_id: int, new_colle
 
 
 def _apply_select_parameters_to_query(
-    query: Union[SelectOfScalar, Select],
-    from_date: Optional[datetime],
-    to_date: Optional[datetime],
+    query: SelectOfScalar | Select,
+    from_date: datetime | None,
+    to_date: datetime | None,
     interval: ParameterInterval,
     desc: bool,
     *,
     entity_type: type = CollectionDB,
-) -> Union[SelectOfScalar, Select]:
+) -> SelectOfScalar | Select:
     """Applies the specified query parameters to the given Select `query`.
 
     Args:
-        query (Select): The query to be modified.
+        query (SelectOfScalar | Select): The query to be modified.
         from_date (datetime): Specifies the earliest date to return data from.
         to_date (datetime): Specifies the latest date to return data from.
         interval (ParameterInterval): Specifies the interval of the data to be returned.
         desc (bool): Specifies the sort direction of the returned data.
-        on_missing (ParameterOnMissing): Specifies how to handle missing data.
 
     Returns:
-        Select: The modified query.
+        SelectOfScalar | Select: The modified query.
     """
     query = _apply_datetime_limits_to_query(query, from_date, to_date, entity_type)
     query = _apply_interval_to_query(query, interval, entity_type)
@@ -542,17 +539,17 @@ def _apply_select_parameters_to_query(
 
 
 def _apply_datetime_limits_to_query(
-    query: Union[SelectOfScalar, Select], from_date: Optional[datetime], to_date: Optional[datetime], entity_type: type = CollectionDB
-) -> Union[SelectOfScalar, Select]:
+    query: SelectOfScalar | Select, from_date: datetime | None, to_date: datetime | None, entity_type: type = CollectionDB
+) -> SelectOfScalar | Select:
     """Applies date limits to the given select `query`.
 
     Args:
-        query (Select): The query to be modified.
+        query (SelectOfScalar | Select): The query to be modified.
         from_date (datetime): Specifies the earliest date to return data from.
         to_date (datetime): Specifies the latest date to return data from.
 
     Returns:
-        Select: The modified query.
+        SelectOfScalar | Select: The modified query.
     """
     if from_date:
         query = query.where(entity_type.collected_at >= from_date)
@@ -562,16 +559,16 @@ def _apply_datetime_limits_to_query(
 
 
 def _apply_interval_to_query(
-    query: Union[SelectOfScalar, Select], interval: ParameterInterval, entity_type: type = CollectionDB
-) -> Union[SelectOfScalar, Select]:
+    query: SelectOfScalar | Select, interval: ParameterInterval, entity_type: type = CollectionDB
+) -> SelectOfScalar | Select:
     """Applies an interval to the given Select `query`.
 
     Args:
-        query (Select): The query to be modified.
+        query (SelectOfScalar | Select): The query to be modified.
         interval (ParameterInterval): Specifies the interval of the data to be returned.
 
     Returns:
-        Select: The modified query.
+        SelectOfScalar | Select: The modified query.
     """
     match interval:
         case ParameterInterval.DAILY:
@@ -581,17 +578,15 @@ def _apply_interval_to_query(
     return query
 
 
-def _apply_order_by_collected_at_to_query(
-    query: Union[SelectOfScalar, Select], desc: bool, entity_type: type = CollectionDB
-) -> Union[SelectOfScalar, Select]:
+def _apply_order_by_collected_at_to_query(query: SelectOfScalar | Select, desc: bool, entity_type: type = CollectionDB) -> SelectOfScalar | Select:
     """Applies a sort direction to the given Select `query`.
 
     Args:
-        query (Select): The query to be modified.
+        query (SelectOfScalar | Select): The query to be modified.
         desc (bool): Specifies the sort direction of the returned data.
 
     Returns:
-        Select: The modified query.
+        SelectOfScalar | Select: The modified query.
     """
     if desc:
         query = query.order_by(col(entity_type.collected_at).desc())
@@ -602,8 +597,8 @@ def _apply_order_by_collected_at_to_query(
 
 async def _get_collections_on_missing_empty_or_null(
     session: AsyncSession,
-    from_date: Optional[datetime],
-    to_date: Optional[datetime],
+    from_date: datetime | None,
+    to_date: datetime | None,
     interval: ParameterInterval,
     desc: bool,
     skip: int,
@@ -614,8 +609,8 @@ async def _get_collections_on_missing_empty_or_null(
 
     Args:
         session (AsyncSession): The database session.
-        from_date (Optional[datetime]): The start date for the query.
-        to_date (Optional[datetime]): The end date for the query.
+        from_date (datetime, optional): The start date for the query.
+        to_date (datetime, optional): The end date for the query.
         interval (ParameterInterval): The interval for data aggregation.
         desc (bool): Whether to sort in descending order.
         skip (int): Number of records to skip.
@@ -671,8 +666,8 @@ async def _get_collections_on_missing_empty_or_null(
 
 async def _get_collections_on_missing_last(
     session: AsyncSession,
-    from_date: Optional[datetime],
-    to_date: Optional[datetime],
+    from_date: datetime | None,
+    to_date: datetime | None,
     interval: ParameterInterval,
     desc: bool,
     skip: int,
@@ -682,8 +677,8 @@ async def _get_collections_on_missing_last(
 
     Args:
         session (AsyncSession): The database session to use.
-        from_date (Optional[datetime]): The start date for the query. If None, defaults to the PSS start date.
-        to_date (Optional[datetime]): The end date for the query. If None, defaults to the current UTC time.
+        from_date (datetime, optional): The start date for the query. If None, defaults to the PSS start date.
+        to_date (datetime, optional): The end date for the query. If None, defaults to the current UTC time.
         interval (ParameterInterval): The interval to group collections by (e.g., HOURLY, DAILY).
         desc (bool): Whether to order the results in descending order by collected_at.
         skip (int): The number of results to skip.
@@ -722,8 +717,8 @@ async def _get_collections_on_missing_last(
 
 async def _get_collections_on_missing_skip(
     session: AsyncSession,
-    from_date: Optional[datetime],
-    to_date: Optional[datetime],
+    from_date: datetime | None,
+    to_date: datetime | None,
     interval: ParameterInterval,
     desc: bool,
     skip: int,
@@ -733,8 +728,8 @@ async def _get_collections_on_missing_skip(
 
     Args:
         session (AsyncSession): The database session to use.
-        from_date (Optional[datetime]): The start date for the query. If None, defaults to the PSS start date.
-        to_date (Optional[datetime]): The end date for the query. If None, defaults to the current UTC time.
+        from_date (datetime, optional): The start date for the query. If None, defaults to the PSS start date.
+        to_date (datetime, optional): The end date for the query. If None, defaults to the current UTC time.
         interval (ParameterInterval): The interval to group collections by (e.g., HOURLY, DAILY).
         desc (bool): Whether to order the results in descending order by collected_at.
         skip (int): The number of results to skip.
@@ -753,15 +748,15 @@ async def _get_collections_on_missing_skip(
         return list(collections)
 
 
-def _get_date_defaults(from_date: Optional[datetime], to_date: Optional[datetime]) -> tuple[datetime, datetime]:
+def _get_date_defaults(from_date: datetime | None, to_date: datetime | None) -> tuple[datetime, datetime]:
     """Returns default values for `from_date` and `to_date` if they are not provided and removes timezone information from the provided dates.
 
     Args:
-        from_date (Optional[datetime]): The provided `from_date`, or None if not provided.
-        to_date (Optional[datetime]): The provided `to_date`, or None if not provided.
+        from_date (datetime, optional): The provided `from_date`, or None if not provided.
+        to_date (datetime, optional): The provided `to_date`, or None if not provided.
 
     Returns:
-        tuple[datetime, datetime]: A tuple containing the `from_date` and `to_date`, with defaults applied if necessary. If `from_date` is None, it defaults to the PSS start date. If `to_date` is None, it defaults to the current UTC time.
+        tuple[datetime, datetime]: A tuple containing the `from_date` and `to_date`, with defaults applied if necessary. If `from_date` is None, it defaults to the PSS start date. If `to_date` is None, it defaults to the current UTC time. Both values are timezone-naive.
     """
     if not from_date:
         from_date = utils.remove_timezone(CONSTANTS.pss_start_date)

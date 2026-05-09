@@ -1,13 +1,17 @@
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Annotated, Any, Optional
+from typing import Annotated, Any
 
 from fastapi import Depends, Header, Path, Query, Request
 
 from .. import utils
 from ..config import CONSTANTS, SETTINGS
-from ..models.enums import ParameterInterval
-from ..models.exceptions import FromDateAfterToDateError, MissingAccessError, NotAuthenticatedError
+from ..models.enums import ParameterInterval, ParameterOnMissing
+from ..models.exceptions import (
+    FromDateAfterToDateError,
+    MissingAccessError,
+    NotAuthenticatedError,
+)
 
 
 @dataclass(frozen=True)
@@ -18,8 +22,8 @@ class ListFilter:
 
 @dataclass(frozen=True)
 class DatetimeFilter:
-    from_date: datetime = None
-    to_date: datetime = None
+    from_date: datetime | None = None
+    to_date: datetime | None = None
 
 
 @dataclass(frozen=True)
@@ -39,7 +43,7 @@ async def alliance_id(alliance_id: Annotated[int, Path(alias="allianceId", ge=1,
 
 
 async def collection_id(
-    collection_id: Annotated[int, Path(alias="collectionId", ge=1, description="The ID of a PSS fleet data Collection.", examples=[1])]
+    collection_id: Annotated[int, Path(alias="collectionId", ge=1, description="The ID of a PSS fleet data Collection.", examples=[1])],
 ) -> int:
     """
     Adds path parameter `collectionId` to a path.
@@ -48,6 +52,39 @@ async def collection_id(
         int: The CollectionId.
     """
     return collection_id
+
+
+async def division_design_id(
+    division_design_id: Annotated[
+        int, Query(alias="divisionDesignId", ge=0, description="The ID of the PSS Monthly Fleet Tournament Division.", examples=[1])
+    ],
+) -> int:
+    """
+    Adds query parameter `divisionDesignId` to a path.
+
+    Returns:
+        int: The DivisionDesignId.
+    """
+    return division_design_id
+
+
+async def on_missing(
+    on_missing: Annotated[
+        ParameterOnMissing,
+        Query(
+            alias="onMissing",
+            description="Specify how missing collections should be handled.",
+            examples=[ParameterOnMissing.SKIP],
+        ),
+    ] = ParameterOnMissing.SKIP,
+) -> ParameterOnMissing:
+    """
+    Adds path parameter `onMissing` to a path.
+
+    Returns:
+        ParameterOnMissing: The specified onMissing parameter or "skip".
+    """
+    return on_missing
 
 
 async def user_id(user_id: Annotated[int, Path(alias="userId", ge=1, description="The ID of a PSS User.", examples=[4510693])]) -> int:
@@ -60,23 +97,9 @@ async def user_id(user_id: Annotated[int, Path(alias="userId", ge=1, description
     return user_id
 
 
-async def division_design_id(
-    division_design_id: Annotated[
-        int, Query(alias="divisionDesignId", ge=0, description="The ID of the PSS Monthly Fleet Tournament Division.", examples=[1])
-    ]
-) -> int:
-    """
-    Adds query parameter `divisionDesignId` to a path.
-
-    Returns:
-        int: The DivisionDesignId.
-    """
-    return division_design_id
-
-
 async def from_to_date_parameters(
     from_date: Annotated[
-        Optional[datetime],
+        datetime | None,
         Query(
             alias="fromDate",
             ge=CONSTANTS.pss_start_date,
@@ -85,7 +108,7 @@ async def from_to_date_parameters(
         ),
     ] = None,
     to_date: Annotated[
-        Optional[datetime],
+        datetime | None,
         Query(
             alias="toDate",
             ge=CONSTANTS.pss_start_date,
@@ -110,13 +133,13 @@ async def from_to_date_parameters(
 
 async def list_filter_parameters(
     interval: Annotated[
-        Optional[ParameterInterval],
+        ParameterInterval | None,
         Query(
             description="Return the data from the specified time frame in hourly, daily (last Collection of a day) or monthly (last Collection of a month) interval.",
             examples=[ParameterInterval.MONTHLY],
         ),
     ] = ParameterInterval.MONTHLY,
-    desc: Annotated[Optional[bool], Query(description="Return the results in descending order by timestamp.", examples=[False])] = False,
+    desc: Annotated[bool | None, Query(description="Return the results in descending order by timestamp.", examples=[False])] = False,
 ) -> ListFilter:
     """
     Adds query parameters `interval` and `desc` to a path.
@@ -128,8 +151,8 @@ async def list_filter_parameters(
 
 
 async def skip_take_parameters(
-    skip: Annotated[Optional[int], Query(ge=0, description="Skip this number of results from the result set.", examples=[0])] = 0,
-    take: Annotated[Optional[int], Query(ge=1, le=100, description="Limit the number of results returned.", examples=[100])] = 100,
+    skip: Annotated[int | None, Query(ge=0, description="Skip this number of results from the result set.", examples=[0])] = 0,
+    take: Annotated[int | None, Query(ge=1, le=100, description="Limit the number of results returned.", examples=[100])] = 100,
 ) -> SkipTakeFilter:
     """
     Adds query parameters `skip` and `take` to a path.
@@ -140,14 +163,14 @@ async def skip_take_parameters(
     return SkipTakeFilter(skip=skip, take=take)
 
 
-def root_api_key() -> Optional[str]:
+def root_api_key() -> str | None:
     return SETTINGS.root_api_key
 
 
 async def verify_api_key(
     request: Request,
     api_key: Annotated[str, Header(alias="Authorization", description="Your API key.")],
-    root_api_key: Optional[str] = Depends(root_api_key),
+    root_api_key: str | None = Depends(root_api_key),
 ):
     """Verifies, if an api key has been provided in the 'Authorization' header and if it's authorized to access the endpoint.
 
@@ -199,18 +222,18 @@ authorization_dependencies: list[Any] = [Depends(verify_api_key)] if root_api_ke
 
 __all__ = [
     # classes
-    DatetimeFilter.__name__,
-    ListFilter.__name__,
-    SkipTakeFilter.__name__,
+    "DatetimeFilter",
+    "ListFilter",
+    "SkipTakeFilter",
     # functions
-    alliance_id.__name__,
-    collection_id.__name__,
-    division_design_id.__name__,
-    from_to_date_parameters.__name__,
-    list_filter_parameters.__name__,
-    skip_take_parameters.__name__,
-    user_id.__name__,
-    verify_api_key.__name__,
+    "alliance_id",
+    "collection_id",
+    "division_design_id",
+    "from_to_date_parameters",
+    "list_filter_parameters",
+    "skip_take_parameters",
+    "user_id",
+    "verify_api_key",
     # conditional dependencies
     "authorization_dependencies",
 ]

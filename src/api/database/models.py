@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Any, Optional, Union
+from typing import Any
 
 from pydantic import field_validator
 from sqlalchemy.orm import foreign, relationship
@@ -15,7 +15,7 @@ class CollectionBaseDB(SQLModel):
 
     @field_validator("collected_at", mode="before")
     @staticmethod
-    def transform_collected_at(value: Any) -> Union[datetime, Any]:
+    def transform_collected_at(value: Any) -> datetime | Any:
         """Takes the value provided to set the property `collected_at`, parses it, localizes it to UTC and then removes the timezone information.
 
         Args:
@@ -25,7 +25,7 @@ class CollectionBaseDB(SQLModel):
             ValueError: Raised, if the parsed datetime is lower than the PSS start date.
 
         Returns:
-            Union[datetime, Any]: The transformed datetime or the original value, if it's not been transformed.
+            datetime | Any: The transformed datetime or the original value, if it's not been transformed.
         """
         if isinstance(value, (datetime, int, str)):
             result = utils.remove_timezone(utils.localize_to_utc(utils.parse_datetime(value)))
@@ -49,15 +49,15 @@ class CollectionDB(CollectionBaseDB, table=True):
     """Date and time of when this snapshot was created."""
     duration: float = Field(ge=0.0)
     """The time it took to collection the data in this snapshot."""
-    fleet_count: Optional[int] = Field(ge=0, le=101)  # Sometimes, 101 fleets participate.
+    fleet_count: int | None = Field(ge=0, le=101)  # Sometimes, 101 fleets participate.
     """The number of fleets collected in this snapshot."""
-    user_count: Optional[int] = Field(
+    user_count: int | None = Field(
         ge=0, le=10200
     )  # Up to 100 members per fleet plus top 100 players, if they all aren't in a tournament fleet (unlikely, but still).
     """The number of players collected in this snapshot. Up to 100 members per fleet and an additional"""
     tournament_running: bool
     """Determines, if a monthly fleet tournament was active when collectin the data."""
-    max_tournament_battle_attempts: Optional[int] = Field(ge=0, default=None, nullable=True)
+    max_tournament_battle_attempts: int | None = Field(ge=0, default=None, nullable=True)
     """The maximum Tournament battle attempts per day for any given player."""
 
     alliances: list["AllianceDB"] = Relationship(
@@ -88,13 +88,13 @@ class AllianceDB(AllianceBaseDB, table=True):
     """The PSS property `Score` of the Alliance as returned by the PSS API."""
     division_design_id: int = Field(ge=0)
     """The PSS property `DivisionDesignId` of the Alliance as returned by the PSS API."""
-    trophy: Optional[int] = Field(ge=0, default=None, nullable=True)
+    trophy: int | None = Field(ge=0, default=None, nullable=True)
     """The PSS property `Trophy` of the Alliance as returned by the PSS API."""
-    championship_score: Optional[int] = Field(ge=0, default=None, nullable=True)
+    championship_score: int | None = Field(ge=0, default=None, nullable=True)
     """The PSS property `ChampionshipScore` of the Alliance as returned by the PSS API."""
-    number_of_members: Optional[int] = Field(ge=0, le=100, default=None, nullable=True)
+    number_of_members: int | None = Field(ge=0, le=100, default=None, nullable=True)
     """The PSS property `NumberOfMembers` of the Alliance as returned by the PSS API."""
-    number_of_approved_members: Optional[int] = Field(ge=0, le=100, default=None, nullable=True)
+    number_of_approved_members: int | None = Field(ge=0, le=100, default=None, nullable=True)
     """The PSS property `NumberOfApprovedMembers` of the Alliance as returned by the PSS API."""
 
     collection: CollectionDB = Relationship(back_populates="alliances", sa_relationship_kwargs={"lazy": "noload"})
@@ -104,11 +104,11 @@ class AllianceDB(AllianceBaseDB, table=True):
 
 
 class UserBaseDB(SQLModel):
-    alliance_join_date: Optional[datetime] = Field(default=None, nullable=True)
+    alliance_join_date: datetime | None = Field(default=None, nullable=True)
     """The PSS property `AllianceJoinDate` of the User as returned by the PSS API."""
-    last_login_date: Optional[datetime] = Field(default=None, nullable=True)
+    last_login_date: datetime | None = Field(default=None, nullable=True)
     """The PSS property `LastLoginDate` of the User as returned by the PSS API."""
-    last_heartbeat_date: Optional[datetime] = Field(default=None, nullable=True)
+    last_heartbeat_date: datetime | None = Field(default=None, nullable=True)
     """The PSS property `LastHeartBeatDate` of the User as returned by the PSS API."""
 
     @field_validator("alliance_join_date", mode="before")
@@ -123,7 +123,7 @@ class UserBaseDB(SQLModel):
             ValueError: Raised, if the parsed datetime is lower than the PSS start date.
 
         Returns:
-            Union[datetime, Any]: The transformed datetime or the original value, if it's not been transformed.
+            datetime | Any: The transformed datetime or the original value, if it's not been transformed.
         """
         if isinstance(value, (datetime, int, str)):
             result = utils.remove_timezone(utils.localize_to_utc(utils.parse_datetime(value)))
@@ -145,7 +145,7 @@ class UserBaseDB(SQLModel):
             ValueError: Raised, if the parsed datetime is lower than the PSS start date.
 
         Returns:
-            Union[datetime, Any]: The transformed datetime or the original value, if it's not been transformed.
+            datetime | Any: The transformed datetime or the original value, if it's not been transformed.
         """
         if isinstance(value, (datetime, int, str)):
             result = utils.remove_timezone(utils.localize_to_utc(utils.parse_datetime(value)))
@@ -167,7 +167,7 @@ class UserBaseDB(SQLModel):
             ValueError: Raised, if the parsed datetime is lower than the PSS start date.
 
         Returns:
-            Union[datetime, Any]: The transformed datetime or the original value, if it's not been transformed.
+            datetime | Any: The transformed datetime or the original value, if it's not been transformed.
         """
         if isinstance(value, (datetime, int, str)):
             result = utils.remove_timezone(utils.localize_to_utc(utils.parse_datetime(value)))
@@ -196,40 +196,40 @@ class UserDB(UserBaseDB, table=True):
     """The PSS property `Trophy` of the User as returned by the PSS API."""
     alliance_score: int = Field(ge=0, default=0)
     """The PSS property `AllianceScore` (stars) of the User as returned by the PSS API."""
-    alliance_membership: Optional[str] = Field(default=None, nullable=True)
+    alliance_membership: str | None = Field(default=None, nullable=True)
     """The PSS property `AllianceMembership` (fleet rank) of the User as returned by the PSS API."""
-    alliance_join_date: Optional[datetime] = Field(default=None, nullable=True)
+    alliance_join_date: datetime | None = Field(default=None, nullable=True)
     """The PSS property `AllianceJoinDate` of the User as returned by the PSS API."""
-    last_login_date: Optional[datetime] = Field(default=None, nullable=True)
+    last_login_date: datetime | None = Field(default=None, nullable=True)
     """The PSS property `LastLoginDate` of the User as returned by the PSS API."""
-    last_heartbeat_date: Optional[datetime] = Field(default=None, nullable=True)
+    last_heartbeat_date: datetime | None = Field(default=None, nullable=True)
     """The PSS property `LastHeartBeatDate` of the User as returned by the PSS API."""
-    crew_donated: Optional[int] = Field(ge=0)
+    crew_donated: int | None = Field(ge=0)
     """The PSS property `CrewDonated` of the User as returned by the PSS API."""
-    crew_received: Optional[int] = Field(ge=0)
+    crew_received: int | None = Field(ge=0)
     """The PSS property `CrewReceived` (crew borrowed) of the User as returned by the PSS API."""
-    pvp_attack_wins: Optional[int] = Field(ge=0)
+    pvp_attack_wins: int | None = Field(ge=0)
     """The PSS property `PvPAttackWins` of the User as returned by the PSS API."""
-    pvp_attack_losses: Optional[int] = Field(ge=0)
+    pvp_attack_losses: int | None = Field(ge=0)
     """The PSS property `PvPAttackLosses` of the User as returned by the PSS API."""
-    pvp_attack_draws: Optional[int] = Field(ge=0)
+    pvp_attack_draws: int | None = Field(ge=0)
     """The PSS property `PvPAttackDraws` of the User as returned by the PSS API."""
-    pvp_defence_wins: Optional[int] = Field(ge=0)
+    pvp_defence_wins: int | None = Field(ge=0)
     """The PSS property `PvPDefenceWins` of the User as returned by the PSS API."""
-    pvp_defence_losses: Optional[int] = Field(ge=0)
+    pvp_defence_losses: int | None = Field(ge=0)
     """The PSS property `PvPDefenceLosses` of the User as returned by the PSS API."""
-    pvp_defence_draws: Optional[int] = Field(ge=0)
+    pvp_defence_draws: int | None = Field(ge=0)
     """The PSS property `PvPDefenceDraws` of the User as returned by the PSS API."""
-    championship_score: Optional[int] = Field(ge=0, default=None, nullable=True)
+    championship_score: int | None = Field(ge=0, default=None, nullable=True)
     """The PSS property `ChampionshipScore` of the User as returned by the PSS API."""
-    highest_trophy: Optional[int] = Field(ge=0, default=None, nullable=True)
+    highest_trophy: int | None = Field(ge=0, default=None, nullable=True)
     """The PSS property `HighestTrophy` of the User as returned by the PSS API."""
-    tournament_bonus_score: Optional[int] = Field(ge=0, default=None, nullable=True)
+    tournament_bonus_score: int | None = Field(ge=0, default=None, nullable=True)
     """The PSS property `TournamentBonusScore` of the User as returned by the PSS API."""
 
     collection: CollectionDB = Relationship(back_populates="users", sa_relationship_kwargs={"lazy": "noload"})
     """The Collection this User data is referencing."""
-    alliance: Optional[AllianceDB] = Relationship()
+    alliance: AllianceDB | None = Relationship()
     """The fleet of this player."""
 
 
@@ -262,9 +262,9 @@ UserHistoryDB = tuple[CollectionDB, UserDB]
 
 
 __all__ = [
-    AllianceDB.__name__,
-    AllianceHistoryDB.__name__,
-    CollectionDB.__name__,
-    UserDB.__name__,
-    UserHistoryDB.__name__,
+    "AllianceDB",
+    "AllianceHistoryDB",
+    "CollectionDB",
+    "UserDB",
+    "UserHistoryDB",
 ]

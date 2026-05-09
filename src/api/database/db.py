@@ -1,6 +1,6 @@
 import io
 import json
-from typing import AsyncGenerator, Union
+from typing import AsyncGenerator
 
 import alembic.command
 import sqlalchemy_utils
@@ -23,11 +23,11 @@ from .models import AllianceBaseDB, AllianceDB, CollectionBaseDB, CollectionDB, 
 ENGINE: AsyncEngine = None
 
 
-def create_collections_from_dummy_data(data: Union[dict, list[dict]]) -> list[CollectionDB]:
+def create_collections_from_dummy_data(data: dict | list[dict]) -> list[CollectionDB]:
     """Takes verbose Collection dummy data from a file and converts it to a list of `CollectionDB` objects.
 
     Args:
-        data (Union[dict, list[dict]]): Either a verbose Collection or a list of verbose Collections read from a file.
+        data (dict | list[dict]): Either a verbose Collection or a list of verbose Collections read from a file.
 
     Returns:
         list[CollectionDB]: The converted data.
@@ -135,8 +135,7 @@ def initialize_db(reinitialize: bool = False):
     """Initializes the database. Optionally drops all tables before creating them. Optionally dummy data will be read from disk and inserted.
 
     Args:
-        drop_tables (bool, optional): Determines, if all tables should be dropped before being recreated. Defaults to False.
-        paths_to_dummy_data (list[str], optional): The paths to files with verbose Collection data. Defaults to None.
+        drop_tables (bool, optional): Determines, if all tables should be dropped before being recreated. Defaults to `False`.
 
     Raises:
         RuntimeError: Raised, if `ENGINE` in this module hasn't been initialized, yet.
@@ -155,7 +154,7 @@ def initialize_db(reinitialize: bool = False):
         alembic.command.upgrade(alembic_config, "head", tag="from_app")
 
 
-def set_up_db_engine(database_url: str, echo: bool = None):
+def set_up_db_engine(database_url: str, echo: bool | None = None):
     """Initializes the database engine `ENGINE`.
 
     Args:
@@ -173,6 +172,11 @@ def set_up_db_engine(database_url: str, echo: bool = None):
 
 
 def __alembic_current_is_head(sync_connection_string: str):
+    """Determines, if the current alembic revision is at head.
+
+    Args:
+        sync_connection_string (str): The synchronous connection string to the database, which is needed for the AlembicConfig.
+    """
     output_buffer = io.StringIO()
 
     alembic_config = AlembicConfig("alembic.ini", stdout=output_buffer)
@@ -184,8 +188,13 @@ def __alembic_current_is_head(sync_connection_string: str):
     return "(head)" in current
 
 
-def __drop_tables(connection_str: str):
-    engine = create_engine(connection_str, poolclass=NullPool)
+def __drop_tables(sync_connection_string: str):
+    """Drops all tables in the database. Additionally, the `alembic_version` table will be dropped, if it exists.
+
+    Args:
+        sync_connection_string (str): The synchronous connection string to the database, which is needed to create the engine.
+    """
+    engine = create_engine(sync_connection_string, poolclass=NullPool)
     SQLModel.metadata.drop_all(engine)
     with engine.begin() as connection:
         connection.execute(text("DROP TABLE IF EXISTS alembic_version;"))
@@ -194,10 +203,10 @@ def __drop_tables(connection_str: str):
 
 __all__ = [
     "ENGINE",
-    create_collections_from_dummy_data.__name__,
-    create_dummy_data.__name__,
-    get_session.__name__,
-    initialize_db.__name__,
-    insert_dummy_collections.__name__,
-    set_up_db_engine.__name__,
+    "create_collections_from_dummy_data",
+    "create_dummy_data",
+    "get_session",
+    "initialize_db",
+    "insert_dummy_collections",
+    "set_up_db_engine",
 ]

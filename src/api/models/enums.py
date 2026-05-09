@@ -30,6 +30,7 @@ class ErrorCode(StrEnum):
     PARAMETER_FROM_DATE_INVALID = "PARAMETER_FROM_DATE_INVALID"
     PARAMETER_FROM_DATE_TOO_EARLY = "PARAMETER_FROM_DATE_TOO_EARLY"
     PARAMETER_INTERVAL_INVALID = "PARAMETER_INTERVAL_INVALID"
+    PARAMETER_ONMISSING_INVALID = "PARAMETER_ONMISSING_INVALID"
     PARAMETER_SKIP_INVALID = "PARAMETER_SKIP_INVALID"
     PARAMETER_TAKE_INVALID = "PARAMETER_TAKE_INVALID"
     PARAMETER_TO_DATE_INVALID = "PARAMETER_TO_DATE_INVALID"
@@ -76,6 +77,21 @@ class ParameterInterval(StrEnum):
     """Return daily data recorded 1 minute before daily reset, if possible. Daily data may not be available."""
     MONTHLY = "month"
     """Return monthly data recorded 1 minute before monthly reset, if possible. Monthly data may not be available."""
+
+
+class ParameterOnMissing(StrEnum):
+    """
+    Control the behaviour of the endpoint when a collection is missing.
+    """
+
+    EMPTY = "empty"
+    """Construct and return an empty collection, if one is missing."""
+    LAST = "last"
+    """Return the most recent collection, if one is missing."""
+    NULL = "null"
+    """Return null instead of a collection, if one is missing."""
+    SKIP = "skip"
+    """Skip a missing collection and return the next one instead (default behaviour)."""
 
 
 class UserAllianceMembership(StrEnum):
@@ -125,9 +141,9 @@ class UserAllianceMembershipEncoded(IntEnum):
 
 
 __all__ = [
-    ErrorCode.__name__,
-    OperationId.__name__,
-    ParameterInterval.__name__,
-    UserAllianceMembership.__name__,
-    UserAllianceMembershipEncoded.__name__,
+    "ErrorCode",
+    "OperationId",
+    "ParameterInterval",
+    "UserAllianceMembership",
+    "UserAllianceMembershipEncoded",
 ]

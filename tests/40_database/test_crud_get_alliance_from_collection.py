@@ -1,5 +1,3 @@
-from typing import Optional
-
 import pytest
 from sqlmodel.ext.asyncio.session import AsyncSession
 
@@ -32,9 +30,7 @@ async def test_get_alliance_from_collection_invalid_ids(collection_id: int, alli
 
 
 @pytest.mark.parametrize(["collection_id", "alliance_id", "expected_user_count"], test_cases_valid_ids)
-async def test_get_alliance_from_collection_valid_ids(
-    collection_id: int, alliance_id: int, expected_user_count: Optional[int], session: AsyncSession
-):
+async def test_get_alliance_from_collection_valid_ids(collection_id: int, alliance_id: int, expected_user_count: int | None, session: AsyncSession):
     alliance_history = await get_alliance_from_collection(session, collection_id, alliance_id)
     assert alliance_history
 

@@ -1,6 +1,5 @@
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
-from typing import Union
 
 from ..models.enums import ErrorCode
 from .link import Link
@@ -15,12 +14,12 @@ class ApiError(Exception):
     The base exception to be thrown, when an error occurs in the API.
     """
 
-    code: Union[str, ErrorCode] = field(init=False)
+    code: str | ErrorCode = field(init=False)
     message: str = field(init=False)
     details: str
-    timestamp: Union[datetime, str] = field(default_factory=lambda: datetime.now(tz=timezone.utc))
+    timestamp: datetime | str = field(default_factory=lambda: datetime.now(tz=timezone.utc))
     suggestion: str = field(default="")
-    links: list[Link] = field(default_factory=lambda: list())
+    links: list[Link] = field(default_factory=lambda: list())  # noqa:C408
 
 
 # HTTP 401
@@ -195,6 +194,11 @@ class InvalidIntervalError(ParameterValueError):
     message = "The provided value for the parameter `interval` is invalid."
 
 
+class InvalidOnMissingError(ParameterValueError):
+    code = ErrorCode.PARAMETER_ONMISSING_INVALID
+    message = "The provided value for the parameter `onMissing` is invalid."
+
+
 class InvalidSkipError(ParameterValueError):
     code = ErrorCode.PARAMETER_SKIP_INVALID
     message = "The provided value for the parameter `skip` is invalid."
@@ -232,40 +236,40 @@ class CollectionNotDeletedError(ServerError):
 
 
 __all__ = [
-    AllianceNotFoundError.__name__,
-    ApiError.__name__,
-    CollectionNotDeletedError.__name__,
-    CollectionNotFoundError.__name__,
-    ConflictError.__name__,
-    FromDateAfterToDateError.__name__,
-    FromDateTooEarlyError.__name__,
-    InvalidAllianceIdError.__name__,
-    InvalidBoolError.__name__,
-    InvalidCollectionIdError.__name__,
-    InvalidDateTimeError.__name__,
-    InvalidDescError.__name__,
-    InvalidFromDateError.__name__,
-    InvalidIntervalError.__name__,
-    InvalidJsonUpload.__name__,
-    InvalidNumberError.__name__,
-    InvalidSkipError.__name__,
-    InvalidTakeError.__name__,
-    InvalidToDateError.__name__,
-    InvalidUserIdError.__name__,
-    MethodNotAllowedError.__name__,
-    MissingAccessError.__name__,
-    NonUniqueCollectionIdError.__name__,
-    NonUniqueTimestampError.__name__,
-    NotAuthenticatedError.__name__,
-    NotFoundError.__name__,
-    ParameterFormatError.__name__,
-    ParameterValidationError.__name__,
-    ParameterValueError.__name__,
-    SchemaVersionMismatch.__name__,
-    ServerError.__name__,
-    ToDateTooEarlyError.__name__,
-    TooManyRequestsError.__name__,
-    UnsupportedMediaTypeError.__name__,
-    UnsupportedSchemaError.__name__,
-    UserNotFoundError.__name__,
+    "AllianceNotFoundError",
+    "ApiError",
+    "CollectionNotDeletedError",
+    "CollectionNotFoundError",
+    "ConflictError",
+    "FromDateAfterToDateError",
+    "FromDateTooEarlyError",
+    "InvalidAllianceIdError",
+    "InvalidBoolError",
+    "InvalidCollectionIdError",
+    "InvalidDateTimeError",
+    "InvalidDescError",
+    "InvalidFromDateError",
+    "InvalidIntervalError",
+    "InvalidJsonUpload",
+    "InvalidNumberError",
+    "InvalidSkipError",
+    "InvalidTakeError",
+    "InvalidToDateError",
+    "InvalidUserIdError",
+    "MethodNotAllowedError",
+    "MissingAccessError",
+    "NonUniqueCollectionIdError",
+    "NonUniqueTimestampError",
+    "NotAuthenticatedError",
+    "NotFoundError",
+    "ParameterFormatError",
+    "ParameterValidationError",
+    "ParameterValueError",
+    "SchemaVersionMismatch",
+    "ServerError",
+    "ToDateTooEarlyError",
+    "TooManyRequestsError",
+    "UnsupportedMediaTypeError",
+    "UnsupportedSchemaError",
+    "UserNotFoundError",
 ]

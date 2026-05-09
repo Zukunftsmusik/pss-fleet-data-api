@@ -24,6 +24,6 @@ class LinkDefinition(BaseModel):
 
 
 __all__ = [
-    Link.__name__,
-    LinkDefinition.__name__,
+    "Link",
+    "LinkDefinition",
 ]

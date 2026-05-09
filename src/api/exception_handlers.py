@@ -13,6 +13,7 @@ from .models.exceptions import (
     InvalidDescError,
     InvalidFromDateError,
     InvalidIntervalError,
+    InvalidOnMissingError,
     InvalidSkipError,
     InvalidTakeError,
     InvalidToDateError,
@@ -237,43 +238,83 @@ def _raise_nested_body_parameter_error(error: RequestValidationErrorOut, exc: Re
     """
     match error.param_path[0]:
         case "fleets":
-            if error.type == "too_long":
-                fleet_index = error.loc[-1]
-                raise UnsupportedSchemaError(f"The fleet at index {fleet_index} is not a valid representation.", suggestion=error.msg)
-            if error.type == "missing":
-                fleet_index = error.loc[-2]
-                raise UnsupportedSchemaError(f"The fleet at index {fleet_index} is missing one or more values.")
+            _raise_nested_body_parameter_error_fleets(error, exc)
         case "meta":
-            if error.type == "missing":
-                raise UnsupportedSchemaError(f"The field {error.param_name} is missing from the metadata.")
-            match error.param_name:
-                case "timestamp":
-                    if error.input is None:
-                        raise UnsupportedSchemaError("The provided schema does not contain a 'timestamp'.")
-                    raise UnsupportedSchemaError("The provided 'timestamp' is invalid.", suggestion=error.msg)
+            _raise_nested_body_parameter_error_meta(error, exc)
         case "users":
-            user_index = error.loc[-2]
-            match error.type:
-                case "too_long":
-                    user_index = error.loc[-1]
-                    raise UnsupportedSchemaError(f"The user at index {user_index} is not a valid representation.", suggestion=error.msg)
-                case "missing":
-                    raise UnsupportedSchemaError(f"The user at index {user_index} is missing one or more values.")
+            _raise_nested_body_parameter_error_users(error, exc)
 
-            error_index = error.loc[-1]
-            match error_index:
-                case 5:
-                    field_name = "AllianceMembership"
-                case 6:
-                    field_name = "AllianceJoinDate"
-                case 7:
-                    field_name = "LastLoginDate"
-                case 8:
-                    field_name = "LastHeartBeatDate"
-            raise UnsupportedSchemaError(
-                f"The user at index {user_index} received an unsupported value for field '{field_name}' (at position: {error_index}).",
-                suggestion=error.msg,
-            )
+
+def _raise_nested_body_parameter_error_fleets(error: RequestValidationErrorOut, exc: RequestValidationError):
+    """Handles a `RequestValidationError` (422) raised upon a failed validation of a fleet (Alliance) in the request body.
+
+    Args:
+        error (RequestValidationErrorOut): Details of the `RequestValidationError` that was thrown.
+        exc (RequestValidationError): The original `RequestValidationError` exception.
+
+    Raises:
+        UnsupportedSchemaError: Raised, if a fleet tuple is invalid or missing required values.
+    """
+    if error.type == "too_long":
+        fleet_index = error.loc[-1]
+        raise UnsupportedSchemaError(f"The fleet at index {fleet_index} is not a valid representation.", suggestion=error.msg)
+    if error.type == "missing":
+        fleet_index = error.loc[-2]
+        raise UnsupportedSchemaError(f"The fleet at index {fleet_index} is missing one or more values.")
+
+
+def _raise_nested_body_parameter_error_meta(error: RequestValidationErrorOut, exc: RequestValidationError):
+    """Handles a `RequestValidationError` (422) raised upon a failed validation of the metadata in the request body.
+
+    Args:
+        error (RequestValidationErrorOut): Details of the `RequestValidationError` that was thrown.
+        exc (RequestValidationError): The original `RequestValidationError` exception.
+
+    Raises:
+        UnsupportedSchemaError: Raised, if a metadata field is missing, invalid, or cannot be parsed to the expected type.
+    """
+    if error.type == "missing":
+        raise UnsupportedSchemaError(f"The field {error.param_name} is missing from the metadata.")
+    match error.param_name:
+        case "timestamp":
+            if error.input is None:
+                raise UnsupportedSchemaError("The provided schema does not contain a 'timestamp'.")
+            raise UnsupportedSchemaError("The provided 'timestamp' is invalid.", suggestion=error.msg)
+
+
+BODY_PARAMETER_ERROR_USERS_ERROR_INDEX_LOOKUP = {
+    5: "AllianceMembership",
+    6: "AllianceJoinDate",
+    7: "LastLoginDate",
+    8: "LastHeartBeatDate",
+}
+
+
+def _raise_nested_body_parameter_error_users(error: RequestValidationErrorOut, exc: RequestValidationError):
+    """Handles a `RequestValidationError` (422) raised upon a failed validation of a user in the request body.
+
+    Args:
+        error (RequestValidationErrorOut): Details of the `RequestValidationError` that was thrown.
+        exc (RequestValidationError): The original `RequestValidationError` exception.
+
+    Raises:
+        UnsupportedSchemaError: Raised, if a user tuple is invalid, missing required values, or contains fields with unsupported values.
+    """
+    user_index = error.loc[-2]
+    match error.type:
+        case "too_long":
+            user_index = error.loc[-1]
+            raise UnsupportedSchemaError(f"The user at index {user_index} is not a valid representation.", suggestion=error.msg)
+        case "missing":
+            raise UnsupportedSchemaError(f"The user at index {user_index} is missing one or more values.")
+
+    error_index = int(error.loc[-1])
+    field_name = BODY_PARAMETER_ERROR_USERS_ERROR_INDEX_LOOKUP.get(error_index, "?")
+
+    raise UnsupportedSchemaError(
+        f"The user at index {user_index} received an unsupported value for field '{field_name}' (at position: {error_index}).",
+        suggestion=error.msg,
+    )
 
 
 def _raise_non_nested_body_parameter_error(error: RequestValidationErrorOut, exc: RequestValidationError):
@@ -353,6 +394,7 @@ def _raise_query_parameter_error(error: RequestValidationErrorOut, exc: RequestV
         InvalidSkipError: Raised, if the query parameter `skip` received a value that can't be parsed to an `int` or if it's negative.
         InvalidTakeError: Raised, if the query parameter `skip` received a value that can't be parsed to an `int`, if it's negative or if it's greater than 100.
         ServerError: Raised, if none of the other exceptions was raised.
+        ToDateTooEarlyError: Raised, if the query parameter `toDate` received a value that is before the PSS start date.
     """
     match error.param_name:
         case "fromDate":
@@ -371,4 +413,6 @@ def _raise_query_parameter_error(error: RequestValidationErrorOut, exc: RequestV
             raise InvalidSkipError(error.msg)
         case "take":
             raise InvalidTakeError(error.msg)
+        case "onMissing":
+            raise InvalidOnMissingError(error.msg)
     raise ServerError("An error occured while raising an error for an invalid query parameter.") from exc

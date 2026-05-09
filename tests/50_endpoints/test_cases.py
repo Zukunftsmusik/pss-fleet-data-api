@@ -1,9 +1,9 @@
 from datetime import datetime
 
 import pytest
-from tests import conftest
 
 from src.api.models.enums import ErrorCode
+from tests import conftest
 
 
 does_exist_collection_and_alliance = [
@@ -73,6 +73,8 @@ invalid_filter_parameters = [
     pytest.param({"take": None}, ErrorCode.PARAMETER_TAKE_INVALID, id="take_none"),
     pytest.param({"take": -1}, ErrorCode.PARAMETER_TAKE_INVALID, id="take_negative"),
     pytest.param({"take": 101}, ErrorCode.PARAMETER_TAKE_INVALID, id="take_too_big"),
+    pytest.param({"onMissing": None}, ErrorCode.PARAMETER_ONMISSING_INVALID, id="onMissing_none"),
+    pytest.param({"onMissing": "invalid"}, ErrorCode.PARAMETER_ONMISSING_INVALID, id="onMissing_invalid"),
 ]
 """parameters, expected_error_code"""
 

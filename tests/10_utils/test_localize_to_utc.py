@@ -1,6 +1,6 @@
 from contextlib import AbstractContextManager
 from datetime import datetime, timezone
-from typing import Any, Optional
+from typing import Any
 
 import pytest
 from dateutil.parser import parse as parse_datetime
@@ -37,6 +37,6 @@ def test_localize_to_utc_invalid(value: Any, expected_exception: AbstractContext
 
 
 @pytest.mark.parametrize(["value", "expected_result"], test_cases_valid)
-def test_localize_to_utc_valid(value: Optional[datetime], expected_result: Optional[datetime]):
+def test_localize_to_utc_valid(value: datetime | None, expected_result: datetime | None):
     result = localize_to_utc(value)
     assert result == expected_result

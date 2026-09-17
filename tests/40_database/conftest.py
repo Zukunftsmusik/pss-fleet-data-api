@@ -16,7 +16,12 @@ from src.api.database.models import CollectionDB
 async def initialize_database():
     db.set_up_db_engine(SETTINGS.async_database_connection_str, echo=True)
     db.initialize_db(True)
-    await db.create_dummy_data(["tests/test_data/test_data.json"])
+    await db.create_dummy_data(
+        [
+            "tests/test_data/test_data.json",
+            "tests/test_data/test_data_onMissing.json",
+        ]
+    )
     await db.ENGINE.dispose()
 
 

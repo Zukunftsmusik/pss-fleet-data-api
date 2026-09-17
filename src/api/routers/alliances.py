@@ -6,6 +6,7 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 from ..database import crud, db
 from ..models import AllianceHistoryOut, exceptions
 from ..models.converters import FromDB
+from ..models.enums import ParameterOnMissing
 from . import dependencies, endpoints
 
 
@@ -18,6 +19,7 @@ async def get_alliance_history(
     datetime_filter: Annotated[dependencies.DatetimeFilter, Depends(dependencies.from_to_date_parameters)],
     list_filter: Annotated[dependencies.ListFilter, Depends(dependencies.list_filter_parameters)],
     skip_take: Annotated[dependencies.SkipTakeFilter, Depends(dependencies.skip_take_parameters)],
+    on_missing: Annotated[ParameterOnMissing, Depends(dependencies.on_missing)],
     session: AsyncSession = Depends(db.get_session),
 ) -> list[AllianceHistoryOut]:
     has_alliance_history = await crud.has_alliance_history(session, alliance_id)

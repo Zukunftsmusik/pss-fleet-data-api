@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Annotated, Optional, Union
+from typing import Annotated
 
 from pydantic import BaseModel, Field, field_validator
 
@@ -15,9 +15,9 @@ INT_GE_1 = Annotated[int, Field(ge=1)]
 STR_LENGTH_GE_0 = Annotated[str, Field(min_length=0)]
 STR_LENGTH_GE_1 = Annotated[str, Field(min_length=1)]
 
-OPTIONAL_INT_GE_0 = Annotated[Optional[int], Field(ge=0, default=None)]
-OPTIONAL_STR_LENGTH_GE_0 = Annotated[Optional[str], Field(default=None)]
-OPTIONAL_STR_LENGTH_GE_1 = Annotated[Optional[str], Field(min_length=1, default=None)]
+OPTIONAL_INT_GE_0 = Annotated[int | None, Field(ge=0, default=None)]
+OPTIONAL_STR_LENGTH_GE_0 = Annotated[str | None, Field(default=None)]
+OPTIONAL_STR_LENGTH_GE_1 = Annotated[str | None, Field(min_length=1, default=None)]
 
 
 AllianceCreate2 = tuple[STR_LENGTH_GE_1, STR_LENGTH_GE_1, STR_LENGTH_GE_1]
@@ -101,7 +101,7 @@ class CollectionCreate3(CollectionCreateBase):
     See also: https://github.com/Zukunftsmusik/pss-fleet-data?tab=readme-ov-file#schema-version-3
     """
 
-    fleets: list[Union["AllianceCreate2", "AllianceCreate3"]]
+    fleets: list["AllianceCreate2 | AllianceCreate3"]
     """The fleets recorded in this Collection."""
     users: list["UserCreate3"]
     """The IDs and names of the players recorded in this Collection."""
@@ -197,12 +197,17 @@ class CollectionMetadataCreateBase(BaseModel):
     """The number of players recorded in this Collection."""
     tourney_running: bool
     """Determines, whether a monthly fleet tournament was running at the time of recording the data in this Collection."""
-    data_version: Optional[int] = Field(ge=3, nullable=True, default=None)
+    data_version: int | None = Field(ge=3, nullable=True, default=None)
     """The schema version with which this data was first collected and stored."""
 
     @field_validator("timestamp", mode="before")
     @staticmethod
-    def transform_timestamp(value: Union[datetime, str]) -> datetime:
+    def transform_timestamp(value: datetime | str) -> datetime:
+        """Transforms the timestamp to a timezone-aware datetime in UTC. If the value is already a datetime, it will be localized to UTC if it is naive. If the value is a string, it will be parsed and localized to UTC.
+
+        Args:
+            value (datetime | str): The timestamp to transform.
+        """
         if not value:
             return value
 
@@ -520,7 +525,7 @@ class CollectionMetadataOut(CollectionMetadataCreate9):
 
     collection_id: int
     """The ID of the collection in the database."""
-    max_tournament_battle_attempts: Optional[int]
+    max_tournament_battle_attempts: int | None
     """The maximum number of tournament battles any given player can do on a given monthly fleet tournament day."""
 
 
@@ -554,7 +559,7 @@ UserOut = tuple[
     INT_GE_0,
     INT_GE_0,
     int,
-    UserAllianceMembershipEncoded,
+    int,
     OPTIONAL_INT_GE_0,
     OPTIONAL_INT_GE_0,
     OPTIONAL_INT_GE_0,
@@ -618,7 +623,7 @@ class UserHistoryOut(BaseModel):
     """The metadata of the Collection that represents the point in the history of the Alliance."""
     user: UserOut
     """The recorded User data."""
-    fleet: Optional[AllianceOut]
+    fleet: AllianceOut | None
     """The Alliance of the User at the time of recording the User data. May be `None`, if the User was not in an Alliance at the time."""
 
 

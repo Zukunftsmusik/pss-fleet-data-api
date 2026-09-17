@@ -1,4 +1,4 @@
-from typing import Any, Optional, Union
+from typing import Any
 
 from pydantic import BaseModel
 
@@ -29,10 +29,10 @@ class RequestValidationErrorOut(BaseModel):
     """
 
     type: str
-    loc: tuple[Union[int, str], ...]
+    loc: tuple[int | str, ...]
     msg: str
-    input: Optional[Any]
-    ctx: Optional[dict[str, Any]] = None
+    input: Any | None
+    ctx: dict[str, Any] | None = None
 
     @property
     def param_location(self) -> str:

@@ -8,6 +8,7 @@ create_dummy_upload_data.py
 
 # Generated files
 cov.xml
+coverage.lcov
 
 
 # VSCode

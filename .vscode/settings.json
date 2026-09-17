@@ -1,11 +1,12 @@
 {
     "python.testing.unittestEnabled": false,
     "python.testing.pytestEnabled": true,
-    "editor.defaultFormatter": "ms-python.black-formatter",
+    "editor.defaultFormatter": "charliermarsh.ruff",
     "editor.formatOnSave": true,
     "[python]": {
         "editor.codeActionsOnSave": {
             "source.organizeImports": "explicit"
         }
-    }
+    },
+    "python-envs.defaultEnvManager": "ms-python.python:venv"
 }

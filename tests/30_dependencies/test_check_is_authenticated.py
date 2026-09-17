@@ -1,5 +1,3 @@
-from typing import Optional
-
 import pytest
 
 from src.api.routers import dependencies
@@ -21,7 +19,7 @@ test_cases_is_authorized = [
 
 
 @pytest.mark.parametrize(["api_key", "expected_result"], test_cases_is_authenticated)
-def test_check_is_authenticated(api_key: Optional[str], expected_result: bool):
+def test_check_is_authenticated(api_key: str | None, expected_result: bool):
     assert dependencies._check_is_authenticated(api_key) is expected_result
 
 

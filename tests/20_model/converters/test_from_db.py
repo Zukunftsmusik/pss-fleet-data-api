@@ -1,5 +1,4 @@
 from datetime import timezone
-from typing import Union
 
 import pytest
 
@@ -118,7 +117,7 @@ def _check_alliance_out(alliance: AllianceOut):
     assert len(alliance) == 8
 
 
-def _check_collection_out(collection: Union[CollectionOut, CollectionWithFleetsOut, CollectionWithUsersOut]):
+def _check_collection_out(collection: CollectionOut | CollectionWithFleetsOut | CollectionWithUsersOut):
     assert collection
     assert isinstance(collection, CollectionOut)
     _check_collection_metadata_out(collection.meta)

@@ -38,7 +38,7 @@ In order to deploy the API, the following prerequisites must be met:
 To deploy the API on [CapRover](https://caprover.com/) you need to:
 - Create a new app on your CapRover instance
 - Set up the environment variables described above
-- [Fork the repository](https://github.com/Zukunftsmusik/pss-fleet-data-importer/fork) to your own github account
+- [Fork the repository](https://github.com/Zukunftsmusik/pss-fleet-data-api/fork) to your own github account
 - Follow the steps explained in the [CapRover Docs](https://caprover.com/docs/ci-cd-integration/deploy-from-github.html).
 
 ## Deploy locally with Docker
@@ -71,8 +71,12 @@ If you want to fix a bug or add a feature, please check out the [Contribution Gu
 # 🆘 Support
 If you need help using the API or want to contribute, you can join my support Discord at: [discord.gg/kKguSec](https://https://discord.gg/kKguSec)
 
+# 🖥️ Clients
+- [Python client library](https://github.com/PSS-Tools-Development/pss-fleet-data-client)
+- [Google Appsscript client library](https://github.com/PSS-Tools-Development/pss-fleet-data-client-appsscript)
+
 # 🔗 Links
-- Documentation (tbd)
+- [Documentation](https://fleetdata.dolores2.xyz/docs)
 - [Official Support Discord server](https://https://discord.gg/kKguSec)
 - [Official PSS Fleet Data API](https://fleetdata.dolores2.xyz)
 - [Buy me a can of cat food](https://buymeacoffee.com/the_worst_pss)

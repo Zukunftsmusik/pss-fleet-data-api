@@ -1,6 +1,5 @@
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
-from typing import Union
 
 from ..models.enums import ErrorCode
 from .link import Link
@@ -15,10 +14,10 @@ class ApiError(Exception):
     The base exception to be thrown, when an error occurs in the API.
     """
 
-    code: Union[str, ErrorCode] = field(init=False)
+    code: str | ErrorCode = field(init=False)
     message: str = field(init=False)
     details: str
-    timestamp: Union[datetime, str] = field(default_factory=lambda: datetime.now(tz=timezone.utc))
+    timestamp: datetime | str = field(default_factory=lambda: datetime.now(tz=timezone.utc))
     suggestion: str = field(default="")
     links: list[Link] = field(default_factory=lambda: list())  # noqa:C408
 
@@ -193,6 +192,11 @@ class ToDateTooEarlyError(InvalidToDateError):
 class InvalidIntervalError(ParameterValueError):
     code = ErrorCode.PARAMETER_INTERVAL_INVALID
     message = "The provided value for the parameter `interval` is invalid."
+
+
+class InvalidOnMissingError(ParameterValueError):
+    code = ErrorCode.PARAMETER_ONMISSING_INVALID
+    message = "The provided value for the parameter `onMissing` is invalid."
 
 
 class InvalidSkipError(ParameterValueError):

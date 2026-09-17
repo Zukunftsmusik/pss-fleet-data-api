@@ -1,5 +1,3 @@
-from typing import Union
-
 import pytest
 from fastapi import Request, status
 from fastapi.responses import ORJSONResponse
@@ -55,7 +53,7 @@ async def test_handle_http_exception(status_code: int):
 
 
 @pytest.mark.parametrize(["status_code", "expected_exception"], test_cases_raises)
-async def test_handle_http_exception_raises(status_code: int, expected_exception: Union[StarletteHTTPException, ApiError]):
+async def test_handle_http_exception_raises(status_code: int, expected_exception: StarletteHTTPException | ApiError):
     exc = StarletteHTTPException(status_code)
 
     with pytest.raises(expected_exception):

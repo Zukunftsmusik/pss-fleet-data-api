@@ -1,6 +1,6 @@
 import json
 from datetime import datetime
-from typing import Any, Callable, Optional
+from typing import Any, Callable
 
 import pytest
 from fastapi import Request
@@ -165,8 +165,8 @@ def patch_get_alliance_history(alliance_history_db, monkeypatch):
         session: AsyncSession,
         alliance_id: int,
         include_users: bool = True,
-        from_date: Optional[datetime] = None,
-        to_date: Optional[datetime] = None,
+        from_date: datetime | None = None,
+        to_date: datetime | None = None,
         interval: ParameterInterval = ParameterInterval.MONTHLY,
         desc: bool = False,
         skip: int = 0,
@@ -255,8 +255,8 @@ def patch_get_collection_by_timestamp_none(monkeypatch):
 def patch_get_collections(collection_db, monkeypatch):
     async def mock_get_collections(
         session: AsyncSession,
-        from_date: Optional[datetime] = None,
-        to_date: Optional[datetime] = None,
+        from_date: datetime | None = None,
+        to_date: datetime | None = None,
         interval: ParameterInterval = ParameterInterval.MONTHLY,
         desc: bool = False,
         skip: int = 0,
@@ -306,8 +306,8 @@ def patch_get_user_history(user_history_db, monkeypatch):
         session: AsyncSession,
         user_id: int,
         include_alliance: bool = True,
-        from_date: Optional[datetime] = None,
-        to_date: Optional[datetime] = None,
+        from_date: datetime | None = None,
+        to_date: datetime | None = None,
         interval: ParameterInterval = ParameterInterval.MONTHLY,
         desc: bool = False,
         skip: int = 0,

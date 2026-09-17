@@ -1,5 +1,5 @@
 import json
-from typing import Annotated, Union
+from typing import Annotated
 
 from fastapi import APIRouter, Body, Depends, File, UploadFile
 from pydantic import ValidationError
@@ -23,6 +23,7 @@ from ..models import (
     UserHistoryOut,
 )
 from ..models.converters import FromDB, ToDB
+from ..models.enums import ParameterOnMissing
 from . import dependencies, endpoints, exceptions
 
 
@@ -34,6 +35,7 @@ async def get_collections(
     datetime_filter: Annotated[dependencies.DatetimeFilter, Depends(dependencies.from_to_date_parameters)],
     list_filter: Annotated[dependencies.ListFilter, Depends(dependencies.list_filter_parameters)],
     skip_take: Annotated[dependencies.SkipTakeFilter, Depends(dependencies.skip_take_parameters)],
+    on_missing: Annotated[ParameterOnMissing, Depends(dependencies.on_missing)],
     session: AsyncSession = Depends(db.get_session),
 ) -> list[CollectionMetadataOut]:
     collections = await crud.get_collections(
@@ -223,7 +225,7 @@ async def update_collection(
 async def convert_uploaded_file(uploaded_file: UploadFile) -> CollectionDB:
     file_contents = await uploaded_file.read()
     try:
-        decoded_json: dict[str, Union[dict[str, Union[bool, float, int, str]], list[list]]] = json.loads(file_contents)
+        decoded_json: dict[str, dict[str, bool | float | int | str] | list[list]] = json.loads(file_contents)
     except json.decoder.JSONDecodeError as json_decoder_error:
         raise exceptions.invalid_json_upload(json_decoder_error) from json_decoder_error
 

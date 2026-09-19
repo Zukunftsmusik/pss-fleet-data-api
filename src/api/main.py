@@ -1,9 +1,9 @@
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
 from fastapi.exceptions import RequestValidationError
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
-from fastapi.responses import Response
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from . import exception_handlers
@@ -67,22 +67,12 @@ app.include_router(root.router)
 
 
 app.add_middleware(GZipMiddleware, minimum_size=1)
-
-
-# ----- CORS -----
-
-
-@app.middleware("http")
-async def public_get_cors_middleware(request: Request, call_next):
-    # 1. Let the request proceed to your endpoint logic
-    response: Response = await call_next(request)
-
-    # 2. Check if the request is a GET method and comes from a browser (has an Origin)
-    if request.method == "GET" and request.headers.get("Origin"):
-        response.headers["Access-Control-Allow-Origin"] = "*"
-        response.headers["Access-Control-Allow-Headers"] = "*"
-
-    return response
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["GET"],
+    allow_headers=["*"],
+)
 
 
 app.add_exception_handler(StarletteHTTPException, exception_handlers.handle_http_exception)

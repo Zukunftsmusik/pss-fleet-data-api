@@ -1,8 +1,10 @@
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
+from fastapi.responses import Response
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from . import exception_handlers
@@ -66,6 +68,12 @@ app.include_router(root.router)
 
 
 app.add_middleware(GZipMiddleware, minimum_size=1)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["GET"],
+    allow_headers=["*"],
+)
 
 
 app.add_exception_handler(StarletteHTTPException, exception_handlers.handle_http_exception)
@@ -77,6 +85,35 @@ app.add_exception_handler(ConflictError, exception_handlers.handle_conflict)
 app.add_exception_handler(ParameterValidationError, exception_handlers.handle_parameter_validation)
 app.add_exception_handler(RequestValidationError, exception_handlers.handle_request_validation)
 app.add_exception_handler(ServerError, exception_handlers.handle_server)
+
+
+# ----- Caching -----
+
+CACHE_STATE = {"is_stale": False}
+
+
+@app.middleware("http")
+async def handle_cache(request: Request, call_next):
+    # 1. Catch data modifications (POST, PUT, PATCH, DELETE)
+    if request.method in ["POST", "PUT", "PATCH", "DELETE"]:
+        CACHE_STATE["is_stale"] = True
+        return await call_next(request)
+
+    # 2. Process the request normally
+    response: Response = await call_next(request)
+
+    # 3. Inject caching directives for successful GET requests
+    if request.method == "GET" and (response.status_code == 200 or response.status_code == 204):
+        if CACHE_STATE["is_stale"]:
+            # Tell CapRover's Nginx to bypass its current cache file and fetch fresh data
+            response.headers["X-Refresh-Cache"] = "1"
+            # Reset the flag because Nginx is about to save this new fresh version
+            CACHE_STATE["is_stale"] = False
+
+        # Set a 1-hour expiration fallback limit
+        response.headers["Cache-Control"] = "public, max-age=3600"
+
+    return response
 
 
 async def initialize_app(app: FastAPI, database_connection_string: str, echo: bool, reinitialize_database: bool, create_dummy_data: bool):

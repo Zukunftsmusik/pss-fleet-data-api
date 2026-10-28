@@ -48,6 +48,7 @@ class Settings:
     # Flags
     create_dummy_data_on_startup: bool = getenv("CREATE_DUMMY_DATA", "false") == "true"
     debug: bool = getenv("DEBUG_MODE", "false") == "true"
+    disable_response_cache: bool = getenv("DISABLE_RESPONSE_CACHE", "false") == "true"
     in_github_actions: bool = getenv("GITHUB_ACTIONS", "false") == "true"  # True if in github actions
     reinitialize_database_on_startup: bool = getenv("REINITIALIZE_DATABASE", "false") == "true"
 

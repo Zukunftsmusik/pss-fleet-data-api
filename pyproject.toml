@@ -1,13 +1,13 @@
 [project]
 name = "pss-fleet-data-api"
-version = "1.7.0"
+version = "1.7.1"
 license = {file = "LICENSE"}
 description = "A REST API server for Pixelstarships Fleet Data"
 authors = [
     { name = "The worst.", email = "theworstpss@gmail.com" }
 ]
 readme = "README.md"
-requires-python = ">= 3.13.3"
+requires-python = ">= 3.13.17"
 dependencies = [
     "alembic>=1.18.4",
     "asyncpg>=0.31.0",

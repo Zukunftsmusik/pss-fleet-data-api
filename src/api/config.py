@@ -21,7 +21,7 @@ class Settings:
 
     # Base
     project_name: str = "PSS Fleet Data API"
-    version: str = "1.7.0"
+    version: str = "1.7.1"
     description: str = "An API server for Pixel Starships Fleet Data."
     contact = {
         "email": "theworstpss@gmail.com",
@@ -48,6 +48,7 @@ class Settings:
     # Flags
     create_dummy_data_on_startup: bool = getenv("CREATE_DUMMY_DATA", "false") == "true"
     debug: bool = getenv("DEBUG_MODE", "false") == "true"
+    disable_response_cache: bool = getenv("DISABLE_RESPONSE_CACHE", "false") == "true"
     in_github_actions: bool = getenv("GITHUB_ACTIONS", "false") == "true"  # True if in github actions
     reinitialize_database_on_startup: bool = getenv("REINITIALIZE_DATABASE", "false") == "true"
 

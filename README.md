@@ -63,6 +63,13 @@ The API can then be accessed at `http://localhost:8000`.
 
 The API can then be accessed at `http://localhost:8000`.
 
+## API response caching
+Successful HTTP 200 GET responses from the `/collections`, `/alliances`, and `/users` endpoints are cached in the API process for up to one hour. Successful POST, PUT, PATCH, and DELETE requests invalidate the cache.
+
+This cache is process-local and is intended for a single API worker/instance. If the API is scaled to multiple workers or instances, use a shared cache such as Redis so a write handled by one process invalidates entries used by the others. Responses use `Cache-Control: private, no-cache` so clients re-request data rather than independently reusing stale responses; `X-Cache` reports `MISS`, `HIT`, or `BYPASS` for eligible requests.
+
+The cache stores the response representation after GZip middleware: gzip-accepting requests use compressed cached bodies, and different `Accept-Encoding` values have separate entries.
+
 # 🖊️ Contribute
 If you ran across a bug or have a feature request, please check if there's [already an issue](https://github.com/Zukunftsmusik/pss-fleet-data-api/issues) for that and if not, please [open a new one](https://github.com/Zukunftsmusik/pss-fleet-data-api/issues/new).
 

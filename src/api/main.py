@@ -2,6 +2,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.exceptions import RequestValidationError
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
@@ -17,6 +18,7 @@ from .models.exceptions import (
     ParameterValidationError,
     ServerError,
 )
+from .response_cache import RESPONSE_CACHE, ResponseCacheMiddleware
 from .routers import alliances, collections, root, users
 
 
@@ -66,6 +68,12 @@ app.include_router(root.router)
 
 
 app.add_middleware(GZipMiddleware, minimum_size=1)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["GET"],
+    allow_headers=["*"],
+)
 
 
 app.add_exception_handler(StarletteHTTPException, exception_handlers.handle_http_exception)
@@ -77,6 +85,9 @@ app.add_exception_handler(ConflictError, exception_handlers.handle_conflict)
 app.add_exception_handler(ParameterValidationError, exception_handlers.handle_parameter_validation)
 app.add_exception_handler(RequestValidationError, exception_handlers.handle_request_validation)
 app.add_exception_handler(ServerError, exception_handlers.handle_server)
+
+if not SETTINGS.disable_response_cache:
+    app.add_middleware(ResponseCacheMiddleware, cache=RESPONSE_CACHE)
 
 
 async def initialize_app(app: FastAPI, database_connection_string: str, echo: bool, reinitialize_database: bool, create_dummy_data: bool):

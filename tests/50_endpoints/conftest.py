@@ -15,6 +15,7 @@ from src.api.models import AllianceHistoryOut, AllianceOut, CollectionOut, Colle
 from src.api.models.converters import FromDB
 from src.api.models.enums import ErrorCode, ParameterInterval
 from src.api.models.error import ErrorOut
+from src.api.response_cache import RESPONSE_CACHE
 from src.api.routers import dependencies
 
 
@@ -48,6 +49,13 @@ def client():
         headers={"Authorization": ""},
     )
     yield client
+
+
+@pytest.fixture(scope="function", autouse=True)
+def clear_response_cache():
+    RESPONSE_CACHE.invalidate()
+    yield
+    RESPONSE_CACHE.invalidate()
 
 
 @pytest.fixture(scope="session")

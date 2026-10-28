@@ -18,7 +18,7 @@ from .models.exceptions import (
     ParameterValidationError,
     ServerError,
 )
-from .response_cache import ResponseCacheMiddleware, response_cache
+from .response_cache import RESPONSE_CACHE, ResponseCacheMiddleware
 from .routers import alliances, collections, root, users
 
 
@@ -87,7 +87,7 @@ app.add_exception_handler(RequestValidationError, exception_handlers.handle_requ
 app.add_exception_handler(ServerError, exception_handlers.handle_server)
 
 if not SETTINGS.disable_response_cache:
-    app.add_middleware(ResponseCacheMiddleware, cache=response_cache)
+    app.add_middleware(ResponseCacheMiddleware, cache=RESPONSE_CACHE)
 
 
 async def initialize_app(app: FastAPI, database_connection_string: str, echo: bool, reinitialize_database: bool, create_dummy_data: bool):

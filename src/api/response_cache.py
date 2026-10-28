@@ -204,4 +204,4 @@ class _ResponseCapture:
         await self.send(message)
 
 
-response_cache = InMemoryResponseCache()
+RESPONSE_CACHE = InMemoryResponseCache()
